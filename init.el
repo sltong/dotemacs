@@ -2,10 +2,13 @@
 
 (setq package-quickstart t) ;; improve start-up time
 
-(setq user-emacs-var-directory (expand-file-name "var" user-emacs-directory))
-
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
+
+(setq user-emacs-etc-directory (expand-file-name "etc" user-emacs-directory))
+(setq user-emacs-var-directory (expand-file-name "var" user-emacs-directory))
+
+(setq custom-theme-directory (expand-file-name "themes" user-emacs-etc-directory))
 
 (setq visible-bell t) ;; replace audible bell with visual one
 
