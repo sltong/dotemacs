@@ -24,6 +24,8 @@
 (setq use-package-always-ensure t)
 
 (use-package desktop
+  :custom
+  (desktop-dirname (expand-file-name "desktop" user-emacs-var-directory))
   :init
   (desktop-save-mode))
 
