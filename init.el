@@ -3,8 +3,6 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
-(setq package-quickstart t) ;; improve start-up time
-
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
@@ -35,9 +33,9 @@
 (setq column-number-mode t)
 
 ;; `use-package'
-(use-package use-package
-  :init
-  (setq use-package-always-ensure t))
+(require 'use-package)
+(require 'use-package-ensure)
+(setq use-package-always-ensure t)
 
 ;; needs to be loaded immediately before almost everything else
 (use-package no-littering
@@ -120,3 +118,5 @@
 (use-package marginalia
   :init
   (marginalia-mode))
+
+(setq package-quickstart t) ;; improve start-up time
