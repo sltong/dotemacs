@@ -2,3 +2,5 @@ eln-cache/
 elpa/
 
 *.elc
+
+package-quickstart.el
