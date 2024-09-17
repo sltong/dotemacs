@@ -46,9 +46,9 @@
   (delete-selection-mode)) ;; replace active selection with typed text
 
 (use-package desktop
-  :config
-  (setq desktop-base-file-name ".desktop-session")
-  (setq desktop-base-lock-name ".desktop-session.lock")
+  :custom
+  (desktop-base-file-name ".desktop-session")
+  (desktop-base-lock-name ".desktop-session.lock")
   (add-to-list 'desktop-path desktop-session-directory)
   :init
   (setq desktop-session-directory (expand-file-name "desktop/" user-emacs-var-directory))
