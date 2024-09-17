@@ -26,6 +26,8 @@
 (setq kept-old-versions 3) ; keep oldest 3 files
 (setq kept-new-versions 5) ; keep newest 5 files
 
+(setq-default indent-tabs-mode nil) ; disable tabs for indentation
+
 ;; initial scratch buffer
 (setq initial-major-mode 'fundamental-mode)
 (setq initial-scratch-message nil)
