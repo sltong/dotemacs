@@ -19,6 +19,12 @@
 (setq kept-new-versions 5) ; keep newest 5 files
 
 ;; `use-package'
+(use-package savehist
+  :custom
+  (savehist-file (expand-file-name "minibuffer-history.el" user-emacs-var-directory))
+  :init
+  (savehist-mode))
+
 (use-package which-key
   :init
   (which-key-mode))
