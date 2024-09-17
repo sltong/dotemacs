@@ -39,6 +39,9 @@
   :init
   (setq use-package-always-ensure t))
 
+;; needs to be loaded immediately before almost everything else
+(use-package no-littering
+  :demand t)
 
 ;; built-in packages
 (use-package delsel
@@ -49,11 +52,7 @@
   :custom
   (desktop-base-file-name ".desktop-session")
   (desktop-base-lock-name ".desktop-session.lock")
-  (add-to-list 'desktop-path desktop-session-directory)
   :init
-  (setq desktop-session-directory (expand-file-name "desktop/" user-emacs-var-directory))
-  (unless (file-directory-p desktop-session-directory)
-    (make-directory desktop-session-directory))
   (desktop-save-mode))
 
 (use-package dired
@@ -69,8 +68,6 @@
   :bind (("C-x C-b" . ibuffer)))
 
 (use-package savehist
-  :custom
-  (savehist-file (expand-file-name "minibuffer-history.el" user-emacs-var-directory))
   :init
   (savehist-mode))
 
