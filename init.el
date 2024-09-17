@@ -56,6 +56,11 @@
   :init
   (which-key-mode))
 
+(use-package magit
+  :bind (("C-x g" . magit-status)
+	 ("C-c g" . magit-dispatch)
+	 ("C-c f" . magit-file-dispatch)))
+
 (use-package orderless
   :custom
   (completion-styles '(orderless basic))
