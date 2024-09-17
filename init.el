@@ -18,3 +18,9 @@
 
 ;; `which-key'
 (which-key-mode)
+
+(use-package vertico
+  :custom
+  (vertico-cycle t) ;; enable cycling for `vertico-next/previous'
+  :init
+  (vertico-mode))
