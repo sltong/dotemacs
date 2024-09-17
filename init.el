@@ -65,6 +65,9 @@
   :init
   (electric-pair-mode))
 
+(use-package ibuffer
+  :bind (("C-x C-b" . ibuffer)))
+
 (use-package savehist
   :custom
   (savehist-file (expand-file-name "minibuffer-history.el" user-emacs-var-directory))
