@@ -78,7 +78,11 @@
 ;; external packages
 (use-package expreg
   :bind (("C->" . expreg-expand)
-         ("C-<" . expreg-contract)))
+         ("C-<" . expreg-contract))
+  :config
+  (defun custom-expreg-expand-sentences ()
+    (add-to-list 'expreg-functions 'expreg--sentence))
+  :hook (text-mode . custom-expreg-expand-sentences))
 
 (use-package magit
   :ensure-system-package git
