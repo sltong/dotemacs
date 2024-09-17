@@ -9,6 +9,8 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
+(setq visible-bell t) ;; replace audible bell with visual one
+
 ;; prompts
 (setq yes-or-no-prompt "(y or n) ")
 (setq use-short-answers t) ;; make "yes-or-no-p" accept "y" and "n"
