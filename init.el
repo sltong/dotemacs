@@ -65,3 +65,7 @@
   (vertico-cycle t) ;; enable cycling for `vertico-next/previous'
   :init
   (vertico-mode))
+
+(use-package marginalia
+  :init
+  (marginalia-mode))
