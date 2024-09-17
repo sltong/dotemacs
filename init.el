@@ -24,9 +24,14 @@
 (setq use-package-always-ensure t)
 
 (use-package desktop
-  :custom
-  (desktop-dirname (expand-file-name "desktop" user-emacs-var-directory))
+  :config
+  (setq desktop-base-file-name ".desktop-session")
+  (setq desktop-base-lock-name ".desktop-session.lock")
+  (add-to-list 'desktop-path desktop-session-directory)
   :init
+  (setq desktop-session-directory (expand-file-name "desktop/" user-emacs-var-directory))
+  (unless (file-directory-p desktop-session-directory)
+    (make-directory desktop-session-directory))
   (desktop-save-mode))
 
 (use-package savehist
