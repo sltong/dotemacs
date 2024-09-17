@@ -26,6 +26,8 @@
 (setq kept-old-versions 3) ; keep oldest 3 files
 (setq kept-new-versions 5) ; keep newest 5 files
 
+(setq column-number-mode t)
+
 ;; `use-package'
 (use-package use-package
   :init
