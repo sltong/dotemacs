@@ -53,7 +53,9 @@
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
   ;; enable file wildcard support with partial completion
-  (completion-category-overrides '((file (styles partial-completion)))))
+  (completion-category-overrides '((file (styles partial-completion))))
+  ;; unconditionally load `orderless'
+  :init)
 
 (use-package vertico
   :custom
