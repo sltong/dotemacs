@@ -29,6 +29,13 @@
   :init
   (which-key-mode))
 
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  ;; enable file wildcard support with partial completion
+  (completion-category-overrides '((file (styles partial-completion)))))
+
 (use-package vertico
   :custom
   (vertico-cycle t) ;; enable cycling for `vertico-next/previous'
