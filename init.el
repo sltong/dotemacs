@@ -71,6 +71,12 @@
   :init
   (savehist-mode))
 
+(use-package whitespace
+  :custom
+  (whitespace-style '(face trailing tabs))
+  :init
+  (global-whitespace-mode))
+
 (use-package which-key
   :init
   (which-key-mode))
