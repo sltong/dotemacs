@@ -2,7 +2,7 @@
 
 (setq package-quickstart t) ;; improve start-up time
 
-(setq custom-file "~/.config/emacs/custom.el")
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
 ;; file backups
