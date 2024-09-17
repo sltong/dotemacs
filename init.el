@@ -16,8 +16,10 @@
 (setq kept-old-versions 3) ; keep oldest 3 files
 (setq kept-new-versions 5) ; keep newest 5 files
 
-;; `which-key'
-(which-key-mode)
+;; `use-package'
+(use-package which-key
+  :init
+  (which-key-mode))
 
 (use-package vertico
   :custom
