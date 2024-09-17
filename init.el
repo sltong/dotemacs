@@ -39,6 +39,8 @@
   :init
   (setq use-package-always-ensure t))
 
+
+;; built-in packages
 (use-package delsel
   :init
   (delete-selection-mode)) ;; replace active selection with typed text
@@ -58,6 +60,10 @@
   :ensure nil ;; dired is built-in, so don't try installing from package archives
   :bind (:map dired-mode-map
 	 ("b" . dired-up-directory)))
+
+(use-package elec-pair
+  :init
+  (electric-pair-mode))
 
 (use-package savehist
   :custom
