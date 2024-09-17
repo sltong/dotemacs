@@ -34,6 +34,10 @@
     (make-directory desktop-session-directory))
   (desktop-save-mode))
 
+(use-package dired
+  :bind (:map dired-mode-map
+	 ("b" . dired-up-directory)))
+
 (use-package savehist
   :custom
   (savehist-file (expand-file-name "minibuffer-history.el" user-emacs-var-directory))
