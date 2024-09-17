@@ -75,6 +75,11 @@
   :init
   (which-key-mode))
 
+;; external packages
+(use-package expreg
+  :bind (("C->" . expreg-expand)
+         ("C-<" . expreg-contract)))
+
 (use-package magit
   :ensure-system-package git
   :bind (("C-x g" . magit-status)
