@@ -39,6 +39,7 @@
   (desktop-save-mode))
 
 (use-package dired
+  :ensure nil ;; dired is built-in, so don't try installing from package archives
   :bind (:map dired-mode-map
 	 ("b" . dired-up-directory)))
 
