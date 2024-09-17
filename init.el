@@ -58,6 +58,7 @@
   (which-key-mode))
 
 (use-package magit
+  :ensure-system-package git
   :bind (("C-x g" . magit-status)
 	 ("C-c g" . magit-dispatch)
 	 ("C-c f" . magit-file-dispatch)))
