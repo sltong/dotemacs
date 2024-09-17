@@ -33,6 +33,10 @@
   :init
   (setq use-package-always-ensure t))
 
+(use-package delsel
+  :init
+  (delete-selection-mode)) ;; replace active selection with typed text
+
 (use-package desktop
   :config
   (setq desktop-base-file-name ".desktop-session")
