@@ -82,6 +82,12 @@
   (which-key-mode))
 
 ;; external packages
+(use-package exec-path-from-shell
+  :init
+  (when (or (memq window-system '(mac ns x))
+            (daemonp))
+    (exec-path-from-shell-initialize)))
+
 (use-package expreg
   :bind (("C->" . expreg-expand)
          ("C-<" . expreg-contract))
