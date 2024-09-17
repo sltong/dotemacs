@@ -27,8 +27,9 @@
 (setq kept-new-versions 5) ; keep newest 5 files
 
 ;; `use-package'
-(require 'use-package-ensure)
-(setq use-package-always-ensure t)
+(use-package use-package
+  :init
+  (setq use-package-always-ensure t))
 
 (use-package desktop
   :config
