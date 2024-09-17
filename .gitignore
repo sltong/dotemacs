@@ -1,5 +1,6 @@
 eln-cache/
 elpa/
+var/
 
 *.elc
 
