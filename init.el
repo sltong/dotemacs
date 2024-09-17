@@ -5,6 +5,10 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
+;; prompts
+(setq yes-or-no-prompt "(y or n) ")
+(setq use-short-answers t) ;; make "yes-or-no-p" accept "y" and "n"
+
 ;; file backups
 (setq backup-directory-alist '(("." . (expand-file-name "backups" user-emacs-directory))))
 (setq version-control t) ; create multiple, numbered backups
