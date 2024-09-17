@@ -1,5 +1,8 @@
 ;;; -*- lexical-binding: t -*-
 
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
 (setq package-quickstart t) ;; improve start-up time
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
