@@ -2,7 +2,7 @@
 
 (setq package-quickstart t) ;; improve start-up time
 
-(setq initial-frame-alist '((maximized . t)))
+(setq initial-frame-alist '((fullscreen . maximized)))
 
 (setq user-emacs-var-directory (expand-file-name "var" user-emacs-directory))
 
