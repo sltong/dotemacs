@@ -210,6 +210,11 @@
   (corfu-scroll-margin 3) ; use scroll margin
   (corfu-popupinfo-delay '(1.25 . 0.9)))
 
+(use-package corfu-terminal
+  :if (display-graphic-p)
+  :init
+  (corfu-terminal-mode))
+
 (use-package marginalia
   :init
   (marginalia-mode)
