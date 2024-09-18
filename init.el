@@ -81,6 +81,10 @@
   :init
   (savehist-mode))
 
+(use-package re-builder
+  :custom
+  (reb-re-syntax 'string))
+
 (use-package whitespace
   :custom
   (whitespace-style '(face trailing tabs))
