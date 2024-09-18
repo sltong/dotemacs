@@ -78,6 +78,10 @@
   :init
   (electric-pair-mode))
 
+(use-package eshell
+  ;; emulate ^D EOF quitting
+  :bind (("C-d" . eshell-life-is-too-much)))
+
 (use-package ibuffer
   :bind (("C-x C-b" . ibuffer)))
 
