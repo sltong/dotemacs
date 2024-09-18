@@ -178,6 +178,13 @@
   (undo-strong-limit (* 1000 1000 5)) ; 5MB
   (kill-ring-max 512))
 
+(use-package treesit
+  :ensure nil
+  :config
+  (setq treesit-language-grammars-directory
+        (expand-file-name "treesit/language-grammars" user-emacs-var-directory))
+  (setq treesit-extra-load-path (list treesit-language-grammars-directory)))
+
 (use-package which-key
   :init
   (which-key-mode 1))
