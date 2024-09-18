@@ -171,7 +171,8 @@
   (undo-limit (* 1000 1000 1)) ; 1MB
   ;; last-ditch outer limit for single undo commands
   (undo-outer-limit (* 1000 1000 100)) ; 50MB
-  (undo-strong-limit (* 1000 1000 5))) ; 5MB
+  (undo-strong-limit (* 1000 1000 5)) ; 5MB
+  (kill-ring-max 512))
 
 (use-package which-key
   :init
