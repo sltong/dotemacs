@@ -114,18 +114,18 @@
 ;; order to prevent fetching them from repositories.
 (use-package completion-preview
   :init
-  (global-completion-preview-mode))
+  (global-completion-preview-mode 1))
 
 (use-package delsel
   :init
-  (delete-selection-mode)) ; replace active selection with typed text
+  (delete-selection-mode 1)) ; replace active selection with typed text
 
 (use-package desktop
   :custom
   (desktop-base-file-name ".desktop-session")
   (desktop-base-lock-name ".desktop-session.lock")
   :init
-  (desktop-save-mode))
+  (desktop-save-mode 1))
 
 (use-package dired
   :ensure nil
@@ -138,7 +138,7 @@
 
 (use-package elec-pair
   :init
-  (electric-pair-mode))
+  (electric-pair-mode 1))
 
 (use-package eshell
   :bind (:map eshell-mode-map
@@ -153,7 +153,7 @@
 
 (use-package recentf
   :init
-  (recentf-mode)
+  (recentf-mode 1)
   :config
   (add-to-list 'recentf-exclude
                (recentf-expand-file-name no-littering-var-directory))
@@ -165,7 +165,7 @@
 
 (use-package savehist
   :init
-  (savehist-mode))
+  (savehist-mode 1))
 
 (use-package simple
   ;; explicitly set to prevent `use-package' from fetching from
@@ -180,7 +180,7 @@
 
 (use-package which-key
   :init
-  (which-key-mode))
+  (which-key-mode 1))
 
 (use-package whitespace
   :custom
@@ -231,7 +231,7 @@
 
 (use-package vertico
   :init
-  (vertico-mode)
+  (vertico-mode 1)
   :config
   ;; adjust number of candidates when resizing minibuffer
   (defun vertico-resize--minibuffer ()
@@ -260,15 +260,15 @@
 
 (use-package corfu
   :init
-  (global-corfu-mode)
+  (global-corfu-mode 1)
   (add-hook 'eshell-mode-hook
             (lambda ()
               (setq-local corfu-auto nil)
               (corfu-mode)))
   ;; corfu extensions
-  (corfu-echo-mode)
-  (corfu-history-mode)
-  (corfu-popupinfo-mode)
+  (corfu-echo-mode 1)
+  (corfu-history-mode 1)
+  (corfu-popupinfo-mode 1)
   ;; configure SPC for separator insertion
   :bind (:map corfu-map
          ("SPC" . corfu-insert-separator))
@@ -281,17 +281,17 @@
 (use-package corfu-terminal
   :if (display-graphic-p)
   :init
-  (corfu-terminal-mode))
+  (corfu-terminal-mode 1))
 
 (use-package marginalia
   :init
-  (marginalia-mode)
+  (marginalia-mode 1)
   :custom
   (marginalia-field-width 120))
 
 (use-package yasnippet
   :init
-  (yas-global-mode))
+  (yas-global-mode 1))
 
 (use-package yasnippet-snippets
   :requires yasnippet)
@@ -332,7 +332,7 @@
           (cdr args)))
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
   ;; show minibuffer recursion depth
-  (minibuffer-depth-indicate-mode))
+  (minibuffer-depth-indicate-mode 1))
 
 (setq package-quickstart t) ; improve start-up time
 
