@@ -179,11 +179,14 @@
          ("TAB" . law-vertico-insert-unless-tramp))
   :custom
   (vertico-cycle t) ; enable cycling for `vertico-next/previous'
-  (vertico-count 12))
+  (vertico-count 7)
+  (vertico-resize nil)) ; fixed minibuffer window size
 
 (use-package marginalia
   :init
-  (marginalia-mode))
+  (marginalia-mode)
+  :custom
+  (marginalia-field-width 120))
 
 (use-package yasnippet
   :init
