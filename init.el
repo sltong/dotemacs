@@ -1,4 +1,58 @@
-;;; -*- lexical-binding: t -*-
+;;; init.el --- Emacs user initialization file -*- lexical-binding: t -*-
+
+;; Copyright (C) 2024 λαω
+
+;; Author: λαω <lambda.alpha.omega@proton.me>
+;; Maintainer: λαω <lambda.alpha.omega@proton.me>
+;; Keywords: local
+
+;; This file is not part of GNU Emacs.
+
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU Affero General Public License
+;; as published by the Free Software Foundation, either version 3 of
+;; the License, or (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; Affero General Public License for more details.
+
+;; You should have received a copy of the GNU Affero General Public
+;; License along with this program. If not, see
+;; <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; This is my init file. There are many like it, but this one is mine.
+
+;; My init file is my best friend. It is my life. I must master it as
+;; I must master my life.
+
+;; Without me, my init file is useless. Without my init file, I am
+;; useless. I must load my init file true. I must edit with Emacs
+;; sharper than my enemy who is trying to outedit me. I must pwn him
+;; before he pwns me. I will...
+
+;; My init file and I know that what counts in editors is not the
+;; start-up times, the backing by a tech corporation, nor the ricing
+;; and anime catgirl theme backgrounds. We know that it is the edits
+;; we make. We will edit...
+
+;; My init file is human, even as I am human, because it is my
+;; life. Thus, I will learn it as a brother. I will learn its
+;; weaknesses, its strength, its parts, its dependencies, its bugs and
+;; its syntax. I will keep my init file clean and ready, even as I am
+;; clean and ready. We will become part of each other. We will...
+
+;; Before God, I swear this creed. My init file and I are the
+;; defenders of FOSS. We are the masters of our enemy. We are the
+;; saviors of my life.
+
+;; So be it, until victory is Richard Stallman's and there is no
+;; enemy, but peace!
+
+;;; Code:
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
@@ -313,3 +367,5 @@
 (keymap-global-set "C-c C-s" λαω-shell-map)
 (keymap-global-set "C-c s" λαω-shell-map)
 (keymap-set λαω-shell-map "e" 'eshell)
+
+;;; init.el ends here
