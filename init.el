@@ -108,8 +108,8 @@
   :custom
   (whitespace-style '(face trailing tabs))
   :hook
- (prog-mode . whitespace-mode)
- (text-mode . whitespace-mode))
+  (prog-mode . whitespace-mode)
+  (text-mode . whitespace-mode))
 
 ;; external packages
 (use-package exec-path-from-shell
