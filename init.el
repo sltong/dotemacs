@@ -73,10 +73,6 @@
    custom-themes-directory)
   (make-directory custom-themes-directory t))
 
-(setq visible-bell t) ; replace audible bell with visual one
-
-(setq use-short-answers t) ; make "yes-or-no-p" accept "y" and "n"
-
 ;; file backups
 (setq backup-directory-alist
       (list (cons "." (expand-file-name "backups" user-emacs-var-directory))))
@@ -85,15 +81,21 @@
 (setq kept-old-versions 3)
 (setq kept-new-versions 5)
 
-(setq message-log-max 10000) ; max number of lines for message log buffer
-
-(setq-default indent-tabs-mode nil)
-
 ;; initial scratch buffer
 (setq initial-major-mode 'fundamental-mode)
 (setq initial-scratch-message nil)
 
+(setq visible-bell t) ; replace audible bell with visual one
+
 (setq column-number-mode t)
+
+(setq message-log-max 10000) ; max number of lines for message log buffer
+
+(setq use-short-answers t) ; make "yes-or-no-p" accept "y" and "n"
+
+(setq frame-resize-pixelwise t)
+
+(setq-default indent-tabs-mode nil)
 
 ;;; local packages
 (require 'λαω-functions)
@@ -108,6 +110,8 @@
   :demand t)
 
 ;;; built-in packages
+;; Some built-in packages needs :ensure to be explicitly set to nil in
+;; order to prevent fetching them from repositories.
 (use-package delsel
   :init
   (delete-selection-mode)) ; replace active selection with typed text
@@ -120,8 +124,6 @@
   (desktop-save-mode))
 
 (use-package dired
-  ;; explicitly set to prevent `use-package' from fetching from
-  ;; package repositories
   :ensure nil
   :bind (:map dired-mode-map
 	 ("b" . dired-up-directory)))
