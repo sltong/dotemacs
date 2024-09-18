@@ -272,4 +272,14 @@
   :doc "Keymap for user Emacs configurations.")
 (keymap-set λαω-configs-map "e" λαω-emacs-configs-map)
 
-(keymap-set λαω-emacs-configs-map "i" 'λαω-open-emacs-init-file)
+(keymap-set λαω-emacs-configs-map "i"
+            (cons "open-emacs-init-file"
+                  '(lambda ()
+                     (interactive)
+                     (find-file user-init-file))))
+
+(keymap-set λαω-emacs-configs-map "e"
+            (cons "open-emacs-early-init-file"
+                  '(lambda ()
+                     (interactive)
+                     (find-file early-init-file))))
