@@ -21,7 +21,6 @@
 
 (setq visible-bell t) ; replace audible bell with visual one
 
-;; prompts
 (setq use-short-answers t) ; make "yes-or-no-p" accept "y" and "n"
 
 ;; file backups
@@ -192,18 +191,18 @@
 
 (use-package corfu
   :init
+  (global-corfu-mode)
   (add-hook 'eshell-mode-hook
             (lambda ()
               (setq-local corfu-auto nil)
               (corfu-mode)))
-  (global-corfu-mode)
   ;; extensions
   (corfu-echo-mode)
   (corfu-history-mode)
   (corfu-popupinfo-mode)
-  :bind
   ;; Configure SPC for separator insertion
-  (:map corfu-map ("SPC" . corfu-insert-separator))
+  :bind (:map corfu-map
+         ("SPC" . corfu-insert-separator))
   :custom
   (corfu-cycle t)         ; enable cycling for `corfu-next/previous'
   (corfu-separator ?\s)   ; orderless field separator
