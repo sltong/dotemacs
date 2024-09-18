@@ -3,6 +3,9 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
+(add-to-list 'load-path
+             (directory-file-name (expand-file-name "λαω" user-emacs-directory)))
+
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
@@ -38,6 +41,9 @@
 (setq initial-scratch-message nil)
 
 (setq column-number-mode t)
+
+;; local packages
+(require 'λαω-functions)
 
 ;; `use-package'
 (require 'use-package)
@@ -202,3 +208,14 @@
   (minibuffer-depth-indicate-mode))
 
 (setq package-quickstart t) ; improve start-up time
+
+;; keybindings
+(defvar-keymap λαω-configs-map
+  :doc "Keymap for user configurations.")
+(keymap-global-set "C-c c" λαω-configs-map)
+
+(defvar-keymap λαω-emacs-configs-map
+  :doc "Keymap for user Emacs configurations.")
+(keymap-set λαω-configs-map "e" λαω-emacs-configs-map)
+
+(keymap-set λαω-emacs-configs-map "i" 'λαω-open-emacs-init-file)
