@@ -37,7 +37,7 @@
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 
-;; needs to be loaded immediately before almost everything else
+;; needs to be loaded immediately as early as possible
 (use-package no-littering
   :demand t)
 
