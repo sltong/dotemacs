@@ -144,13 +144,57 @@
   :init)
 
 (use-package vertico
+  :init
+  (vertico-mode)
+  :config
+  ;; adjust the number of candidates when resizing minibuffer
+  (defun vertico-resize--minibuffer ()
+    (add-hook 'window-size-change-functions
+              (lambda (win)
+                (let ((height (window-height win)))
+                  (when (/= (1- height) vertico-count)
+                    (setq-local vertico-count (1- height))
+                    (vertico--exhibit))))
+              t t))
+  (advice-add #'vertico--setup :before #'vertico-resize--minibuffer)
+
+  (defun law-vertico-insert-unless-tramp ()
+    "Insert current candidate in minibuffer, except for tramp."
+    (interactive)
+    (if (vertico--remote-p (vertico--candidate))
+        (minibuffer-complete)
+      (vertico-insert)))
+
+  :bind (:map vertico-map
+         ("TAB" . law-vertico-insert-unless-tramp))
   :custom
   (vertico-cycle t) ; enable cycling for `vertico-next/previous'
-  :init
-  (vertico-mode))
+  (vertico-count 12))
 
 (use-package marginalia
   :init
   (marginalia-mode))
+
+(use-package emacs
+  ;; many of these configurations come from vertico and corfu
+  :custom
+  ;; support opening new minibuffers from inside existing minibuffers
+  (enable-recursive-minibuffers t)
+  ;; hide commands in M-x which do not work in the current mode. vertico
+  ;; commands are hidden in normal buffers.
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  :init
+  ;; add prompt indicator to `completing-read-multiple'
+  ;; display [CRM<separator>], e.g., [CRM,] if the separator is a comma
+  (defun crm-indicator (args)
+    (cons (format "[CRM%s] %s"
+                  (replace-regexp-in-string
+                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                   crm-separator)
+                  (car args))
+          (cdr args)))
+  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+  ;; show minibuffer recursion depth
+  (minibuffer-depth-indicate-mode))
 
 (setq package-quickstart t) ; improve start-up time
