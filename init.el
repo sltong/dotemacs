@@ -14,7 +14,6 @@
 (setq visible-bell t) ; replace audible bell with visual one
 
 ;; prompts
-(setq yes-or-no-prompt "(y or n) ")
 (setq use-short-answers t) ; make "yes-or-no-p" accept "y" and "n"
 
 ;; file backups
@@ -84,6 +83,14 @@
 (use-package savehist
   :init
   (savehist-mode))
+
+(use-package simple
+  :ensure nil ; built-in
+  :custom
+  (undo-limit (* 1000 1000 1)) ; 1MB
+  ;; last-ditch outer limit for one undo command
+  (undo-outer-limit (* 1000 1000 100)) ; 50MB
+  (undo-strong-limit (* 1000 1000 5))) ; 5MB
 
 (use-package which-key
   :init
