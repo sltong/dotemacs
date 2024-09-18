@@ -80,14 +80,14 @@
 ;; file backups
 (setq backup-directory-alist
       (list (cons "." (expand-file-name "backups" user-emacs-var-directory))))
-(setq version-control t) ; create multiple, numbered backups
-(setq delete-old-versions t) ; automatically delete excess backup files
-(setq kept-old-versions 3) ; keep oldest 3 files
-(setq kept-new-versions 5) ; keep newest 5 files
+(setq version-control t) ; always use numerically versioned backups
+(setq delete-old-versions t)
+(setq kept-old-versions 3)
+(setq kept-new-versions 5)
 
 (setq message-log-max 10000) ; max number of lines for message log buffer
 
-(setq-default indent-tabs-mode nil) ; disable tabs for indentation
+(setq-default indent-tabs-mode nil)
 
 ;; initial scratch buffer
 (setq initial-major-mode 'fundamental-mode)
@@ -95,19 +95,19 @@
 
 (setq column-number-mode t)
 
-;; local packages
+;;; local packages
 (require 'λαω-functions)
 
-;; `use-package'
+;; `use-package' configurations
 (require 'use-package)
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 
-;; needs to be loaded immediately as early as possible
+;; load immediately, as early as possible
 (use-package no-littering
   :demand t)
 
-;; built-in packages
+;;; built-in packages
 (use-package delsel
   :init
   (delete-selection-mode)) ; replace active selection with typed text
@@ -120,7 +120,9 @@
   (desktop-save-mode))
 
 (use-package dired
-  :ensure nil ; dired is built-in, so don't try installing from package archives
+  ;; explicitly set to prevent `use-package' from fetching from
+  ;; package repositories
+  :ensure nil
   :bind (:map dired-mode-map
 	 ("b" . dired-up-directory)))
 
@@ -133,9 +135,8 @@
   (electric-pair-mode))
 
 (use-package eshell
-  ;; emulate ^D EOF quitting
   :bind (:map eshell-mode-map
-         ("C-d" . eshell-life-is-too-much)))
+         ("C-d" . eshell-life-is-too-much))) ; emulate ^D EOF quitting
 
 (use-package ibuffer
   :bind (("C-x C-b" . ibuffer)))
@@ -161,10 +162,12 @@
   (savehist-mode))
 
 (use-package simple
-  :ensure nil ; built-in
+  ;; explicitly set to prevent `use-package' from fetching from
+  ;; package repositories
+  :ensure nil
   :custom
   (undo-limit (* 1000 1000 1)) ; 1MB
-  ;; last-ditch outer limit for one undo command
+  ;; last-ditch outer limit for single undo commands
   (undo-outer-limit (* 1000 1000 100)) ; 50MB
   (undo-strong-limit (* 1000 1000 5))) ; 5MB
 
@@ -179,7 +182,7 @@
   (prog-mode . whitespace-mode)
   (text-mode . whitespace-mode))
 
-;; external packages
+;;; third-party packages
 (use-package exec-path-from-shell
   :if (or (memq window-system '(mac ns x)) (daemonp))
   :init
@@ -203,7 +206,7 @@
 	 ("C-c f" . magit-file-dispatch)))
 
 (use-package orderless
-  :init ; unconditionally load `orderless'
+  :init
   :config
   ;; efficient prefix filtering for inputs shorter than 4 characters
   (defun orderless-fast-dispatch (word index total)
@@ -216,14 +219,14 @@
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
-  ;; enable file wildcard support with partial completion
+  ;; enable file wildcard support using partial completion
   (completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package vertico
   :init
   (vertico-mode)
   :config
-  ;; adjust the number of candidates when resizing minibuffer
+  ;; adjust number of candidates when resizing minibuffer
   (defun vertico-resize--minibuffer ()
     (add-hook 'window-size-change-functions
               (lambda (win)
@@ -246,7 +249,7 @@
   :custom
   (vertico-cycle t) ; enable cycling for `vertico-next/previous'
   (vertico-count 7)
-  (vertico-resize nil)) ; fixed minibuffer window size
+  (vertico-resize nil)) ; affix minibuffer window size
 
 (use-package corfu
   :init
@@ -255,17 +258,17 @@
             (lambda ()
               (setq-local corfu-auto nil)
               (corfu-mode)))
-  ;; extensions
+  ;; corfu extensions
   (corfu-echo-mode)
   (corfu-history-mode)
   (corfu-popupinfo-mode)
-  ;; Configure SPC for separator insertion
+  ;; configure SPC for separator insertion
   :bind (:map corfu-map
          ("SPC" . corfu-insert-separator))
   :custom
   (corfu-cycle t)         ; enable cycling for `corfu-next/previous'
   (corfu-separator ?\s)   ; orderless field separator
-  (corfu-scroll-margin 3) ; use scroll margin
+  (corfu-scroll-margin 3)
   (corfu-popupinfo-delay '(1.25 . 0.9)))
 
 (use-package corfu-terminal
@@ -290,7 +293,7 @@
   :hook (prog-mode text-mode))
 
 (use-package emacs
-  ;; many of these configurations come from vertico and corfu
+  ;; many of these configurations are suggested by vertico and corfu
   :custom
   ;; support opening new minibuffers from inside existing minibuffers
   (enable-recursive-minibuffers t)
@@ -302,7 +305,7 @@
   ;; commands are hidden in normal buffers.
   (read-extended-command-predicate #'command-completion-default-include-p)
 
-  ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
+  ;; Emacs 30 and newer: disable Ispell completion function. As an alternative,
   ;; try `cape-dict'.
   (text-mode-ispell-word-completion nil)
 
@@ -340,7 +343,6 @@
   :doc "Keymap for shells.")
 
 ;; key bindings
-
 ;; config key(map) bindings
 (keymap-global-set "C-c C-c" λαω-config-map)
 (keymap-global-set "C-c c" λαω-config-map)
