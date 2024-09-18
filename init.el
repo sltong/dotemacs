@@ -80,7 +80,8 @@
 
 (use-package eshell
   ;; emulate ^D EOF quitting
-  :bind (("C-d" . eshell-life-is-too-much)))
+  :bind (:map eshell-mode-map
+         ("C-d" . eshell-life-is-too-much)))
 
 (use-package ibuffer
   :bind (("C-x C-b" . ibuffer)))
