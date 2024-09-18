@@ -195,6 +195,9 @@
 (use-package yasnippet-snippets
   :requires yasnippet)
 
+(use-package colorful-mode
+  :hook (prog-mode text-mode))
+
 (use-package emacs
   ;; many of these configurations come from vertico and corfu
   :custom
