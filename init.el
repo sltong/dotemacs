@@ -102,6 +102,9 @@
   :init
   (exec-path-from-shell-initialize))
 
+(use-package vundo
+  :bind (("C-M-/" . vundo)))
+
 (use-package expreg
   :bind (("C->" . expreg-expand)
          ("C-<" . expreg-contract))
