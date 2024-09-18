@@ -291,7 +291,10 @@
 
 (use-package yasnippet
   :init
-  (yas-global-mode 1))
+  (yas-global-mode 1)
+  (keymap-unset yas-minor-mode-map "TAB" t)
+  :bind (:map yas-minor-mode-map
+              ("C-c y e" . yas-expand)))
 
 (use-package yasnippet-snippets
   :requires yasnippet)
