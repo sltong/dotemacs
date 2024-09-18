@@ -65,6 +65,18 @@
 (use-package ibuffer
   :bind (("C-x C-b" . ibuffer)))
 
+(use-package recentf
+  :init
+  (recentf-mode)
+  :config
+  (add-to-list 'recentf-exclude
+               (recentf-expand-file-name no-littering-var-directory))
+  (add-to-list 'recentf-exclude
+               (recentf-expand-file-name no-littering-etc-directory))
+  :custom
+  (recentf-max-menu-items 13)
+  (recentf-max-saved-items 23))
+
 (use-package savehist
   :init
   (savehist-mode))
