@@ -271,7 +271,6 @@
 
 (setq package-quickstart t) ; improve start-up time
 
-;; keys
 ;; keymaps
 (defvar-keymap λαω-config-map
   :doc "Keymap for configurations.")
@@ -279,14 +278,19 @@
 (defvar-keymap λαω-emacs-config-map
   :doc "Keymap for Emacs configurations.")
 
+(defvar-keymap λαω-shell-config-map
+  :doc "Keymap for shell configurations.")
+
 (defvar-keymap λαω-shell-map
   :doc "Keymap for shells.")
 
 ;; key bindings
+
 ;; config key(map) bindings
-(keymap-global-set "C-c c" λαω-config-map)
 (keymap-global-set "C-c C-c" λαω-config-map)
+(keymap-global-set "C-c c" λαω-config-map)
 (keymap-set λαω-config-map "e" λαω-emacs-config-map)
+(keymap-set λαω-config-map "s" λαω-shell-config-map)
 
 (keymap-set λαω-emacs-config-map "e"
             (cons "open-emacs-early-init-file"
@@ -298,8 +302,13 @@
                   '(lambda ()
                      (interactive)
                      (find-file user-init-file))))
+(keymap-set λαω-shell-config-map "b"
+            (cons "open-bashrc"
+                  '(lambda ()
+                     (interactive)
+                     (find-file "~/.bashrc"))))
 
 ;; shell key(map) bindings
-(keymap-global-set "C-c s" λαω-shell-map)
 (keymap-global-set "C-c C-s" λαω-shell-map)
+(keymap-global-set "C-c s" λαω-shell-map)
 (keymap-set λαω-shell-map "e" 'eshell)
