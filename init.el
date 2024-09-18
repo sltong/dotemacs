@@ -29,6 +29,8 @@
 (setq kept-old-versions 3) ; keep oldest 3 files
 (setq kept-new-versions 5) ; keep newest 5 files
 
+(setq message-log-max 10000) ; max number of lines for message log buffer
+
 (setq-default indent-tabs-mode nil) ; disable tabs for indentation
 
 ;; initial scratch buffer
