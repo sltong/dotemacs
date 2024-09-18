@@ -267,23 +267,35 @@
 
 (setq package-quickstart t) ; improve start-up time
 
-;; keybindings
-(defvar-keymap λαω-configs-map
-  :doc "Keymap for user configurations.")
-(keymap-global-set "C-c c" λαω-configs-map)
+;; keys
+;; keymaps
+(defvar-keymap λαω-config-map
+  :doc "Keymap for configurations.")
 
-(defvar-keymap λαω-emacs-configs-map
-  :doc "Keymap for user Emacs configurations.")
-(keymap-set λαω-configs-map "e" λαω-emacs-configs-map)
+(defvar-keymap λαω-emacs-config-map
+  :doc "Keymap for Emacs configurations.")
 
-(keymap-set λαω-emacs-configs-map "i"
+(defvar-keymap λαω-shell-map
+  :doc "Keymap for shells.")
+
+;; key bindings
+;; config key(map) bindings
+(keymap-global-set "C-c c" λαω-config-map)
+(keymap-global-set "C-c C-c" λαω-config-map)
+(keymap-set λαω-config-map "e" λαω-emacs-config-map)
+
+(keymap-set λαω-emacs-config-map "e"
+            (cons "open-emacs-early-init-file"
+                  '(lambda ()
+                     (interactive)
+                     (find-file early-init-file))))
+(keymap-set λαω-emacs-config-map "i"
             (cons "open-emacs-init-file"
                   '(lambda ()
                      (interactive)
                      (find-file user-init-file))))
 
-(keymap-set λαω-emacs-configs-map "e"
-            (cons "open-emacs-early-init-file"
-                  '(lambda ()
-                     (interactive)
-                     (find-file early-init-file))))
+;; shell key(map) bindings
+(keymap-global-set "C-c s" λαω-shell-map)
+(keymap-global-set "C-c C-s" λαω-shell-map)
+(keymap-set λαω-shell-map "e" 'eshell)
