@@ -65,6 +65,10 @@
   :bind (:map dired-mode-map
 	 ("b" . dired-up-directory)))
 
+(use-package display-line-numbers
+  :hook
+  (prog-mode . display-line-numbers-mode))
+
 (use-package elec-pair
   :init
   (electric-pair-mode))
