@@ -65,6 +65,10 @@
 (use-package ibuffer
   :bind (("C-x C-b" . ibuffer)))
 
+(use-package re-builder
+  :custom
+  (reb-re-syntax 'string))
+
 (use-package recentf
   :init
   (recentf-mode)
@@ -81,9 +85,9 @@
   :init
   (savehist-mode))
 
-(use-package re-builder
-  :custom
-  (reb-re-syntax 'string))
+(use-package which-key
+  :init
+  (which-key-mode))
 
 (use-package whitespace
   :custom
@@ -91,10 +95,6 @@
   :hook
  (prog-mode . whitespace-mode)
  (text-mode . whitespace-mode))
-
-(use-package which-key
-  :init
-  (which-key-mode))
 
 ;; external packages
 (use-package exec-path-from-shell
