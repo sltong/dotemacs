@@ -112,6 +112,10 @@
 ;;; built-in packages
 ;; Some built-in packages needs :ensure to be explicitly set to nil in
 ;; order to prevent fetching them from repositories.
+(use-package completion-preview
+  :init
+  (global-completion-preview-mode))
+
 (use-package delsel
   :init
   (delete-selection-mode)) ; replace active selection with typed text
