@@ -11,11 +11,11 @@
 
 (setq custom-theme-directory (expand-file-name "themes" user-emacs-etc-directory))
 
-(setq visible-bell t) ;; replace audible bell with visual one
+(setq visible-bell t) ; replace audible bell with visual one
 
 ;; prompts
 (setq yes-or-no-prompt "(y or n) ")
-(setq use-short-answers t) ;; make "yes-or-no-p" accept "y" and "n"
+(setq use-short-answers t) ; make "yes-or-no-p" accept "y" and "n"
 
 ;; file backups
 (setq backup-directory-alist (list (cons "." (expand-file-name "backups" user-emacs-var-directory))))
@@ -44,7 +44,7 @@
 ;; built-in packages
 (use-package delsel
   :init
-  (delete-selection-mode)) ;; replace active selection with typed text
+  (delete-selection-mode)) ; replace active selection with typed text
 
 (use-package desktop
   :custom
@@ -54,7 +54,7 @@
   (desktop-save-mode))
 
 (use-package dired
-  :ensure nil ;; dired is built-in, so don't try installing from package archives
+  :ensure nil ; dired is built-in, so don't try installing from package archives
   :bind (:map dired-mode-map
 	 ("b" . dired-up-directory)))
 
@@ -110,7 +110,7 @@
 
 (use-package vertico
   :custom
-  (vertico-cycle t) ;; enable cycling for `vertico-next/previous'
+  (vertico-cycle t) ; enable cycling for `vertico-next/previous'
   :init
   (vertico-mode))
 
@@ -118,4 +118,4 @@
   :init
   (marginalia-mode))
 
-(setq package-quickstart t) ;; improve start-up time
+(setq package-quickstart t) ; improve start-up time
