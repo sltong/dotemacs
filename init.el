@@ -145,13 +145,21 @@
 	 ("C-c f" . magit-file-dispatch)))
 
 (use-package orderless
+  :init ; unconditionally load `orderless'
+  :config
+  ;; efficient prefix filtering for inputs shorter than 4 characters
+  (defun orderless-fast-dispatch (word index total)
+    (and (= index 0) (= total 1) (length< word 4)
+         (cons 'orderless-literal-prefix word)))
+  (orderless-define-completion-style orderless-fast
+    (orderless-style-dispatchers '(orderless-fast-dispatch))
+    (orderless-matching-styles '(orderless-literal orderless-regexp)))
+
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
   ;; enable file wildcard support with partial completion
-  (completion-category-overrides '((file (styles partial-completion))))
-  ;; unconditionally load `orderless'
-  :init)
+  (completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package vertico
   :init
@@ -182,6 +190,26 @@
   (vertico-count 7)
   (vertico-resize nil)) ; fixed minibuffer window size
 
+(use-package corfu
+  :init
+  (add-hook 'eshell-mode-hook
+            (lambda ()
+              (setq-local corfu-auto nil)
+              (corfu-mode)))
+  (global-corfu-mode)
+  ;; extensions
+  (corfu-echo-mode)
+  (corfu-history-mode)
+  (corfu-popupinfo-mode)
+  :bind
+  ;; Configure SPC for separator insertion
+  (:map corfu-map ("SPC" . corfu-insert-separator))
+  :custom
+  (corfu-cycle t)         ; enable cycling for `corfu-next/previous'
+  (corfu-separator ?\s)   ; orderless field separator
+  (corfu-scroll-margin 3) ; use scroll margin
+  (corfu-popupinfo-delay '(1.25 . 0.9)))
+
 (use-package marginalia
   :init
   (marginalia-mode)
@@ -203,9 +231,22 @@
   :custom
   ;; support opening new minibuffers from inside existing minibuffers
   (enable-recursive-minibuffers t)
+
+  ;; TAB cycle if there are only few candidates
+  (completion-cycle-threshold 3)
+
   ;; hide commands in M-x which do not work in the current mode. vertico
   ;; commands are hidden in normal buffers.
   (read-extended-command-predicate #'command-completion-default-include-p)
+
+  ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
+  ;; try `cape-dict'.
+  (text-mode-ispell-word-completion nil)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (tab-always-indent 'complete)
+
   :init
   ;; add prompt indicator to `completing-read-multiple'
   ;; display [CRM<separator>], e.g., [CRM,] if the separator is a comma
