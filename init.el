@@ -88,8 +88,9 @@
 (use-package whitespace
   :custom
   (whitespace-style '(face trailing tabs))
-  :init
-  (global-whitespace-mode))
+  :hook
+ (prog-mode . whitespace-mode)
+ (text-mode . whitespace-mode))
 
 (use-package which-key
   :init
