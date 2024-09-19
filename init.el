@@ -141,8 +141,12 @@
   (electric-pair-mode 1))
 
 (use-package eshell
+  :ensure nil
+  :init
+  ;; this is needed to preemptively define `eshell-mode-map'
+  (require 'esh-mode)
   :bind (:map eshell-mode-map
-         ("C-d" . eshell-life-is-too-much))) ; emulate ^D EOF quitting
+              ("C-d" . eshell-life-is-too-much))) ; emulate ^D EOF quitting
 
 (use-package ibuffer
   :bind (("C-x C-b" . ibuffer)))
