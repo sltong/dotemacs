@@ -120,7 +120,9 @@
 ;; order to prevent fetching them from repositories.
 (use-package completion-preview
   :init
-  (global-completion-preview-mode 1))
+  (global-completion-preview-mode 1)
+  :custom
+  (completion-preview-idle-delay 0.25))
 
 (use-package delsel
   :init
