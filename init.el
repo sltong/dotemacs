@@ -104,6 +104,7 @@
 (require 'use-package)
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+(setq use-package-verbose t)
 
 ;; load immediately, as early as possible
 (use-package no-littering
