@@ -128,13 +128,6 @@
 ;;; built-in packages
 ;; these packages should have :ensure explicitly set to nil in order
 ;; to prevent fetching them from repositories
-(use-package completion-preview
-  :ensure nil
-  :init
-  (global-completion-preview-mode 1)
-  :custom
-  (completion-preview-idle-delay 0.25))
-
 (use-package delsel
   :ensure nil
   :init
