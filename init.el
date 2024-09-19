@@ -121,8 +121,6 @@
 
 (setq-default indent-tabs-mode nil)
 
-(pixel-scroll-precision-mode 1)
-
 ;;; local packages
 (require 'λαω-functions)
 
@@ -167,6 +165,12 @@
 (use-package ibuffer
   :ensure nil
   :bind (("C-x C-b" . ibuffer)))
+
+(use-package pixel-scroll
+  :ensure nil
+  :if (display-graphic-p)
+  :init
+  (pixel-scroll-precision-mode 1))
 
 (use-package re-builder
   :ensure nil
