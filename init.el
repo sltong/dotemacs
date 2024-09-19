@@ -126,19 +126,23 @@
 (require 'λαω-functions)
 
 ;;; built-in packages
-;; Some built-in packages needs :ensure to be explicitly set to nil in
-;; order to prevent fetching them from repositories.
+;; these packages should have :ensure explicitly set to nil in order
+;; to prevent fetching them from repositories
 (use-package completion-preview
+  :ensure nil
   :init
   (global-completion-preview-mode 1)
   :custom
   (completion-preview-idle-delay 0.25))
 
 (use-package delsel
+  :ensure nil
   :init
-  (delete-selection-mode 1)) ; replace active selection with typed text
+  (delete-selection-mode 1) ; replace active selection with typed text
+  :defer t)
 
 (use-package desktop
+  :ensure nil
   :custom
   (desktop-base-file-name ".desktop-session")
   (desktop-base-lock-name ".desktop-session.lock")
@@ -151,10 +155,12 @@
 	 ("b" . dired-up-directory)))
 
 (use-package display-line-numbers
+  :ensure nil
   :hook
   (prog-mode . display-line-numbers-mode))
 
 (use-package elec-pair
+  :ensure nil
   :init
   (electric-pair-mode 1))
 
@@ -167,13 +173,16 @@
               ("C-d" . eshell-life-is-too-much))) ; emulate ^D EOF quitting
 
 (use-package ibuffer
+  :ensure nil
   :bind (("C-x C-b" . ibuffer)))
 
 (use-package re-builder
+  :ensure nil
   :custom
   (reb-re-syntax 'string))
 
 (use-package recentf
+  :ensure nil
   :init
   (recentf-mode 1)
   :config
@@ -186,12 +195,11 @@
   (recentf-max-saved-items 23))
 
 (use-package savehist
+  :ensure nil
   :init
   (savehist-mode 1))
 
 (use-package simple
-  ;; explicitly set to prevent `use-package' from fetching from
-  ;; package repositories
   :ensure nil
   :custom
   (undo-limit (* 1000 1000 1)) ; 1MB
@@ -208,10 +216,12 @@
   (setq treesit-extra-load-path (list treesit-language-grammars-directory)))
 
 (use-package which-key
+  :ensure nil
   :init
   (which-key-mode 1))
 
 (use-package whitespace
+  :ensure nil
   :custom
   (whitespace-style '(face trailing tabs))
   :hook
