@@ -28,6 +28,25 @@
 
 ;;; Code:
 
+;; set these high enough as to effectively disable garbage collection
+(setq gc-cons-threshold most-positive-fixnum
+      gc-cons-percentage 0.9)
+
+;; turn garbage collection back on by resetting `gc-cons-threshold'
+(add-hook 'emacs-startup-hook
+  (lambda ()
+    (setq gc-cons-threshold (* 1000 1000 16) ; 16MB
+          gc-cons-percentage 0.1)))
+
+;; don't try to preserve a frame's number of columns or lines of text
+;; this should optimize for the case when the frame font size is
+;; different from the system's
+(setq frame-inhibit-implied-resize t)
+
+;; maximized initial and default frames
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
 ;; store `eln-cache' in the "var" user-emacs-directory
 (when (and (fboundp 'startup-redirect-eln-cache)
            (fboundp 'native-comp-available-p)
@@ -35,9 +54,5 @@
   (startup-redirect-eln-cache
    (convert-standard-filename
     (expand-file-name  "var/eln-cache/" user-emacs-directory))))
-
-;; maximized initial and default frames
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 ;;; early-init.el ends here
