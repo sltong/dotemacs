@@ -60,8 +60,9 @@
 ;; `use-package' configurations
 (require 'use-package)
 (require 'use-package-ensure)
-(setq use-package-always-ensure t)
-(setq use-package-verbose t)
+(setq use-package-always-ensure t
+      use-package-always-defer t
+      use-package-verbose t)
 
 ;;; early packages
 ;; load immediately, as early as possible
@@ -131,16 +132,16 @@
 (use-package delsel
   :ensure nil
   :init
-  (delete-selection-mode 1) ; replace active selection with typed text
-  :defer t)
+  (delete-selection-mode 1)) ; replace active selection with typed text
 
 (use-package desktop
   :ensure nil
+  :defer 1
+  :init
+  (desktop-save-mode 1)
   :custom
   (desktop-base-file-name ".desktop-session")
-  (desktop-base-lock-name ".desktop-session.lock")
-  :init
-  (desktop-save-mode 1))
+  (desktop-base-lock-name ".desktop-session.lock"))
 
 (use-package dired
   :ensure nil
@@ -149,13 +150,11 @@
 
 (use-package display-line-numbers
   :ensure nil
-  :hook
-  (prog-mode . display-line-numbers-mode))
+  :hook (prog-mode . display-line-numbers-mode))
 
 (use-package elec-pair
   :ensure nil
-  :init
-  (electric-pair-mode 1))
+  :hook (prog-mode . electric-pair-mode))
 
 (use-package eshell
   :ensure nil
@@ -176,6 +175,7 @@
 
 (use-package recentf
   :ensure nil
+  :defer 1
   :init
   (recentf-mode 1)
   :config
@@ -189,63 +189,64 @@
 
 (use-package savehist
   :ensure nil
+  :defer 1
   :init
   (savehist-mode 1))
 
 (use-package simple
   :ensure nil
   :custom
-  (undo-limit (* 1000 1000 1)) ; 1MB
-  ;; last-ditch outer limit for single undo commands
-  (undo-outer-limit (* 1000 1000 100)) ; 50MB
-  (undo-strong-limit (* 1000 1000 5)) ; 5MB
   (kill-ring-max 512))
 
 (use-package treesit
   :ensure nil
-  :config
+  :init
   (setq treesit-language-grammars-directory
         (expand-file-name "treesit/language-grammars" user-emacs-var-directory))
   (setq treesit-extra-load-path (list treesit-language-grammars-directory)))
 
 (use-package which-key
   :ensure nil
+  :demand t
   :init
   (which-key-mode 1))
 
 (use-package whitespace
   :ensure nil
-  :custom
-  (whitespace-style '(face trailing tabs))
   :hook
   (prog-mode . whitespace-mode)
-  (text-mode . whitespace-mode))
+  (text-mode . whitespace-mode)
+  :custom
+  (whitespace-style '(face trailing tabs)))
 
 ;;; third-party packages
 (use-package vundo
+  :demand t
   :bind (("C-M-/" . vundo)))
 
 (use-package expreg
-  :bind (("C->" . expreg-expand)
-         ("C-<" . expreg-contract))
-  :config
+  :init
   (defun custom-expreg-expand-sentences ()
     (add-to-list 'expreg-functions 'expreg--sentence))
-  :hook (text-mode . custom-expreg-expand-sentences))
+  :hook (text-mode . custom-expreg-expand-sentences)
+  :bind (("C->" . expreg-expand)
+         ("C-<" . expreg-contract)))
 
 (use-package magit
+  :demand t
   :ensure-system-package git
   :bind (("C-x g" . magit-status)
 	 ("C-c g" . magit-dispatch)
 	 ("C-c f" . magit-file-dispatch)))
 
 (use-package orderless
+  :demand t
   :init
-  :config
   ;; efficient prefix filtering for inputs shorter than 4 characters
   (defun orderless-fast-dispatch (word index total)
     (and (= index 0) (= total 1) (length< word 4)
          (cons 'orderless-literal-prefix word)))
+  :config
   (orderless-define-completion-style orderless-fast
     (orderless-style-dispatchers '(orderless-fast-dispatch))
     (orderless-matching-styles '(orderless-literal orderless-regexp)))
@@ -257,6 +258,7 @@
   (completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package vertico
+  :defer 1
   :init
   (vertico-mode 1)
   :config
@@ -277,7 +279,6 @@
     (if (vertico--remote-p (vertico--candidate))
         (minibuffer-complete)
       (vertico-insert)))
-
   :bind (:map vertico-map
          ("TAB" . law-vertico-insert-unless-tramp))
   :custom
@@ -286,6 +287,7 @@
   (vertico-resize nil)) ; affix minibuffer window size
 
 (use-package corfu
+  :defer 1
   :init
   (global-corfu-mode 1)
   (add-hook 'eshell-mode-hook
@@ -331,7 +333,28 @@
 
 (use-package emacs
   ;; many of these configurations are suggested by vertico and corfu
+  :init
+  ;; add prompt indicator to `completing-read-multiple'
+  ;; display [CRM<separator>], e.g., [CRM,] if the separator is a comma
+  (defun crm-indicator (args)
+    (cons (format "[CRM%s] %s"
+                  (replace-regexp-in-string
+                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                   crm-separator)
+                  (car args))
+          (cdr args)))
+
+  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+  ;; show minibuffer recursion depth
+  (minibuffer-depth-indicate-mode 1)
+
   :custom
+  ;; undo
+  (undo-limit (* 1000 1000 1)) ; 1MB
+  ;; last-ditch outer limit for single undo commands
+  (undo-outer-limit (* 1000 1000 100)) ; 50MB
+  (undo-strong-limit (* 1000 1000 5)) ; 5MB
+
   ;; support opening new minibuffers from inside existing minibuffers
   (enable-recursive-minibuffers t)
 
@@ -348,21 +371,7 @@
 
   ;; Enable indentation+completion using the TAB key.
   ;; `completion-at-point' is often bound to M-TAB.
-  (tab-always-indent 'complete)
-
-  :init
-  ;; add prompt indicator to `completing-read-multiple'
-  ;; display [CRM<separator>], e.g., [CRM,] if the separator is a comma
-  (defun crm-indicator (args)
-    (cons (format "[CRM%s] %s"
-                  (replace-regexp-in-string
-                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                   crm-separator)
-                  (car args))
-          (cdr args)))
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-  ;; show minibuffer recursion depth
-  (minibuffer-depth-indicate-mode 1))
+  (tab-always-indent 'complete))
 
 (setq package-quickstart t) ; improve start-up time
 
