@@ -156,11 +156,6 @@
 
 (use-package eshell
   :ensure nil
-  :init
-  ;; this is needed to preemptively define `eshell-mode-map'
-  (require 'esh-mode)
-  :bind (:map eshell-mode-map
-              ("C-d" . eshell-life-is-too-much))) ; emulate ^D EOF quitting
   :custom
   (eshell-buffer-maximum-lines 8192))
 
