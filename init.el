@@ -81,6 +81,10 @@
 (setq kept-old-versions 3)
 (setq kept-new-versions 5)
 
+;; minibuffer history
+(setq history-length 512)
+(setq history-delete-duplicates t)
+
 ;; initial scratch buffer
 (setq initial-major-mode 'fundamental-mode)
 (setq initial-scratch-message nil)
