@@ -54,15 +54,16 @@
 
 ;;; Code:
 
+;;; package configurations
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
-;; `use-package' configurations
 (require 'use-package)
-(require 'use-package-ensure)
-(setq use-package-always-ensure t
-      use-package-always-defer t
-      use-package-verbose t)
+(use-package use-package
+  :custom
+  (use-package-always-ensure t)
+  (use-package-always-defer t)
+  (use-package-verbose t))
 
 ;;; early packages
 ;; load immediately, as early as possible
