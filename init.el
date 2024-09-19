@@ -109,6 +109,12 @@
 (use-package no-littering
   :demand t)
 
+(use-package exec-path-from-shell
+  :demand t
+  :if (or (memq window-system '(mac ns x))
+          (daemonp))
+  :config
+  (exec-path-from-shell-initialize))
 ;;; built-in packages
 ;; Some built-in packages needs :ensure to be explicitly set to nil in
 ;; order to prevent fetching them from repositories.
@@ -201,11 +207,6 @@
   (text-mode . whitespace-mode))
 
 ;;; third-party packages
-(use-package exec-path-from-shell
-  :if (or (memq window-system '(mac ns x)) (daemonp))
-  :init
-  (exec-path-from-shell-initialize))
-
 (use-package vundo
   :bind (("C-M-/" . vundo)))
 
