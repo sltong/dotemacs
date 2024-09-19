@@ -4,4 +4,5 @@ var/
 
 *.elc
 
+custom.el
 package-quickstart.el
