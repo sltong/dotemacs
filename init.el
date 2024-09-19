@@ -161,6 +161,8 @@
   (require 'esh-mode)
   :bind (:map eshell-mode-map
               ("C-d" . eshell-life-is-too-much))) ; emulate ^D EOF quitting
+  :custom
+  (eshell-buffer-maximum-lines 8192))
 
 (use-package ibuffer
   :ensure nil
