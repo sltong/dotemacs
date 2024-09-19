@@ -57,6 +57,25 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
+;; `use-package' configurations
+(require 'use-package)
+(require 'use-package-ensure)
+(setq use-package-always-ensure t)
+(setq use-package-verbose t)
+
+;;; early packages
+;; load immediately, as early as possible
+(use-package no-littering
+  :demand t)
+
+(use-package exec-path-from-shell
+  :demand t
+  :if (or (memq window-system '(mac ns x))
+          (daemonp))
+  :config
+  (exec-path-from-shell-initialize))
+
+;;; local packages and directories
 (add-to-list 'load-path
              (directory-file-name (expand-file-name "λαω" user-emacs-directory)))
 
@@ -104,22 +123,6 @@
 ;;; local packages
 (require 'λαω-functions)
 
-;; `use-package' configurations
-(require 'use-package)
-(require 'use-package-ensure)
-(setq use-package-always-ensure t)
-(setq use-package-verbose t)
-
-;; load immediately, as early as possible
-(use-package no-littering
-  :demand t)
-
-(use-package exec-path-from-shell
-  :demand t
-  :if (or (memq window-system '(mac ns x))
-          (daemonp))
-  :config
-  (exec-path-from-shell-initialize))
 ;;; built-in packages
 ;; Some built-in packages needs :ensure to be explicitly set to nil in
 ;; order to prevent fetching them from repositories.
