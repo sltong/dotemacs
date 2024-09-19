@@ -38,15 +38,6 @@
     (setq gc-cons-threshold (* 1000 1000 16) ; 16MB
           gc-cons-percentage 0.1)))
 
-;; don't try to preserve a frame's number of columns or lines of text
-;; this should optimize for the case when the frame font size is
-;; different from the system's
-(setq frame-inhibit-implied-resize t)
-
-;; maximized initial and default frames
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
-
 ;; store `eln-cache' in the "var" user-emacs-directory
 (when (and (fboundp 'startup-redirect-eln-cache)
            (fboundp 'native-comp-available-p)
@@ -54,5 +45,21 @@
   (startup-redirect-eln-cache
    (convert-standard-filename
     (expand-file-name  "var/eln-cache/" user-emacs-directory))))
+
+;; don't try to preserve a frame's number of columns and don't round
+;; frame sizes when resizing
+;; these should optimize for the case when the frame font size is
+;; different from the system's
+(setq frame-inhibit-implied-resize t
+      frame-resize-pixelwise t)
+
+;; theming
+(setq custom-enabled-themes '(modus-vivendi-tinted))
+(load-theme 'modus-vivendi-tinted)
+
+;; initial and default frames
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
 
 ;;; early-init.el ends here

@@ -117,8 +117,6 @@
 
 (setq use-short-answers t) ; make "yes-or-no-p" accept "y" and "n"
 
-(setq frame-resize-pixelwise t)
-
 (setq-default indent-tabs-mode nil)
 
 ;;; local packages
