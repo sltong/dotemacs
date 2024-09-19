@@ -120,6 +120,8 @@
 
 (setq-default indent-tabs-mode nil)
 
+(pixel-scroll-precision-mode 1)
+
 ;;; local packages
 (require 'λαω-functions)
 
