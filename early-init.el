@@ -58,8 +58,8 @@
 (load-theme 'modus-vivendi-tinted)
 
 ;; initial and default frames
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
+(setq initial-frame-alist '((fullscreen . maximized)))
+(setq default-frame-alist '((fullscreen . maximized)
+                             (tool-bar-lines . 0)))
 
 ;;; early-init.el ends here
