@@ -242,7 +242,6 @@
          ("C-<" . expreg-contract)))
 
 (use-package magit
-  :demand t
   :ensure-system-package git
   :bind (("C-x g" . magit-status)
 	 ("C-c g" . magit-dispatch)
