@@ -117,6 +117,8 @@
 
 (setq visible-bell t) ; replace audible bell with visual one
 
+(setq-default truncate-lines t)
+
 (setq column-number-mode t)
 
 (setq message-log-max 10000) ; max number of lines for message log buffer
@@ -196,7 +198,9 @@
   :ensure nil
   :defer 1
   :init
-  (savehist-mode 1))
+  (savehist-mode 1)
+  :custom
+  (savehist-additional-variables '(kill-ring kmacro-ring regexp-search-ring search-ring)))
 
 (use-package simple
   :ensure nil
