@@ -252,6 +252,9 @@
 	 ("C-c g g" . magit-dispatch)
 	 ("C-c g f" . magit-file-dispatch)))
 
+(use-package git-timemachine
+  :bind (("C-c g t" . git-timemachine)))
+
 (use-package orderless
   :demand t
   :init
