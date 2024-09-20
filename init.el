@@ -271,18 +271,7 @@
   :init
   (vertico-mode 1)
   :config
-  ;; adjust number of candidates when resizing minibuffer
-  (defun vertico-resize--minibuffer ()
-    (add-hook 'window-size-change-functions
-              (lambda (win)
-                (let ((height (window-height win)))
-                  (when (/= (1- height) vertico-count)
-                    (setq-local vertico-count (1- height))
-                    (vertico--exhibit))))
-              t t))
-  (advice-add #'vertico--setup :before #'vertico-resize--minibuffer)
-
-  (defun law-vertico-insert-unless-tramp ()
+  (defun λαω-vertico-insert-unless-tramp ()
     "Insert current candidate in minibuffer, except for tramp."
     (interactive)
     (if (vertico--remote-p (vertico--candidate))
