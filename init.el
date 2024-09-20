@@ -116,9 +116,6 @@
 (setq initial-scratch-message nil)
 
 (setq visible-bell t) ; replace audible bell with visual one
-
-(setq-default truncate-lines t)
-
 (setq column-number-mode t)
 
 (setq scroll-conservatively 101)
@@ -177,6 +174,13 @@
   :if (display-graphic-p)
   :init
   (pixel-scroll-precision-mode 1))
+
+(use-package prog-mode
+  :ensure nil
+  :config
+  (defun λαω-prog-mode-hook ()
+    (setq-local truncate-lines t))
+  (add-hook 'prog-mode-hook #'λαω-prog-mode-hook))
 
 (use-package re-builder
   :ensure nil
