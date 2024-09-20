@@ -121,6 +121,9 @@
 
 (setq column-number-mode t)
 
+(setq scroll-conservatively 101)
+(setq scroll-preserve-screen-position t)
+
 (setq message-log-max 10000) ; max number of lines for message log buffer
 
 (setq use-short-answers t) ; make "yes-or-no-p" accept "y" and "n"
