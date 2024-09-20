@@ -188,11 +188,9 @@
   :config
   (add-to-list 'recentf-exclude
                (recentf-expand-file-name no-littering-var-directory))
-  (add-to-list 'recentf-exclude
-               (recentf-expand-file-name no-littering-etc-directory))
+  :bind (("C-c f r" . recentf))
   :custom
-  (recentf-max-menu-items 13)
-  (recentf-max-saved-items 23))
+  (recentf-max-saved-items 64))
 
 (use-package savehist
   :ensure nil
