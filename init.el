@@ -99,6 +99,44 @@
    custom-themes-directory)
   (make-directory custom-themes-directory t))
 
+;; keymaps
+(defvar-keymap λαω-map
+  :doc "λαω keymap.")
+(keymap-set global-map "C-l" λαω-map)
+
+(defvar-keymap λαω-config-map
+  :doc "Keymap for configurations.")
+(keymap-set global-map "C-c c" λαω-config-map)
+
+(defvar-keymap λαω-emacs-config-map
+  :doc "Keymap for Emacs configurations."
+  "e" '(cons "open-emacs-early-init-file"
+             '(lambda ()
+                (interactive)
+                (find-file early-init-file))))
+(keymap-set λαω-config-map "e" λαω-emacs-config-map)
+
+(defvar-keymap λαω-shell-config-map
+  :doc "Keymap for shell configurations.")
+(keymap-set λαω-config-map "s" λαω-shell-config-map)
+
+(defvar-keymap λαω-shell-map
+  :doc "Keymap for shells.")
+(keymap-set global-map "C-c s" λαω-shell-map)
+
+;; key bindings
+;; config key bindings
+(keymap-set λαω-emacs-config-map "i"
+            (cons "open-emacs-init-file"
+                  '(lambda ()
+                     (interactive)
+                     (find-file user-init-file))))
+(keymap-set λαω-shell-config-map "b"
+            (cons "open-bashrc"
+                  '(lambda ()
+                     (interactive)
+                     (find-file "~/.bashrc"))))
+
 ;; file backups
 (setq backup-directory-alist
       (list (cons "." (expand-file-name "backups" user-emacs-var-directory))))
@@ -162,12 +200,15 @@
 
 (use-package eshell
   :ensure nil
+  :bind (:map λαω-shell-map
+         ("e" . eshell))
   :custom
   (eshell-buffer-maximum-lines 8192))
 
 (use-package ibuffer
   :ensure nil
-  :bind (("C-x C-b" . ibuffer)))
+  :bind (:map λαω-map
+         ("b" . ibuffer)))
 
 (use-package pixel-scroll
   :ensure nil
@@ -195,7 +236,9 @@
   :config
   (add-to-list 'recentf-exclude
                (recentf-expand-file-name no-littering-var-directory))
-  :bind (("C-c f r" . recentf))
+  :bind (("C-c f r" . recentf)
+         :map λαω-map
+         ("f" . recentf))
   :custom
   (recentf-max-saved-items 64))
 
@@ -233,28 +276,11 @@
   :custom
   (whitespace-style '(face trailing tabs)))
 
+(use-package window
+  :ensure nil
+  :bind (("C-c l" . recenter-top-bottom)))
+
 ;;; third-party packages
-(use-package vundo
-  :demand t
-  :bind (("C-M-/" . vundo)))
-
-(use-package expreg
-  :init
-  (defun custom-expreg-expand-sentences ()
-    (add-to-list 'expreg-functions 'expreg--sentence))
-  :hook (text-mode . custom-expreg-expand-sentences)
-  :bind (("C->" . expreg-expand)
-         ("C-<" . expreg-contract)))
-
-(use-package magit
-  :ensure-system-package git
-  :bind (("C-c g s" . magit-status)
-	 ("C-c g g" . magit-dispatch)
-	 ("C-c g f" . magit-file-dispatch)))
-
-(use-package git-timemachine
-  :bind (("C-c g t" . git-timemachine)))
-
 (use-package orderless
   :demand t
   :init
@@ -276,16 +302,15 @@
 (use-package vertico
   :defer 1
   :init
-  (vertico-mode 1)
-  :config
   (defun λαω-vertico-insert-unless-tramp ()
     "Insert current candidate in minibuffer, except for tramp."
     (interactive)
     (if (vertico--remote-p (vertico--candidate))
         (minibuffer-complete)
       (vertico-insert)))
+  (vertico-mode 1)
   :bind (:map vertico-map
-         ("TAB" . law-vertico-insert-unless-tramp))
+         ("TAB" . λαω-vertico-insert-unless-tramp))
   :custom
   (vertico-cycle t) ; enable cycling for `vertico-next/previous'
   (vertico-count 7)
@@ -323,12 +348,33 @@
   :custom
   (marginalia-field-width 120))
 
+(use-package vundo
+  :demand t
+  :bind (("C-M-/" . vundo)))
+
+(use-package magit
+  :ensure-system-package git
+  :bind (("C-c g s" . magit-status)
+	 ("C-c g g" . magit-dispatch)
+	 ("C-c g f" . magit-file-dispatch)
+         :map λαω-map
+         ("g" . magit-status)))
+
+(use-package expreg
+  :config
+  (defun custom-expreg-expand-sentences ()
+    (add-to-list 'expreg-functions 'expreg--sentence))
+  :hook (text-mode . custom-expreg-expand-sentences)
+  :bind (("C->" . expreg-expand)
+         ("C-<" . expreg-contract)))
+
 (use-package yasnippet
   :init
   (yas-global-mode 1)
   (keymap-unset yas-minor-mode-map "TAB" t)
-  :bind (:map yas-minor-mode-map
-              ("C-c y e" . yas-expand)))
+  :bind (("C-c y e" . yas-expand)
+         :map λαω-map
+         ("y" . yas-insert-snippet)))
 
 (use-package yasnippet-snippets
   :requires yasnippet)
@@ -379,46 +425,5 @@
   (tab-always-indent 'complete))
 
 (setq package-quickstart t) ; improve start-up time
-
-;; keymaps
-(defvar-keymap λαω-config-map
-  :doc "Keymap for configurations.")
-
-(defvar-keymap λαω-emacs-config-map
-  :doc "Keymap for Emacs configurations.")
-
-(defvar-keymap λαω-shell-config-map
-  :doc "Keymap for shell configurations.")
-
-(defvar-keymap λαω-shell-map
-  :doc "Keymap for shells.")
-
-;; key bindings
-;; config key(map) bindings
-(keymap-global-set "C-c C-c" λαω-config-map)
-(keymap-global-set "C-c c" λαω-config-map)
-(keymap-set λαω-config-map "e" λαω-emacs-config-map)
-(keymap-set λαω-config-map "s" λαω-shell-config-map)
-
-(keymap-set λαω-emacs-config-map "e"
-            (cons "open-emacs-early-init-file"
-                  '(lambda ()
-                     (interactive)
-                     (find-file early-init-file))))
-(keymap-set λαω-emacs-config-map "i"
-            (cons "open-emacs-init-file"
-                  '(lambda ()
-                     (interactive)
-                     (find-file user-init-file))))
-(keymap-set λαω-shell-config-map "b"
-            (cons "open-bashrc"
-                  '(lambda ()
-                     (interactive)
-                     (find-file "~/.bashrc"))))
-
-;; shell key(map) bindings
-(keymap-global-set "C-c C-s" λαω-shell-map)
-(keymap-global-set "C-c s" λαω-shell-map)
-(keymap-set λαω-shell-map "e" 'eshell)
 
 ;;; init.el ends here
