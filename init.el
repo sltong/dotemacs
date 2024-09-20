@@ -82,6 +82,11 @@
              (directory-file-name (expand-file-name "λαω" user-emacs-directory)))
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(unless (file-exists-p custom-file)
+  (message
+   "Custom file %s does not exist. Creating..."
+   custom-file)
+  (make-empty-file custom-file t))
 (load custom-file)
 
 (setq user-emacs-etc-directory (expand-file-name "etc" user-emacs-directory))
