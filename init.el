@@ -99,44 +99,6 @@
    custom-themes-directory)
   (make-directory custom-themes-directory t))
 
-;; keymaps
-(defvar-keymap λαω-map
-  :doc "λαω keymap.")
-(keymap-set global-map "C-l" λαω-map)
-
-(defvar-keymap λαω-config-map
-  :doc "Keymap for configurations.")
-(keymap-set global-map "C-c c" λαω-config-map)
-
-(defvar-keymap λαω-emacs-config-map
-  :doc "Keymap for Emacs configurations."
-  "e" '(cons "open-emacs-early-init-file"
-             '(lambda ()
-                (interactive)
-                (find-file early-init-file))))
-(keymap-set λαω-config-map "e" λαω-emacs-config-map)
-
-(defvar-keymap λαω-shell-config-map
-  :doc "Keymap for shell configurations.")
-(keymap-set λαω-config-map "s" λαω-shell-config-map)
-
-(defvar-keymap λαω-shell-map
-  :doc "Keymap for shells.")
-(keymap-set global-map "C-c s" λαω-shell-map)
-
-;; key bindings
-;; config key bindings
-(keymap-set λαω-emacs-config-map "i"
-            (cons "open-emacs-init-file"
-                  '(lambda ()
-                     (interactive)
-                     (find-file user-init-file))))
-(keymap-set λαω-shell-config-map "b"
-            (cons "open-bashrc"
-                  '(lambda ()
-                     (interactive)
-                     (find-file "~/.bashrc"))))
-
 ;; file backups
 (setq backup-directory-alist
       (list (cons "." (expand-file-name "backups" user-emacs-var-directory))))
@@ -166,6 +128,7 @@
 (setq-default indent-tabs-mode nil)
 
 ;;; local packages
+(require 'λαω-keys)
 (require 'λαω-functions)
 
 ;;; built-in packages
