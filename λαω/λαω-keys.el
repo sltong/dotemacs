@@ -64,7 +64,7 @@
 
 (defvar-keymap λαω-shell-map
   :doc "Keymap for shells.")
-(keymap-set global-map "C-c s" λαω-shell-map)
+(keymap-set λαω-map "s" λαω-shell-map)
 
 (provide 'λαω-keys)
 
