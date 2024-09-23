@@ -320,7 +320,7 @@
   :bind (("C-c g s" . magit-status)
 	 ("C-c g g" . magit-dispatch)
 	 ("C-c g f" . magit-file-dispatch)
-         :map λαω-map
+         :map λαω-git-map
          ("g" . magit-status)))
 
 (use-package expreg

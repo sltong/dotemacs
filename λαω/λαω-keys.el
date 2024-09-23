@@ -57,6 +57,11 @@
                      (find-file "~/.bashrc"))))
 (keymap-set λαω-config-map "s" λαω-shell-config-map)
 
+(defvar-keymap λαω-git-map
+  :doc "Keymap for git-related commands."
+  :name "git")
+(keymap-set λαω-map "g" λαω-git-map)
+
 (defvar-keymap λαω-shell-map
   :doc "Keymap for shells.")
 (keymap-set global-map "C-c s" λαω-shell-map)
