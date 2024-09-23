@@ -1,4 +1,4 @@
-;;; λαω-functions.el --- Functions  -*- lexical-binding: t -*-
+;;; λαω-functions.el --- λαω functions  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2024 λαω
 
@@ -18,20 +18,24 @@
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ;; Affero General Public License for more details.
 
-;; You should have received a copy of the GNU Affero General Public
-;; License along with this program. If not, see
+;; you should have received a copy of the gnu affero general public
+;; license along with this program. if not, see
 ;; <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
-;; This package consists of functions intended for local use.
+;; λαω functions.
 
 ;;; Code:
 
-(defun λαω-open-emacs-init-file ()
-  "Open the user Emacs init file."
-  (interactive)
-  (find-file user-init-file))
+(defun λαω-downcase-and-hyphenate-region (beginning end)
+  "Downcase words and replaces spaces with a hyphen in the active
+region. Consecutive spaces are replaced by a single hyphen."
+  (interactive "r")
+  (when (use-region-p)
+    (downcase-region beginning end)
+    (replace-regexp "\\([[:alnum:]]\\)[[:space:]]+\\([[:alnum:]]\\)" "\\1-\\2"
+                    nil beginning end)))
 
 (provide 'λαω-functions)
 
