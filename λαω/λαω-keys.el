@@ -57,6 +57,9 @@
   :doc "Keymap for shells.")
 (keymap-set λαω-map "s" λαω-shell-map)
 
+(defvar-keymap λαω-terminal-map
+  :doc "Keymap for terminals.")
+(keymap-set λαω-map "t" λαω-terminal-map)
 
 ;;; key bindings
 ;; config key bindings
