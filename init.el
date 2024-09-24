@@ -311,6 +311,10 @@
 (use-package delight)
 (use-package diminish)
 
+(use-package avy
+  :demand t
+  :bind (("M-j" . avy-goto-char-timer)))
+
 (use-package orderless
   :demand t
   :init
