@@ -140,9 +140,11 @@
   :init
   (desktop-save-mode)
   :custom
-  (desktop-save 'ask)
   (desktop-base-file-name ".desktop-session")
   (desktop-base-lock-name ".desktop-session.lock")
+  (desktop-save 'ask-if-exists)
+  (desktop-missing-file-warning t)
+  (desktop-auto-save-timeout 4)
   (desktop-restore-eager 3)
   (desktop-lazy-idle-delay 1)
   (desktop-lazy-verbose nil))
