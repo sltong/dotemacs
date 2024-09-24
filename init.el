@@ -388,6 +388,10 @@
 
 (use-package magit
   :ensure-system-package git
+  :init
+  (magit-wip-mode)
+  :config
+  (add-to-list 'magit-no-confirm 'safe-with-wip)
   :bind (("C-c g s" . magit-status)
 	 ("C-c g g" . magit-dispatch)
 	 ("C-c g f" . magit-file-dispatch)
