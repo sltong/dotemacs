@@ -276,9 +276,15 @@
 
 (use-package which-key
   :ensure nil
-  :demand t
   :init
-  (which-key-mode 1))
+  (which-key-mode t)
+  :custom
+  (which-key-idle-delay 0.3)
+  (which-key-preserve-window-configuration t)
+  (which-key-max-description-length nil)
+  (which-key-dont-use-unicode nil)
+  (which-key-prefix-prefix "*")
+  (which-key-separator " → "))
 
 (use-package whitespace
   :ensure nil
