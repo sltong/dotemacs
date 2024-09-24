@@ -182,7 +182,8 @@
   (version-control t) ; always use numerically versioned backups
   (delete-old-versions t)
   (kept-old-versions 3)
-  (kept-new-versions 5))
+  (kept-new-versions 5)
+  (require-final-newline t))
 
 (use-package finder
   :ensure nil
