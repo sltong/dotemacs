@@ -234,6 +234,13 @@
   :custom
   (recentf-max-saved-items 64))
 
+(use-package repeat
+  :ensure nil
+  :init
+  (repeat-mode t)
+  :custom
+  (repeat-exit-timeout 1))
+
 (use-package savehist
   :ensure nil
   :defer 1
