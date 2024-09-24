@@ -150,7 +150,7 @@
 (use-package dired
   :ensure nil
   :bind (:map dired-mode-map
-	 ("b" . dired-up-directory))
+         ("b" . dired-up-directory))
   :custom
   (dired-listing-switches "-ahl"))
 
@@ -395,8 +395,8 @@
   :config
   (add-to-list 'magit-no-confirm 'safe-with-wip)
   :bind (("C-c g s" . magit-status)
-	 ("C-c g g" . magit-dispatch)
-	 ("C-c g f" . magit-file-dispatch)
+         ("C-c g g" . magit-dispatch)
+         ("C-c g f" . magit-file-dispatch)
          :map λαω-git-map
          ("g" . magit-status)))
 
