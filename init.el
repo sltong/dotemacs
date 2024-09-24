@@ -424,6 +424,20 @@
 (use-package yasnippet-snippets
   :requires yasnippet)
 
+
+(use-package beacon
+  :init
+  (beacon-mode)
+  :config
+  (add-to-list 'beacon-dont-blink-major-modes
+               'artist-mode
+               'which-key-mode)
+  :custom
+  (beacon-blink-delay 0.25)
+  (beacon-blink-duration 0.25)
+  (beacon-color "#fcb948")
+  (beacon-size 32))
+
 (use-package indent-bars
   :config
   (require 'indent-bars-ts)
