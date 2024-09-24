@@ -199,6 +199,11 @@
   :ensure nil
   :bind ("C-h p" . describe-package))
 
+(use-package paragraphs
+  :ensure nil
+  :custom
+  (sentence-end-double-space nil))
+
 (use-package pixel-scroll
   :ensure nil
   :if (display-graphic-p)
