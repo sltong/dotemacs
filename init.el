@@ -409,6 +409,10 @@
 (use-package colorful-mode
   :hook (prog-mode text-mode))
 
+(use-package esup
+  :custom
+  (esup-depth 0))
+
 (use-package emacs
   ;; many of these configurations are suggested by vertico and corfu
   :init
