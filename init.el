@@ -186,6 +186,10 @@
   :ensure nil
   :bind ("C-h P" . finder-by-keyword))
 
+(use-package help-fns
+  :ensure nil
+  :bind (("C-h M" . describe-keymap)))
+
 (use-package ibuffer
   :ensure nil
   :bind (:map λαω-map
