@@ -265,6 +265,8 @@
   :ensure nil
   :init
   (column-number-mode)
+  :bind (:map λαω-map
+         ("s" . scratch-buffer))
   :custom
   (kill-ring-max 512))
 
