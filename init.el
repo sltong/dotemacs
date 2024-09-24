@@ -308,6 +308,9 @@
   :bind (("C-c l" . recenter-top-bottom)))
 
 ;;; third-party packages
+(use-package delight)
+(use-package diminish)
+
 (use-package orderless
   :demand t
   :init
