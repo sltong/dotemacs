@@ -311,6 +311,10 @@
 (use-package delight)
 (use-package diminish)
 
+(use-package undo-fu-session
+  :hook
+  (text-mode prog-mode))
+
 (use-package avy
   :demand t
   :bind (("M-j" . avy-goto-char-timer)))
