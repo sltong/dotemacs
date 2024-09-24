@@ -29,8 +29,9 @@
 ;;; Code:
 
 (defun λαω-downcase-and-hyphenate-region (beginning end)
-  "Downcase words and replaces spaces with a hyphen in the active
-region. Consecutive spaces are replaced by a single hyphen."
+  "Downcase words and replace spaces with hyphens in region.
+
+Consecutive spaces are replaced by a single hyphen."
   (interactive "r")
   (when (use-region-p)
     (downcase-region beginning end)
