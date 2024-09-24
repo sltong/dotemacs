@@ -462,6 +462,8 @@
   :custom
   (esup-depth 0))
 
+;;; final Emacs configurations
+
 (use-package emacs
   ;; many of these configurations are suggested by vertico and corfu
   :init
