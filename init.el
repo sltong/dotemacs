@@ -66,7 +66,7 @@
   (use-package-verbose t))
 
 ;;; early packages
-;; load immediately, as early as possible
+;; load immediately, as soon as possible
 (use-package no-littering
   :demand t)
 
@@ -133,12 +133,12 @@
 (use-package delsel
   :ensure nil
   :init
-  (delete-selection-mode 1)) ; replace active selection with typed text
+  (delete-selection-mode)) ; replace active selection with typed text
 
 (use-package desktop
   :ensure nil
   :init
-  (desktop-save-mode 1)
+  (desktop-save-mode)
   :custom
   (desktop-save 'ask)
   (desktop-base-file-name ".desktop-session")
@@ -175,8 +175,9 @@
 (use-package files
   :ensure nil
   :custom
-  (backup-directory-alist
-        (list (cons "." (expand-file-name "backups" user-emacs-var-directory))))
+  (backup-directory-alist (list (cons "." (expand-file-name
+                                           "backups"
+                                           user-emacs-var-directory))))
   (backup-by-copying t) ; don't break hard or symbolic links
   (version-control t) ; always use numerically versioned backups
   (delete-old-versions t)
@@ -214,7 +215,7 @@
   :ensure nil
   :if (display-graphic-p)
   :init
-  (pixel-scroll-precision-mode 1))
+  (pixel-scroll-precision-mode))
 
 (use-package prog-mode
   :ensure nil
@@ -233,7 +234,7 @@
   :config
   (add-to-list 'recentf-exclude
                (recentf-expand-file-name no-littering-var-directory))
-  (recentf-mode t)
+  (recentf-mode)
   :bind (("C-c f r" . recentf)
          :map λαω-map
          ("f" . recentf))
@@ -243,7 +244,7 @@
 (use-package repeat
   :ensure nil
   :init
-  (repeat-mode t)
+  (repeat-mode)
   :custom
   (repeat-exit-timeout 1))
 
@@ -255,11 +256,13 @@
 
 (use-package savehist
   :ensure nil
-  :defer 1
   :init
-  (savehist-mode 1)
+  (savehist-mode)
   :custom
-  (savehist-additional-variables '(kill-ring kmacro-ring regexp-search-ring search-ring)))
+  (savehist-additional-variables '(kill-ring
+                                   kmacro-ring
+                                   regexp-search-ring
+                                   search-ring)))
 
 (use-package simple
   :ensure nil
@@ -280,7 +283,7 @@
 (use-package which-key
   :ensure nil
   :init
-  (which-key-mode t)
+  (which-key-mode)
   :custom
   (which-key-idle-delay 0.3)
   (which-key-preserve-window-configuration t)
@@ -330,7 +333,6 @@
   (orderless-define-completion-style orderless-fast
     (orderless-style-dispatchers '(orderless-fast-dispatch))
     (orderless-matching-styles '(orderless-literal orderless-regexp)))
-
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
@@ -338,7 +340,6 @@
   (completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package vertico
-  :defer 1
   :init
   (defun λαω-vertico-insert-unless-tramp ()
     "Insert current candidate in minibuffer, except for tramp."
@@ -346,7 +347,7 @@
     (if (vertico--remote-p (vertico--candidate))
         (minibuffer-complete)
       (vertico-insert)))
-  (vertico-mode 1)
+  (vertico-mode)
   :bind (:map vertico-map
          ("TAB" . λαω-vertico-insert-unless-tramp))
   :custom
@@ -355,17 +356,16 @@
   (vertico-resize nil)) ; affix minibuffer window size
 
 (use-package corfu
-  :defer 1
   :init
-  (global-corfu-mode 1)
+  (global-corfu-mode)
   (add-hook 'eshell-mode-hook
             (lambda ()
               (setq-local corfu-auto nil)
               (corfu-mode)))
   ;; corfu extensions
-  (corfu-echo-mode 1)
-  (corfu-history-mode 1)
-  (corfu-popupinfo-mode 1)
+  (corfu-echo-mode)
+  (corfu-history-mode)
+  (corfu-popupinfo-mode)
   ;; configure SPC for separator insertion
   :bind (:map corfu-map
          ("SPC" . corfu-insert-separator))
@@ -378,18 +378,14 @@
 (use-package corfu-terminal
   :if (display-graphic-p)
   :init
-  (corfu-terminal-mode 1))
+  (corfu-terminal-mode))
 
 (use-package marginalia
   :init
-  (marginalia-mode 1)
+  (marginalia-mode)
   :bind (("M-A" . marginalia-cycle))
   :custom
   (marginalia-field-width 120))
-
-(use-package vundo
-  :demand t
-  :bind (("C-M-/" . vundo)))
 
 (use-package magit
   :ensure-system-package git
@@ -418,8 +414,7 @@
          ("C-<" . expreg-contract)))
 
 (use-package yasnippet
-  :init
-  (yas-global-mode 1)
+  :config
   (keymap-unset yas-minor-mode-map "TAB" t)
   :bind (("C-c y e" . yas-expand)
          :map λαω-map
@@ -428,6 +423,9 @@
 (use-package yasnippet-snippets
   :requires yasnippet)
 
+(use-package vundo
+  :demand t
+  :bind (("C-M-/" . vundo)))
 
 (use-package beacon
   :init
@@ -478,7 +476,7 @@
 
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
   ;; show minibuffer recursion depth
-  (minibuffer-depth-indicate-mode 1)
+  (minibuffer-depth-indicate-mode)
 
   :custom
   ;; undo
