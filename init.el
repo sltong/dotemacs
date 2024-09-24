@@ -463,6 +463,7 @@
   (add-to-list 'beacon-dont-blink-major-modes
                'artist-mode
                'which-key-mode)
+  :diminish
   :custom
   (beacon-blink-delay 0.25)
   (beacon-blink-duration 0.25)
