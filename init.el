@@ -224,12 +224,10 @@
 
 (use-package recentf
   :ensure nil
-  :defer 1
-  :init
-  (recentf-mode 1)
   :config
   (add-to-list 'recentf-exclude
                (recentf-expand-file-name no-littering-var-directory))
+  (recentf-mode t)
   :bind (("C-c f r" . recentf)
          :map λαω-map
          ("f" . recentf))
