@@ -306,8 +306,7 @@
                       indentation::space
                       space-after-tab
                       space-before-tab
-                      tab-mark))
-  (show-trailing-whitespace t))
+                      tab-mark)))
 
 (use-package window
   :ensure nil
