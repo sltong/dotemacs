@@ -151,7 +151,9 @@
 (use-package dired
   :ensure nil
   :bind (:map dired-mode-map
-	 ("b" . dired-up-directory)))
+	 ("b" . dired-up-directory))
+  :custom
+  (dired-listing-switches "-ahl"))
 
 (use-package display-line-numbers
   :ensure nil
