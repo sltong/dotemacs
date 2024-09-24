@@ -413,6 +413,20 @@
 (use-package yasnippet-snippets
   :requires yasnippet)
 
+(use-package indent-bars
+  :config
+  (require 'indent-bars-ts)
+  :custom
+  (indent-bars-treesit-support t)
+  (indent-bars-treesit-ignore-blank-lines-types '("module"))
+  (indent-bars-treesit-scope '((function_definition
+                                class_definition
+                                for_statement
+                                if_statement
+                                with_statement
+                                while_statement)))
+  :hook prog-mode)
+
 (use-package colorful-mode
   :hook (prog-mode text-mode))
 
