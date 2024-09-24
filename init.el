@@ -108,7 +108,6 @@
 (setq initial-scratch-message nil)
 
 (setq visible-bell t) ; replace audible bell with visual one
-(setq column-number-mode t)
 
 (setq scroll-conservatively 101)
 (setq scroll-preserve-screen-position t)
@@ -264,6 +263,8 @@
 
 (use-package simple
   :ensure nil
+  :init
+  (column-number-mode)
   :custom
   (kill-ring-max 512))
 
