@@ -155,7 +155,10 @@
 
 (use-package display-line-numbers
   :ensure nil
-  :hook (prog-mode . display-line-numbers-mode))
+  :hook (prog-mode . display-line-numbers-mode)
+  :custom
+  (display-line-numbers-grow-only t)
+  (display-line-numbers-width 3))
 
 (use-package elec-pair
   :ensure nil
