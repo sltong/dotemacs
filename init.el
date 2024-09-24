@@ -152,9 +152,12 @@
 (use-package dired
   :ensure nil
   :bind (:map dired-mode-map
-         ("b" . dired-up-directory))
+         ("b" . dired-up-directory)
+         ("+" . dired-create-empty-file)
+         ("M-+" . dired-create-directory))
   :custom
-  (dired-listing-switches "-ahl"))
+  (dired-listing-switches "-ahl")
+  (dired-auto-revert-buffer t))
 
 (use-package display-line-numbers
   :ensure nil
