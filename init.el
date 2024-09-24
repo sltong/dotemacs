@@ -396,6 +396,7 @@
   (corfu-popupinfo-delay '(1.25 . 0.9)))
 
 (use-package corfu-terminal
+  :requires corfu
   :if (display-graphic-p)
   :init
   (corfu-terminal-mode))
