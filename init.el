@@ -99,14 +99,6 @@
    custom-themes-directory)
   (make-directory custom-themes-directory t))
 
-;; file backups
-(setq backup-directory-alist
-      (list (cons "." (expand-file-name "backups" user-emacs-var-directory))))
-(setq version-control t) ; always use numerically versioned backups
-(setq delete-old-versions t)
-(setq kept-old-versions 3)
-(setq kept-new-versions 5)
-
 ;; (minibuffer) history
 (setq history-length 1024)
 (setq history-delete-duplicates t)
@@ -168,6 +160,16 @@
   :custom
   (eshell-buffer-maximum-lines 8192))
 
+(use-package files
+  :ensure nil
+  :custom
+  (backup-directory-alist
+        (list (cons "." (expand-file-name "backups" user-emacs-var-directory))))
+  (backup-by-copying t) ; don't break hard or symbolic links
+  (version-control t) ; always use numerically versioned backups
+  (delete-old-versions t)
+  (kept-old-versions 3)
+  (kept-new-versions 5))
 (use-package ibuffer
   :ensure nil
   :bind (:map λαω-map
