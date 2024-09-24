@@ -77,6 +77,10 @@
   :config
   (exec-path-from-shell-initialize))
 
+;; load early without :demand
+(use-package delight)
+(use-package diminish)
+
 ;;; local packages and directories
 (add-to-list 'load-path
              (directory-file-name (expand-file-name "λαω" user-emacs-directory)))
@@ -324,9 +328,6 @@
   :bind (("C-c l" . recenter-top-bottom)))
 
 ;;; third-party packages
-(use-package delight)
-(use-package diminish)
-
 (use-package undo-fu-session
   :hook
   (text-mode prog-mode))
