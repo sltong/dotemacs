@@ -196,6 +196,11 @@
   :ensure nil
   :bind ("C-h P" . finder-by-keyword))
 
+(use-package frame
+  :ensure nil
+  :config
+  (keymap-global-unset "C-z"))
+
 (use-package help-fns
   :ensure nil
   :bind (("C-h M" . describe-keymap)))
