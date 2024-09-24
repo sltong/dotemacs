@@ -409,6 +409,7 @@
 
 (use-package magit
   :ensure-system-package git
+  :demand t
   :init
   (magit-wip-mode)
   :config
