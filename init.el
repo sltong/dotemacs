@@ -126,6 +126,11 @@
 ;;; built-in packages
 ;; these packages should have :ensure explicitly set to nil in order
 ;; to prevent fetching them from repositories
+(use-package cc-vars
+  :ensure nil
+  :custom
+  (c-basic-offset 4))
+
 (use-package delsel
   :ensure nil
   :init
