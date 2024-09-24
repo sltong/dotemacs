@@ -394,6 +394,12 @@
          :map λαω-git-map
          ("g" . magit-status)))
 
+(use-package git-timemachine
+  :ensure-system-package git
+  :bind (("C-c g t" . git-timemachine)
+         :map λαω-git-map
+         ("t" . git-timemachine)))
+
 (use-package expreg
   :config
   (defun custom-expreg-expand-sentences ()
