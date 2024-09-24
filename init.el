@@ -379,6 +379,7 @@
 (use-package marginalia
   :init
   (marginalia-mode 1)
+  :bind (("M-A" . marginalia-cycle))
   :custom
   (marginalia-field-width 120))
 
