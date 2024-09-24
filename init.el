@@ -71,6 +71,8 @@
 
 ;;; early packages
 ;; load immediately, as soon as possible
+;; later packages still explicitly set their modes' respective
+;; directories or file paths for redundancy.
 (use-package no-littering
   :demand t)
 
@@ -288,6 +290,7 @@
   :init
   (savehist-mode)
   :custom
+  (savehist-file (expand-filename "savehist.el" user-emacs-var-directory))
   (savehist-additional-variables '(kill-ring
                                    kmacro-ring
                                    regexp-search-ring
@@ -343,7 +346,12 @@
 ;;; third-party packages
 (use-package undo-fu-session
   :hook
-  (text-mode prog-mode))
+  (text-mode prog-mode)
+  :custom
+  (undo-fu-session-directory (expand-filename
+                              "undo-fu-session"
+                              user-emacs-var-directory)))
+
 
 (use-package avy
   :demand t
