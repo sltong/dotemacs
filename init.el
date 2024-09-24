@@ -195,6 +195,11 @@
   :bind (:map λαω-map
          ("b" . ibuffer)))
 
+(use-package mule-cmds
+  :ensure nil
+  :custom
+  (default-input-method "greek"))
+
 (use-package package
   :ensure nil
   :bind ("C-h p" . describe-package))
