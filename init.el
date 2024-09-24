@@ -65,6 +65,10 @@
   (use-package-always-defer t)
   (use-package-verbose t))
 
+;; system packages
+(use-package system-packages)
+(use-package use-package-ensure-system-package)
+
 ;;; early packages
 ;; load immediately, as soon as possible
 (use-package no-littering
