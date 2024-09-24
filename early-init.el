@@ -53,13 +53,16 @@
 (setq frame-inhibit-implied-resize t
       frame-resize-pixelwise t)
 
+;; initial and default frames
+(setq initial-frame-alist '((fullscreen . maximized)
+                             (tool-bar-lines . 0)
+                             (vertical-scroll-bar . nil)))
+(setq default-frame-alist '((fullscreen . maximized)
+                             (tool-bar-lines . 0)
+                             (vertical-scroll-bar . nil)))
+
 ;; theming
 (setq custom-enabled-themes '(modus-vivendi-tinted))
 (load-theme 'modus-vivendi-tinted)
-
-;; initial and default frames
-(setq initial-frame-alist '((fullscreen . maximized)))
-(setq default-frame-alist '((fullscreen . maximized)
-                             (tool-bar-lines . 0)))
 
 ;;; early-init.el ends here
