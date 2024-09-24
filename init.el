@@ -102,7 +102,8 @@
 (setq user-emacs-etc-directory (expand-file-name "etc" user-emacs-directory))
 (setq user-emacs-var-directory (expand-file-name "var" user-emacs-directory))
 
-(setq custom-themes-directory (expand-file-name "themes" user-emacs-etc-directory))
+(setq custom-themes-directory (expand-file-name
+                               "themes" user-emacs-etc-directory))
 (unless (file-directory-p custom-themes-directory)
   (message
    "Custom themes directory %s does not exist. Creating..."
