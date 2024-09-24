@@ -407,6 +407,15 @@
   :custom
   (marginalia-field-width 120))
 
+
+(use-package expreg
+  :config
+  (defun custom-expreg-expand-sentences ()
+    (add-to-list 'expreg-functions 'expreg--sentence))
+  :hook (text-mode . custom-expreg-expand-sentences)
+  :bind (("C->" . expreg-expand)
+         ("C-<" . expreg-contract)))
+
 (use-package magit
   :ensure-system-package git
   :demand t
@@ -426,13 +435,10 @@
          :map λαω-git-map
          ("t" . git-timemachine)))
 
-(use-package expreg
-  :config
-  (defun custom-expreg-expand-sentences ()
-    (add-to-list 'expreg-functions 'expreg--sentence))
-  :hook (text-mode . custom-expreg-expand-sentences)
-  :bind (("C->" . expreg-expand)
-         ("C-<" . expreg-contract)))
+(use-package ace-window
+  :bind (("M-o" . ace-window))
+  :custom
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
 (use-package yasnippet
   :config
