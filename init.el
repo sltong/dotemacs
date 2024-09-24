@@ -181,10 +181,19 @@
   (delete-old-versions t)
   (kept-old-versions 3)
   (kept-new-versions 5))
+
+(use-package finder
+  :ensure nil
+  :bind ("C-h P" . finder-by-keyword))
+
 (use-package ibuffer
   :ensure nil
   :bind (:map λαω-map
          ("b" . ibuffer)))
+
+(use-package package
+  :ensure nil
+  :bind ("C-h p" . describe-package))
 
 (use-package pixel-scroll
   :ensure nil
