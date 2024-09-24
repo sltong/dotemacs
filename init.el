@@ -401,7 +401,7 @@
   (corfu-terminal-mode))
 
 (use-package marginalia
-  :init
+  :config
   (marginalia-mode)
   :bind (("M-A" . marginalia-cycle))
   :custom
