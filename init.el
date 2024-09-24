@@ -248,6 +248,12 @@
   :custom
   (repeat-exit-timeout 1))
 
+(use-package replace
+  :ensure nil
+  :bind (("C-c r" . query-replace-regexp)
+         :map λαω-map
+         ("r" . query-replace-regexp)))
+
 (use-package savehist
   :ensure nil
   :defer 1
