@@ -177,6 +177,9 @@
   (display-line-numbers-grow-only t)
   (display-line-numbers-width 3))
 
+(use-package eldoc
+  :diminish)
+
 (use-package elec-pair
   :ensure nil
   :hook (prog-mode . electric-pair-mode))
@@ -309,6 +312,7 @@
   :ensure nil
   :init
   (which-key-mode)
+  :diminish
   :custom
   (which-key-idle-delay 0.3)
   (which-key-preserve-window-configuration t)
@@ -319,6 +323,7 @@
 
 (use-package whitespace
   :ensure nil
+  :diminish
   :hook
   (prog-mode text-mode)
   :custom
