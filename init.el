@@ -289,10 +289,16 @@
 (use-package whitespace
   :ensure nil
   :hook
-  (prog-mode . whitespace-mode)
-  (text-mode . whitespace-mode)
+  (prog-mode text-mode)
   :custom
-  (whitespace-style '(face trailing tabs)))
+  (whitespace-style '(face
+                      trailing
+                      tabs
+                      indentation::space
+                      space-after-tab
+                      space-before-tab
+                      tab-mark))
+  (show-trailing-whitespace t))
 
 (use-package window
   :ensure nil
