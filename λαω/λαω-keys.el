@@ -41,20 +41,11 @@
 
 (defvar-keymap λαω-emacs-config-map
   :doc "Keymap for Emacs configurations."
-  :name "emacs-config"
-  "e" '("early-init" . (lambda ()
-                         (interactive)
-                         (find-file early-init-file)))
-  "i" '("init" . (lambda ()
-                   (interactive)
-                   (find-file user-init-file))))
+  :name "emacs-config")
 (keymap-set λαω-config-map "e" λαω-emacs-config-map)
 
 (defvar-keymap λαω-shell-config-map
-  :doc "Keymap for shell configurations."
-  "b" '("bashrc" . (lambda ()
-                     (interactive)
-                     (find-file "~/.bashrc"))))
+  :doc "Keymap for shell configurations.")
 (keymap-set λαω-config-map "s" λαω-shell-config-map)
 
 (defvar-keymap λαω-git-map
@@ -65,6 +56,23 @@
 (defvar-keymap λαω-shell-map
   :doc "Keymap for shells.")
 (keymap-set λαω-map "s" λαω-shell-map)
+
+
+;;; key bindings
+;; config key bindings
+(keymap-set λαω-emacs-config-map
+            "e" '("early-init" . (lambda ()
+                                   (interactive)
+                                   (find-file early-init-file))))
+(keymap-set λαω-emacs-config-map
+            "i" '("init" . (lambda ()
+                   (interactive)
+                   (find-file user-init-file))))
+
+(keymap-set λαω-shell-config-map
+            "b" '("bashrc" . (lambda ()
+                               (interactive)
+                               (find-file "~/.bashrc"))))
 
 (provide 'λαω-keys)
 
