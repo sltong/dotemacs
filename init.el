@@ -170,7 +170,9 @@
   :bind (:map λαω-shell-map
          ("e" . eshell))
   :custom
-  (eshell-buffer-maximum-lines 8192))
+  (eshell-buffer-maximum-lines 8192)
+  ;; fix glitch where prompt gets partially hidden underneath modeline
+  (eshell-scroll-show-maximum-output nil))
 
 (use-package files
   :ensure nil
