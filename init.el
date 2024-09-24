@@ -82,8 +82,10 @@
 (use-package diminish)
 
 ;;; local packages and directories
+(setq emacs-λαω-directory (expand-file-name "λαω" user-emacs-directory))
+
 (add-to-list 'load-path
-             (directory-file-name (expand-file-name "λαω" user-emacs-directory)))
+             (directory-file-name emacs-λαω-directory))
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (unless (file-exists-p custom-file)
