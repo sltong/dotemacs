@@ -138,12 +138,15 @@
 
 (use-package desktop
   :ensure nil
-  :defer 1
   :init
   (desktop-save-mode 1)
   :custom
+  (desktop-save 'ask)
   (desktop-base-file-name ".desktop-session")
-  (desktop-base-lock-name ".desktop-session.lock"))
+  (desktop-base-lock-name ".desktop-session.lock")
+  (desktop-restore-eager 3)
+  (desktop-lazy-idle-delay 1)
+  (desktop-lazy-verbose nil))
 
 (use-package dired
   :ensure nil
