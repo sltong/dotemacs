@@ -204,6 +204,7 @@
   (delete-old-versions t)
   (kept-old-versions 3)
   (kept-new-versions 5)
+  (confirm-kill-emacs 'y-or-n-p)
   (require-final-newline t))
 
 (use-package finder
