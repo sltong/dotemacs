@@ -420,9 +420,8 @@ URL `https://emacs.stackexchange.com/a/4191'"
                               "undo-fu-session"
                               user-emacs-var-directory)))
 
-
 (use-package avy
-  :demand t
+  :defer 1
   :bind (("M-j" . avy-goto-char-timer)))
 
 (use-package orderless
