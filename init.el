@@ -589,6 +589,9 @@ URL `https://emacs.stackexchange.com/a/4191'"
                        (setq-local electric-pair-mode nil)))
   :custom
   (delete-by-moving-to-trash t)
+  ;; auto-save
+  (auto-save-timeout 5)
+  (auto-save-interval 65)
   ;; undo
   (undo-limit (* 1000 1000 1)) ; 1MB
   ;; last-ditch outer limit for single undo commands
