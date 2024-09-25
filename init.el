@@ -373,6 +373,11 @@ URL `https://emacs.stackexchange.com/a/4191'"
   :custom
   (vc-make-backup-files t))
 
+(use-package winner
+  :ensure nil
+  :config
+  (winner-mode))
+
 (use-package which-key
   :ensure nil
   :init
