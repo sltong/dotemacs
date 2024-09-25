@@ -424,6 +424,11 @@ URL `https://emacs.stackexchange.com/a/4191'"
   :defer 1
   :bind (("M-j" . avy-goto-char-timer)))
 
+(use-package ace-window
+  :bind (("M-o" . ace-window))
+  :custom
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
 (use-package orderless
   :demand t
   :init
