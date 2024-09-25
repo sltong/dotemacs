@@ -328,6 +328,20 @@
   :ensure nil
   :init
   (column-number-mode)
+  (defun λαω-remove-kill-ring-text-properties ()
+    "Remove all text properties from `kill-ring' entries.
+
+This is useful for optimizing `kill-ring' history size when it is saved
+through `savehist-additional-variables', for example.
+
+See Info node `(elisp)Creating Strings'.
+
+Credit itsjeyd on the Emacs Stack Exchange:
+URL `https://emacs.stackexchange.com/a/4191'"
+    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
+  :hook
+  ;; remove `kill-ring' text-properties before killing Emacs
+  (kill-emacs . λαω-remove-kill-ring-text-properties)
   :bind (:map λαω-map
          ("s" . scratch-buffer))
   :custom
