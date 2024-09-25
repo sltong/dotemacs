@@ -140,6 +140,10 @@
 ;;; built-in packages
 ;; these packages should have :ensure explicitly set to nil in order
 ;; to prevent fetching them from repositories
+(use-package autorevert
+  :ensure nil
+  :diminish (auto-revert-mode))
+
 (use-package cc-vars
   :ensure nil
   :custom
