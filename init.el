@@ -323,6 +323,20 @@
   :custom
   (kill-ring-max 512))
 
+(use-package tramp
+  :ensure nil
+  :init
+  (setq tramp-backup-directory (convert-standard-filename
+                                (expand-file-name
+                                 "tramp/backups"
+                                 user-emacs-var-directory)))
+  :custom
+  (tramp-default-method "ssh")
+  (tramp-backup-directory-alist `(("." . ,tramp-backup-directory)))
+  ;; set default shell to bash
+  (tramp-connection-properties '((nil "remote-shell" "/usr/bin/bash")))
+  (tramp-encoding-shell "/usr/bin/bash"))
+
 (use-package treesit
   :ensure nil
   :init
