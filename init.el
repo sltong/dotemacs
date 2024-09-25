@@ -205,8 +205,8 @@
   (backup-by-copying t) ; don't break hard or symbolic links
   (version-control t) ; always use numerically versioned backups
   (delete-old-versions t)
-  (kept-old-versions 3)
-  (kept-new-versions 5)
+  (kept-old-versions 0)
+  (kept-new-versions 8)
   (confirm-kill-emacs 'y-or-n-p)
   (require-final-newline t))
 
