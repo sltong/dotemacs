@@ -368,6 +368,11 @@ URL `https://emacs.stackexchange.com/a/4191'"
         (expand-file-name "treesit/language-grammars" user-emacs-var-directory))
   (setq treesit-extra-load-path (list treesit-language-grammars-directory)))
 
+(use-package vc-hooks
+  :ensure nil
+  :custom
+  (vc-make-backup-files t))
+
 (use-package which-key
   :ensure nil
   :init
