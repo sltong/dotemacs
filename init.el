@@ -284,7 +284,7 @@
 
 (use-package recentf
   :ensure nil
-  :demand t
+  :defer 1
   :config
   (add-to-list 'recentf-exclude
                (recentf-expand-file-name no-littering-var-directory))
