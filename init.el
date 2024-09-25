@@ -235,6 +235,12 @@
          :map λαω-map
          ("b" . ibuffer)))
 
+(use-package minibuffer
+  :ensure nil
+  :custom
+  ;; tab cycle if there are only few candidates
+  (completion-cycle-threshold 3))
+
 (use-package mule-cmds
   :ensure nil
   :custom
@@ -542,10 +548,6 @@
 
   ;; support opening new minibuffers from inside existing minibuffers
   (enable-recursive-minibuffers t)
-
-  ;; TAB cycle if there are only few candidates
-  (completion-cycle-threshold 3)
-
   ;; hide commands in M-x which do not work in the current mode. vertico
   ;; commands are hidden in normal buffers.
   (read-extended-command-predicate #'command-completion-default-include-p)
