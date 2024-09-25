@@ -231,7 +231,8 @@
 
 (use-package ibuffer
   :ensure nil
-  :bind (:map λαω-map
+  :bind (("C-x C-b" . ibuffer)
+         :map λαω-map
          ("b" . ibuffer)))
 
 (use-package mule-cmds
