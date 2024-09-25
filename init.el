@@ -255,6 +255,10 @@
   :custom
   (sentence-end-double-space nil))
 
+(use-package paren
+  :config
+  (show-paren-mode))
+
 (use-package pixel-scroll
   :ensure nil
   :if (display-graphic-p)
