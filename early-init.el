@@ -32,13 +32,6 @@
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 0.9)
 
-;; add hook for turning garbage collection back on by resetting
-;; `gc-cons-threshold' and `gc-cons-percentage' to normal values
-(add-hook 'emacs-startup-hook
-  (lambda ()
-    (setq gc-cons-threshold (* 1000 1000 16) ; 16MB
-          gc-cons-percentage 0.1)))
-
 ;; store `eln-cache' in the "var" user-emacs-directory
 (when (and (fboundp 'startup-redirect-eln-cache)
            (fboundp 'native-comp-available-p)
@@ -56,14 +49,25 @@
 
 ;; initial and default frames
 (setq initial-frame-alist '((fullscreen . maximized)
-                             (tool-bar-lines . 0)
-                             (vertical-scroll-bar . nil)))
+                            (horizontal-scroll-bars . nil)
+                            (vertical-scroll-bars . nil)
+                            (tool-bar-lines . 0)))
 (setq default-frame-alist '((fullscreen . maximized)
-                             (tool-bar-lines . 0)
-                             (vertical-scroll-bar . nil)))
+                            (horizontal-scroll-bars . nil)
+                            (vertical-scroll-bars . nil)
+                            (tool-bar-lines . 0)))
+
+(setq inhibit-startup-screen t)
 
 ;; theming
 (setq custom-enabled-themes '(modus-vivendi-tinted))
 (load-theme 'modus-vivendi-tinted)
+
+;; add hook for turning garbage collection back on by resetting
+;; `gc-cons-threshold' and `gc-cons-percentage' to normal values
+(add-hook 'emacs-startup-hook
+  (lambda ()
+    (setq gc-cons-threshold (* 1000 1000 16) ; 16MB
+          gc-cons-percentage 0.1)))
 
 ;;; early-init.el ends here
