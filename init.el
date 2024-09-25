@@ -259,6 +259,11 @@
   :config
   (show-paren-mode))
 
+(use-package password-cache
+  :ensure nil
+  :custom
+  (password-cache-expiry (* 60 5))) ; 5 minutes
+
 (use-package pixel-scroll
   :ensure nil
   :if (display-graphic-p)
