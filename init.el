@@ -543,6 +543,7 @@
   (minibuffer-setup . (lambda ()
                        (setq-local electric-pair-mode nil)))
   :custom
+  (delete-by-moving-to-trash t)
   ;; undo
   (undo-limit (* 1000 1000 1)) ; 1MB
   ;; last-ditch outer limit for single undo commands
