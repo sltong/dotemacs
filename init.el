@@ -397,7 +397,9 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
 (use-package window
   :ensure nil
-  :bind (("C-c l" . recenter-top-bottom)))
+  :bind (("C-c l" . recenter-top-bottom)
+         :repeat-map λαω-recenter-window-repeat-map
+         ("l" . recenter-top-bottom)))
 
 ;;; third-party packages
 (use-package undo-fu-session
