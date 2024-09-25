@@ -443,15 +443,7 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
 (use-package vertico
   :init
-  (defun λαω-vertico-insert-unless-tramp ()
-    "Insert current candidate in minibuffer, except for tramp."
-    (interactive)
-    (if (vertico--remote-p (vertico--candidate))
-        (minibuffer-complete)
-      (vertico-insert)))
   (vertico-mode)
-  :bind (:map vertico-map
-         ("TAB" . λαω-vertico-insert-unless-tramp))
   :custom
   (vertico-cycle t) ; enable cycling for `vertico-next/previous'
   (vertico-count 7)
