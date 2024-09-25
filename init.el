@@ -223,6 +223,12 @@
   :ensure nil
   :bind (("C-h M" . describe-keymap)))
 
+(use-package hideshow
+  :config
+  (hs-minor-mode)
+  :bind (("C-c C-<tab>" . hs-toggle-hiding)
+         ("C-c <tab>" . hs-toggle-hiding)))
+
 (use-package ibuffer
   :ensure nil
   :bind (:map λαω-map
