@@ -539,6 +539,9 @@
   ;; show minibuffer recursion depth
   (minibuffer-depth-indicate-mode)
 
+  :hook
+  (minibuffer-setup . (lambda ()
+                       (setq-local electric-pair-mode nil)))
   :custom
   ;; undo
   (undo-limit (* 1000 1000 1)) ; 1MB
