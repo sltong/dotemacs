@@ -531,6 +531,11 @@ URL `https://emacs.stackexchange.com/a/4191'"
 (use-package yasnippet-snippets
   :requires yasnippet)
 
+(use-package whitespace-cleanup-mode
+  :defer 3
+  :init
+  (global-whitespace-cleanup-mode))
+
 (use-package vundo
   :demand t
   :bind (("C-M-/" . vundo)))
