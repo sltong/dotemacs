@@ -313,7 +313,6 @@
   :init
   (savehist-mode)
   :custom
-  (savehist-file (expand-filename "savehist.el" user-emacs-var-directory))
   (savehist-additional-variables '(kill-ring
                                    kmacro-ring
                                    regexp-search-ring
