@@ -319,6 +319,11 @@
                                    regexp-search-ring
                                    search-ring)))
 
+(use-package saveplace
+  :ensure nil
+  :config
+  (save-place-mode))
+
 (use-package simple
   :ensure nil
   :init
