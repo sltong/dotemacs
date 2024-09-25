@@ -413,11 +413,7 @@ URL `https://emacs.stackexchange.com/a/4191'"
 ;;; third-party packages
 (use-package undo-fu-session
   :hook
-  (text-mode prog-mode)
-  :custom
-  (undo-fu-session-directory (expand-filename
-                              "undo-fu-session"
-                              user-emacs-var-directory)))
+  (text-mode prog-mode))
 
 (use-package avy
   :defer 1
