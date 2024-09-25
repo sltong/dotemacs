@@ -74,7 +74,9 @@
 ;; later packages still explicitly set their modes' respective
 ;; directories or file paths for redundancy.
 (use-package no-littering
-  :demand t)
+  :demand t
+  :config
+  (no-littering-theme-backups))
 
 (use-package exec-path-from-shell
   :demand t
@@ -198,9 +200,6 @@
 (use-package files
   :ensure nil
   :custom
-  (backup-directory-alist (list (cons "." (expand-file-name
-                                           "backups"
-                                           user-emacs-var-directory))))
   (backup-by-copying t) ; don't break hard or symbolic links
   (version-control t) ; always use numerically versioned backups
   (delete-old-versions t)
