@@ -535,6 +535,9 @@ URL `https://emacs.stackexchange.com/a/4191'"
   :demand t
   :bind (("C-M-/" . vundo)))
 
+(use-package goto-line-preview
+  :bind ([remap goto-line] . goto-line-preview))
+
 (use-package beacon
   :init
   (beacon-mode)
