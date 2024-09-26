@@ -31,6 +31,11 @@
 ;; set these high enough as to effectively disable garbage collection
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 0.9)
+;; set "etc" and "var" Emacs user directories
+(setq user-emacs-etc-directory (convert-standard-filename
+                                (expand-file-name "etc/" user-emacs-directory)))
+(setq user-emacs-var-directory (convert-standard-filename
+                                (expand-file-name "var/" user-emacs-directory)))
 
 ;; store `eln-cache' in the "var" user-emacs-directory
 (when (and (fboundp 'startup-redirect-eln-cache)
