@@ -56,9 +56,20 @@
 
 ;;; package configurations
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-
 (require 'use-package)
+
+(use-package package
+  :ensure nil
+  :demand t
+  :init
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  :bind ("C-h p" . describe-package)
+  :custom
+  ;; speed up start-up time by precomputing package activation actions
+  (package-quickstart-file
+   (expand-file-name "package-quickstart.el" user-emacs-var-directory))
+  (package-quickstart t))
+
 (use-package use-package
   :custom
   (use-package-always-ensure t)
@@ -242,10 +253,6 @@
   :ensure nil
   :custom
   (default-input-method "greek"))
-
-(use-package package
-  :ensure nil
-  :bind ("C-h p" . describe-package))
 
 (use-package paragraphs
   :ensure nil
@@ -617,6 +624,5 @@ URL `https://emacs.stackexchange.com/a/4191'"
   ;; `completion-at-point' is often bound to M-TAB.
   (tab-always-indent 'complete))
 
-(setq package-quickstart t) ; improve start-up time
 
 ;;; init.el ends here
