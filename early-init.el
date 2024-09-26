@@ -42,8 +42,7 @@
            (fboundp 'native-comp-available-p)
            (native-comp-available-p))
   (startup-redirect-eln-cache
-   (convert-standard-filename
-    (expand-file-name  "var/eln-cache/" user-emacs-directory))))
+   (expand-file-name "eln-cache/" user-emacs-var-directory)))
 
 ;; don't try to preserve a frame's number of columns and don't round
 ;; frame sizes when resizing
