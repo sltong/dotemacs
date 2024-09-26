@@ -24,19 +24,27 @@
 
 ;;; Commentary:
 
-;; λαω functions.
+;; Functions.
 
 ;;; Code:
 
-(defun λαω-downcase-and-hyphenate-region (beginning end)
-  "Downcase words and replace spaces with hyphens in region.
+;;; utilities
 
-Consecutive spaces are replaced by a single hyphen."
+(defun λαω-downcase-and-hyphenate-region (region-start region-end)
+  "Downcase words in the region and concatenate them with hyphens.
+
+Consecutive blank characters are replaced by a single hyphen.
+
+Any non-blank, non-word characters (such as punctuation marks) will
+break concatenation. For example, the function will transform \"Oh no!
+Our word chain; it's broken.\", \"oh-no! our-word-chain; it's-broken.\"."
   (interactive "r")
   (when (use-region-p)
-    (downcase-region beginning end)
-    (replace-regexp "\\([[:alnum:]]\\)[[:space:]]+\\([[:alnum:]]\\)" "\\1-\\2"
-                    nil beginning end)))
+    (save-excursion
+      (downcase-region region-start region-end)
+      (goto-char region-start)
+      (while (re-search-forward "\\b[[:blank:]]+\\b" region-end t)
+        (replace-match "-" nil nil)))))
 
 (provide 'λαω-functions)
 
