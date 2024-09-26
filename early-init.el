@@ -44,6 +44,9 @@
   (startup-redirect-eln-cache
    (expand-file-name "eln-cache/" user-emacs-var-directory)))
 
+;; temporarily hide warnings
+(setq warning-minimum-level :error)
+
 ;; don't try to preserve a frame's number of columns and don't round
 ;; frame sizes when resizing
 ;; these should optimize for the case when the frame font size is
@@ -66,12 +69,19 @@
 ;; theming
 (setq custom-enabled-themes '(modus-vivendi-tinted))
 (load-theme 'modus-vivendi-tinted)
+(defun λαω-emacs-startup-hook-function ()
+  "`emacs-startup-hook' hook function.
 
-;; add hook for turning garbage collection back on by resetting
-;; `gc-cons-threshold' and `gc-cons-percentage' to normal values
-(add-hook 'emacs-startup-hook
-  (lambda ()
-    (setq gc-cons-threshold (* 1000 1000 16) ; 16MB
-          gc-cons-percentage 0.1)))
+This function is run after loading `user-init-file' and handling the
+command line.
+
+Restore garbage collection by setting `gc-cons-threshold' and
+`gc-cons-percentage' to normal values. Restore warnings by resetting
+`warning-minimum-level' to `:warning'."
+  (setq gc-cons-threshold (* 1000 1000 16))
+  (setq gc-cons-percentage 0.1)
+  (setq warning-minimum-level :warning))
+
+(add-hook 'emacs-startup-hook #'λαω-emacs-startup-hook-function)
 
 ;;; early-init.el ends here
