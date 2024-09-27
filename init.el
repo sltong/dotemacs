@@ -178,6 +178,8 @@
 ;; to prevent fetching them from repositories
 (use-package autorevert
   :ensure nil
+  :config
+  (global-auto-revert-mode)
   :diminish (auto-revert-mode))
 
 (use-package cc-vars
