@@ -169,7 +169,7 @@
   :config
   (exec-path-from-shell-initialize))
 
-;; load early without :demand
+;; load early without demand
 (use-package delight)
 (use-package diminish)
 
