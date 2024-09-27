@@ -235,11 +235,15 @@
 
 (use-package eshell
   :ensure nil
+  :config
+  (add-to-list 'eshell-modules-list 'eshell-tramp t)
   :bind (:map λαω-cli-map
          ("e" . eshell))
   :custom
   (eshell-buffer-maximum-lines 8192)
   ;; fix glitch where prompt gets partially hidden underneath modeline
+  (eshell-scroll-to-bottom-on-input t)
+  (eshell-scroll-to-bottom-on-output t)
   (eshell-scroll-show-maximum-output nil))
 
 (use-package files
