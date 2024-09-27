@@ -527,11 +527,11 @@
 
 (use-package magit
   :ensure-system-package git
-  :demand t
-  :init
-  (magit-wip-mode)
+  :commands (magit-auto-revert-mode magit-mode magit-wip-mode)
   :config
   (add-to-list 'magit-no-confirm 'safe-with-wip)
+  (magit-wip-mode)
+  :diminish magit-wip-mode
   :bind (("C-c g s" . magit-status)
          ("C-c g g" . magit-dispatch)
          ("C-c g f" . magit-file-dispatch)
