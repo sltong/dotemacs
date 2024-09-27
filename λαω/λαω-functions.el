@@ -28,6 +28,48 @@
 
 ;;; Code:
 
+;;; Emacs configurations
+(defun λαω-crm-prompt-indicator (args)
+  "Prompt indicator for `completing-read-multiple'.
+
+Indicator displays the `crm-separator'.
+
+For example, the prompt will display \"[CRM,]\" if the separator is a
+comma."
+  (cons (format "[CRM%s] %s"
+                (replace-regexp-in-string
+                 "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                 crm-separator)
+                (car args))
+        (cdr args)))
+
+(defun λαω-remove-kill-ring-text-properties ()
+    "Remove all text properties from `kill-ring' entries.
+
+This is useful for optimizing `kill-ring' history size when it is saved
+through `savehist-additional-variables', for example.
+
+See Info node `(elisp)Creating Strings'.
+
+Credit itsjeyd on the Emacs Stack Exchange:
+URL `https://emacs.stackexchange.com/a/4191'"
+    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
+
+(defun λαω-local-truncate-lines ()
+  "Locally enable `truncate-lines'."
+  (setq-local truncate-lines t))
+
+
+(defun λαω-display-init-time-message ()
+  "Display an Emacs initialization time and garbage collections message."
+  (run-with-idle-timer
+   3 nil (lambda ()
+           (message "Emacs loaded in %s with %d garbage collections."
+                    (format "%.2f seconds"
+                            (float-time
+                             (time-subtract after-init-time before-init-time)))
+                    gcs-done))))
+
 ;;; files
 (defun λαω-find-emacs-early-init-file ()
   "Edit the Emacs user early init file."

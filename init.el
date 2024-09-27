@@ -65,10 +65,10 @@
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   :bind ("C-h p" . describe-package)
   :custom
-  ;; speed up start-up time by precomputing package activation actions
   (package-quickstart-file
    (expand-file-name "package-quickstart.el" user-emacs-var-directory))
-  (package-quickstart t))
+  (package-quickstart t
+   "Speed up start-up time by precomputing package activation actions."))
 
 (use-package use-package
   :ensure nil
@@ -79,6 +79,79 @@
 ;; system packages
 (use-package system-packages)
 (use-package use-package-ensure-system-package)
+
+;; λαω
+(setq emacs-λαω-directory (expand-file-name "λαω" user-emacs-directory))
+(use-package λαω
+  :load-path emacs-λαω-directory)
+
+;;; Emacs initialization and customizations
+(use-package emacs
+  :init
+  ;; customizations file
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+  (unless (file-exists-p custom-file)
+    (message
+     "Custom file %s does not exist. Creating..."
+     custom-file)
+    (make-empty-file custom-file t))
+  (load custom-file)
+
+  ;; themes directory
+  (setq custom-themes-directory (expand-file-name
+                                 "themes" user-emacs-etc-directory))
+  (unless (file-directory-p custom-themes-directory)
+    (message
+     "Custom themes directory %s does not exist. Creating..."
+     custom-themes-directory)
+    (make-directory custom-themes-directory t))
+
+  ;; hooks
+  (add-hook 'after-init-hook 'λαω-display-init-time-message)
+  ;; ensure `λαω-remove-kill-ring-text-properties' is the first
+  ;; function in `kill-emacs-hook'
+  (add-hook 'kill-emacs-hook 'λαω-remove-kill-ring-text-properties -100)
+  (add-hook 'org-mode-hook 'visual-line-mode)
+  :custom
+  (custom-enabled-themes '(modus-vivendi-tinted))
+  (load-prefer-newer t)
+  (inhibit-default-init t)
+  (selection-coding-system 'utf-8)
+  (auto-save-timeout 5)
+  (auto-save-interval 65)
+  (kill-ring-max 512)
+  ;; undo
+  (undo-limit (* 1000 1000 1) "Increase undo information to 1MB.")
+  ;; last-ditch outer limit for single undo commands
+  (undo-outer-limit (* 1000 1000 100)) ; 50MB
+  (undo-strong-limit (* 1000 1000 5)) ; 5MB
+  ;; (minibuffer) history
+  (history-length 1024)
+  (history-delete-duplicates t)
+  (enable-recursive-minibuffers t)
+  (truncate-lines t)
+  (column-number-mode t)
+  (indent-tabs-mode nil)
+  ;; *scratch* buffer
+  (initial-major-mode 'fundamental-mode
+   "Set initial *scratch* buffer major mode to `fundamental-mode'.")
+  (initial-scratch-message nil)
+  (visible-bell t) ; replace audible bell with visual one
+  (scroll-conservatively 101)
+  (scroll-preserve-screen-position t)
+  (message-log-max 10000
+   "Increase maximum number of lines in the message log buffer.")
+  (use-short-answers t "Make `yes-or-no-p' accept \"y\" or \"n\".")
+  (default-input-method "greek")
+  (sentence-end-double-space nil
+   "Make Emacs recognize single spaces as sentence-ending.")
+  (delete-by-moving-to-trash t
+   "Don't delete files, but move them to OS-specific trash can.")
+  ;; Emacs 30 and newer: disable Ispell completion function. As an
+  ;; alternative, try `cape-dict'.
+  (text-mode-ispell-word-completion nil)
+  ;; Enable indentation/completion using the TAB key.
+  (tab-always-indent 'complete))
 
 ;;; early packages
 ;; load immediately, as soon as possible
@@ -100,51 +173,6 @@
 (use-package delight)
 (use-package diminish)
 
-;;; local packages and directories
-(setq emacs-λαω-directory (expand-file-name "λαω" user-emacs-directory))
-
-(add-to-list 'load-path
-             (directory-file-name emacs-λαω-directory))
-
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(unless (file-exists-p custom-file)
-  (message
-   "Custom file %s does not exist. Creating..."
-   custom-file)
-  (make-empty-file custom-file t))
-(load custom-file)
-
-(setq custom-themes-directory (expand-file-name
-                               "themes" user-emacs-etc-directory))
-(unless (file-directory-p custom-themes-directory)
-  (message
-   "Custom themes directory %s does not exist. Creating..."
-   custom-themes-directory)
-  (make-directory custom-themes-directory t))
-
-;; (minibuffer) history
-(setq history-length 1024)
-(setq history-delete-duplicates t)
-
-;; initial scratch buffer
-(setq initial-major-mode 'fundamental-mode)
-(setq initial-scratch-message nil)
-
-(setq visible-bell t) ; replace audible bell with visual one
-
-(setq scroll-conservatively 101)
-(setq scroll-preserve-screen-position t)
-
-(setq message-log-max 10000) ; max number of lines for message log buffer
-
-(setq use-short-answers t) ; make "yes-or-no-p" accept "y" and "n"
-
-(setq-default indent-tabs-mode nil)
-
-;;; local packages
-(require 'λαω-keys)
-(require 'λαω-functions)
-
 ;;; built-in packages
 ;; these packages should have :ensure explicitly set to nil in order
 ;; to prevent fetching them from repositories
@@ -156,6 +184,12 @@
   :ensure nil
   :custom
   (c-basic-offset 4))
+
+(use-package crm
+  :ensure nil
+  :config
+  (advice-add #'completing-read-multiple
+              :filter-args #'λαω-crm-prompt-indicator))
 
 (use-package delsel
   :ensure nil
@@ -192,6 +226,7 @@
   (display-line-numbers-width 3))
 
 (use-package eldoc
+  :ensure nil
   :diminish)
 
 (use-package elec-pair
@@ -232,6 +267,7 @@
   :bind (("C-h M" . describe-keymap)))
 
 (use-package hideshow
+  :ensure nil
   :config
   (hs-minor-mode)
   :bind (("C-c C-<tab>" . hs-toggle-hiding)
@@ -243,23 +279,19 @@
          :map λαω-map
          ("b" . ibuffer)))
 
+(use-package mb-depth
+  :ensure nil
+  :config
+  (minibuffer-depth-indicate-mode))
+
 (use-package minibuffer
   :ensure nil
   :custom
   ;; tab cycle if there are only few candidates
   (completion-cycle-threshold 3))
 
-(use-package mule-cmds
-  :ensure nil
-  :custom
-  (default-input-method "greek"))
-
-(use-package paragraphs
-  :ensure nil
-  :custom
-  (sentence-end-double-space nil))
-
 (use-package paren
+  :ensure nil
   :config
   (show-paren-mode))
 
@@ -273,13 +305,6 @@
   :if (display-graphic-p)
   :init
   (pixel-scroll-precision-mode))
-
-(use-package prog-mode
-  :ensure nil
-  :config
-  (defun λαω-prog-mode-hook ()
-    (setq-local truncate-lines t))
-  (add-hook 'prog-mode-hook #'λαω-prog-mode-hook))
 
 (use-package re-builder
   :ensure nil
@@ -327,28 +352,16 @@
   :config
   (save-place-mode))
 
-(use-package simple
-  :ensure nil
+(use-package time
   :init
-  (column-number-mode)
-  (defun λαω-remove-kill-ring-text-properties ()
-    "Remove all text properties from `kill-ring' entries.
-
-This is useful for optimizing `kill-ring' history size when it is saved
-through `savehist-additional-variables', for example.
-
-See Info node `(elisp)Creating Strings'.
-
-Credit itsjeyd on the Emacs Stack Exchange:
-URL `https://emacs.stackexchange.com/a/4191'"
-    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
-  :hook
-  ;; remove `kill-ring' text-properties before killing Emacs
-  (kill-emacs . λαω-remove-kill-ring-text-properties)
-  :bind (:map λαω-map
-         ("s" . scratch-buffer))
+  (display-time-mode)
   :custom
-  (kill-ring-max 512))
+  (display-time-24hr-format t)
+  (display-time-day-and-date t)
+  (display-time-default-load-average
+   nil
+   "Don't show system load average (wtf?).")
+  (display-time-format "%a %h %d %H:%M"))
 
 (use-package tramp
   :ensure nil
@@ -510,11 +523,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
          :map λαω-git-map
          ("t" . git-timemachine)))
 
-(use-package ace-window
-  :bind (("M-o" . ace-window))
-  :custom
-  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
-
 (use-package yasnippet
   :config
   (keymap-unset yas-minor-mode-map "TAB" t)
@@ -555,6 +563,7 @@ URL `https://emacs.stackexchange.com/a/4191'"
 (use-package indent-bars
   :config
   (require 'indent-bars-ts)
+  :hook (prog-mode)
   :custom
   (indent-bars-treesit-support t)
   (indent-bars-treesit-ignore-blank-lines-types '("module"))
@@ -563,62 +572,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
                                 for_statement
                                 if_statement
                                 with_statement
-                                while_statement)))
-  :hook prog-mode)
-
-(use-package colorful-mode
-  :hook (prog-mode text-mode))
-
-(use-package esup
-  :custom
-  (esup-depth 0))
-
-;;; final Emacs configurations
-
-(use-package emacs
-  ;; many of these configurations are suggested by vertico and corfu
-  :init
-  ;; add prompt indicator to `completing-read-multiple'
-  ;; display [CRM<separator>], e.g., [CRM,] if the separator is a comma
-  (defun crm-indicator (args)
-    (cons (format "[CRM%s] %s"
-                  (replace-regexp-in-string
-                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                   crm-separator)
-                  (car args))
-          (cdr args)))
-
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-  ;; show minibuffer recursion depth
-  (minibuffer-depth-indicate-mode)
-
-  :hook
-  (minibuffer-setup . (lambda ()
-                       (setq-local electric-pair-mode nil)))
-  :custom
-  (delete-by-moving-to-trash t)
-  ;; auto-save
-  (auto-save-timeout 5)
-  (auto-save-interval 65)
-  ;; undo
-  (undo-limit (* 1000 1000 1)) ; 1MB
-  ;; last-ditch outer limit for single undo commands
-  (undo-outer-limit (* 1000 1000 100)) ; 50MB
-  (undo-strong-limit (* 1000 1000 5)) ; 5MB
-
-  ;; support opening new minibuffers from inside existing minibuffers
-  (enable-recursive-minibuffers t)
-  ;; hide commands in M-x which do not work in the current mode. vertico
-  ;; commands are hidden in normal buffers.
-  (read-extended-command-predicate #'command-completion-default-include-p)
-
-  ;; Emacs 30 and newer: disable Ispell completion function. As an alternative,
-  ;; try `cape-dict'.
-  (text-mode-ispell-word-completion nil)
-
-  ;; Enable indentation+completion using the TAB key.
-  ;; `completion-at-point' is often bound to M-TAB.
-  (tab-always-indent 'complete))
-
+                                while_statement))))
 
 ;;; init.el ends here
