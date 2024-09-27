@@ -26,11 +26,15 @@
 
 ;; Emacs user early initialization file.
 
+;; `setq' is used instead of `customize-set-variable' and `setopt' for
+;; performance.
+
 ;;; Code:
 
 ;; set these high enough as to effectively disable garbage collection
-(setq gc-cons-threshold most-positive-fixnum
-      gc-cons-percentage 0.9)
+(setq gc-cons-threshold most-positive-fixnum)
+(setq gc-cons-percentage 0.9)
+
 (setq user-emacs-etc-directory (convert-standard-filename
                                 (expand-file-name "etc/" user-emacs-directory)))
 (setq user-emacs-var-directory (convert-standard-filename
@@ -53,8 +57,8 @@
 ;; frame sizes when resizing
 ;; these should optimize for the case when the frame font size is
 ;; different from the system's
-(setq frame-inhibit-implied-resize t
-      frame-resize-pixelwise t)
+(setq frame-inhibit-implied-resize t)
+(setq frame-resize-pixelwise t)
 
 ;; initial and default frames
 (setq initial-frame-alist '((fullscreen . maximized)
