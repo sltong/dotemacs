@@ -532,6 +532,11 @@
          :map λαω-git-map
          ("g" . magit-status)))
 
+(use-package magit-todos
+  :after magit
+  :config
+  (magit-todos-mode))
+
 (use-package git-timemachine
   :ensure-system-package git
   :bind (("C-c g t" . git-timemachine)
