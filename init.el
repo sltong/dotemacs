@@ -562,7 +562,7 @@
 
 (use-package yasnippet
   :config
-  (keymap-unset yas-minor-mode-map "TAB" t)
+  (keymap-unset yas-minor-mode-map "<tab>" t)
   (yas-minor-mode)
   :bind (("C-c y e" . yas-expand)
          :map λαω-map
