@@ -53,6 +53,14 @@
 ;; temporarily hide warnings
 (setq warning-minimum-level :error)
 
+(defvar file-name-handler-alist-pre-init file-name-handler-alist
+  "Pre-`user-init-file' `file-name-handler-alist'.
+
+This variable stores the original `file-name-handler-alist' so that it
+can be set to nil during initialization to speed it up.")
+
+(setq file-name-handler-alist nil)
+
 ;; don't try to preserve a frame's number of columns and don't round
 ;; frame sizes when resizing
 ;; these should optimize for the case when the frame font size is
@@ -78,12 +86,14 @@
 This function is run after loading `user-init-file' and handling the
 command line.
 
-Restore garbage collection by setting `gc-cons-threshold' and
-`gc-cons-percentage' to normal values. Restore warnings by resetting
-`warning-minimum-level' to `:warning'."
+Restore the following:
+- garbage collection
+- displaying of warnings
+- `file-name-handler-alist'"
   (setq gc-cons-threshold (* 1000 1000 16))
   (setq gc-cons-percentage 0.1)
-  (setq warning-minimum-level :warning))
+  (setq warning-minimum-level :warning)
+  (setq file-name-handler-alist file-name-handler-alist-pre-init))
 
 (add-hook 'emacs-startup-hook #'λαω-emacs-startup-hook-function)
 
