@@ -34,38 +34,44 @@
   :group 'use-package
   :prefix "λαω-use-package-defer-priority")
 
-(defcustom λαω-use-package-defer-priority-max nil
+(defcustom λαω-use-package-defer-priority-highest 0.01
   "Highest priority for `use-package' `:defer'."
   :type '(choice number (const nil))
   :require 'use-package
   :group 'λαω-use-package-defer-priority)
 
-(defcustom λαω-use-package-defer-priority-higher 1
+(defcustom λαω-use-package-defer-priority-higher 0.2
   "Higher priority for `use-package' `:defer'."
   :type '(choice number (const nil))
   :require 'use-package
   :group 'λαω-use-package-defer-priority)
 
-(defcustom λαω-use-package-defer-priority-high 2
+(defcustom λαω-use-package-defer-priority-high 0.5
   "High priority for `use-package' `:defer'."
   :type '(choice number (const nil))
   :require 'use-package
   :group 'λαω-use-package-defer-priority)
 
-(defcustom λαω-use-package-defer-priority-medium 3
+(defcustom λαω-use-package-defer-priority-medium 0.75
   "Medium priority for `use-package' `:defer'."
   :type '(choice number (const nil))
   :require 'use-package
   :group 'λαω-use-package-defer-priority)
 
-(defcustom λαω-use-package-defer-priority-low 4
+(defcustom λαω-use-package-defer-priority-low 1
   "Low priority for `use-package' `:defer'."
   :type '(choice number (const nil))
   :require 'use-package
   :group 'λαω-use-package-defer-priority)
 
-(defcustom λαω-use-package-defer-priority-lower 5
+(defcustom λαω-use-package-defer-priority-lower 2
   "Lower priority for `use-package' `:defer'."
+  :type '(choice number (const nil))
+  :require 'use-package
+  :group 'λαω-use-package-defer-priority)
+
+(defcustom λαω-use-package-defer-priority-lowest 3
+  "Lowest priority for `use-package' `:defer'."
   :type '(choice number (const nil))
   :require 'use-package
   :group 'λαω-use-package-defer-priority)
