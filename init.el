@@ -652,6 +652,12 @@ This function adds the `expreg--sentence' expansion function to
                  nil
                  (window-parameters (mode-line-format . none)))))
 
+(use-package embark-consult
+  :demand t
+  ;; show consult previews as you move around an auto-updating embark
+  ;; collect buffer
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package magit
   :ensure-system-package git
