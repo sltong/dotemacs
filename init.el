@@ -1,4 +1,4 @@
-;;; init.el --- Emacs user initialization file -*- lexical-binding: t -*-
+;;; init.el --- Emacs user initialization file -*- coding: utf-8; lexical-binding: t; -*-
 
 ;; Copyright (C) 2024 λαω
 

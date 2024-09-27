@@ -1,4 +1,4 @@
-;;; λαω-functions.el --- λαω functions  -*- lexical-binding: t -*-
+;;; λαω-functions.el --- λαω functions -*- coding: utf-8; lexical-binding: t; -*-
 
 ;; Copyright (C) 2024 λαω
 

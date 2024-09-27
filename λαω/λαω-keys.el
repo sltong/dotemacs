@@ -1,4 +1,4 @@
-;;; λαω-keys.el --- λαω keymaps and key bindings -*- lexical-binding: t -*-
+;;; λαω-keys.el --- λαω keymaps and key bindings -*- coding: utf-8; lexical-binding: t; -*-
 
 ;; Copyright (C) 2024 λαω
 
