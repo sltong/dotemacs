@@ -549,6 +549,17 @@
          :map λαω-git-map
          ("t" . git-timemachine)))
 
+(use-package diff-hl
+  :init
+  (global-diff-hl-mode)
+  (diff-hl-flydiff-mode)
+  :hook
+  (dired-mode . diff-hl-dired-mode)
+  :custom
+  (diff-hl-update-async t)
+  (diff-hl-draw-borders nil)
+  (diff-hl-flydiff-delay 0.2))
+
 (use-package yasnippet
   :config
   (keymap-unset yas-minor-mode-map "TAB" t)
