@@ -579,7 +579,6 @@
 
 
 (use-package vundo
-  :demand t
   :bind (("C-M-/" . vundo)))
 
 (use-package goto-line-preview
