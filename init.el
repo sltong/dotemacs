@@ -438,6 +438,20 @@
   :custom
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
+(use-package eat
+  :config
+  (eat-eshell-visual-command-mode)
+  :bind (:map λαω-cli-map
+         ("t" . eat)))
+
+(use-package vterm
+  ;; needed to compile libvterm
+  :ensure-system-package (cmake libtool)
+  :config
+  (keymap-unset vterm-mode-map "C-l" t)
+  :bind (:map λαω-cli-map
+         ("v" . vterm)))
+
 (use-package orderless
   :demand t
   :init
