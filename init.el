@@ -200,7 +200,7 @@
 
 (use-package eshell
   :ensure nil
-  :bind (:map λαω-shell-map
+  :bind (:map λαω-cli-map
          ("e" . eshell))
   :custom
   (eshell-buffer-maximum-lines 8192)
@@ -294,7 +294,7 @@
                (recentf-expand-file-name no-littering-var-directory))
   (recentf-mode)
   :bind (("C-c f r" . recentf)
-         :map λαω-map
+         :map λαω-file-map
          ("f" . recentf))
   :custom
   (recentf-max-saved-items 64))

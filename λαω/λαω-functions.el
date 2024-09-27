@@ -28,6 +28,27 @@
 
 ;;; Code:
 
+;;; files
+(defun λαω-find-emacs-early-init-file ()
+  "Edit the Emacs user early init file."
+  (interactive)
+  (find-file early-init-file))
+
+(defun λαω-find-emacs-init-file ()
+  "Edit the Emacs user init file."
+  (interactive)
+  (find-file user-init-file))
+
+(defun λαω-find-emacs-custom-file ()
+  "Edit the Emacs customizations file."
+  (interactive)
+  (find-file custom-file))
+
+(defun λαω-find-bashrc-file ()
+  "Edit the `bash' user startup file."
+  (interactive)
+  (find-file "~/.bashrc"))
+
 ;;; utilities
 
 (defun λαω-downcase-and-hyphenate-region (region-start region-end)
