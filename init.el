@@ -561,7 +561,9 @@
 (use-package whitespace-cleanup-mode
   :defer 3
   :init
-  (global-whitespace-cleanup-mode))
+  (global-whitespace-cleanup-mode)
+  :diminish)
+
 
 (use-package vundo
   :demand t
