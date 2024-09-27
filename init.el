@@ -352,14 +352,10 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
 (use-package tramp
   :ensure nil
-  :init
-  (setq tramp-backup-directory (convert-standard-filename
-                                (expand-file-name
-                                 "tramp/backups"
-                                 user-emacs-var-directory)))
+  :defer t
   :custom
   (tramp-default-method "ssh")
-  (tramp-backup-directory-alist `(("." . ,tramp-backup-directory)))
+  (tramp-backup-directory-alist backup-directory-alist)
   ;; set default shell to bash
   (tramp-connection-properties '((nil "remote-shell" "/usr/bin/bash")))
   (tramp-encoding-shell "/usr/bin/bash"))
