@@ -231,7 +231,7 @@
 
 (use-package elec-pair
   :ensure nil
-  :hook (prog-mode . electric-pair-mode))
+  :hook (prog-mode . electric-pair-local-mode))
 
 (use-package eshell
   :ensure nil
