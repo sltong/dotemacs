@@ -577,6 +577,8 @@
   (global-whitespace-cleanup-mode)
   :diminish)
 
+(use-package ialign
+  :bind (("C-c t i" . ialign)))
 
 (use-package vundo
   :bind (("C-M-/" . vundo)))
