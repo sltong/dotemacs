@@ -439,6 +439,20 @@
   :defer 1
   :bind (("M-j" . avy-goto-char-timer)))
 
+(use-package expreg
+  :defer 3
+  :config
+  (defun λαω-expreg-expand-sentences ()
+    "Expand sentences with `expreg'.
+
+This function adds the `expreg--sentence' expansion function to
+`expreg-functions'."
+    (add-to-list 'expreg-functions 'expreg--sentence))
+
+  :hook (text-mode . λαω-expreg-expand-sentences)
+  :bind (("C->" . expreg-expand)
+         ("C-<" . expreg-contract)))
+
 (use-package ace-window
   :bind (("M-o" . ace-window))
   :custom
@@ -516,14 +530,20 @@
   :custom
   (marginalia-field-width 120))
 
-
-(use-package expreg
+(use-package embark
+  :bind
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
   :config
-  (defun custom-expreg-expand-sentences ()
-    (add-to-list 'expreg-functions 'expreg--sentence))
-  :hook (text-mode . custom-expreg-expand-sentences)
-  :bind (("C->" . expreg-expand)
-         ("C-<" . expreg-contract)))
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
 
 (use-package magit
   :ensure-system-package git
