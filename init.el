@@ -178,6 +178,7 @@
 ;; to prevent fetching them from repositories
 (use-package autorevert
   :ensure nil
+  :defer λαω-use-package-defer-priority-medium
   :config
   (global-auto-revert-mode)
   :diminish (auto-revert-mode))
