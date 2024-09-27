@@ -71,10 +71,10 @@
   (package-quickstart t))
 
 (use-package use-package
+  :ensure nil
+  :demand t
   :custom
-  (use-package-always-ensure t)
-  (use-package-always-defer t)
-  (use-package-verbose t))
+  (use-package-always-ensure t))
 
 ;; system packages
 (use-package system-packages)
