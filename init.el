@@ -487,7 +487,7 @@
   :init
   (global-corfu-mode)
   (add-hook 'eshell-mode-hook
-            (lambda ()
+            (defun λαω-disable-corfu-auto-for-eshell ()
               (setq-local corfu-auto nil)
               (corfu-mode)))
   ;; corfu extensions
