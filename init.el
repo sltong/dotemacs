@@ -309,7 +309,8 @@
 (use-package re-builder
   :ensure nil
   :custom
-  (reb-re-syntax 'string))
+  (reb-re-syntax 'string)
+  (reb-auto-match-limit 512))
 
 (use-package recentf
   :ensure nil
