@@ -370,6 +370,7 @@
   (save-place-mode))
 
 (use-package time
+  :ensure nil
   :init
   (display-time-mode)
   :custom
