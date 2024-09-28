@@ -723,7 +723,8 @@ This function adds the `expreg--sentence' expansion function to
   :diminish)
 
 (use-package ialign
-  :bind (("C-c t i" . ialign)))
+  :bind (:map λαω-text-map
+         ("a" . ialign)))
 
 (use-package vundo
   :bind (("C-M-/" . vundo)))
