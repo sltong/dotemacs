@@ -123,7 +123,7 @@
   (after-init . λαω-display-init-time-message)
   (org-mode . visual-line-mode)
   :custom
-  (custom-enabled-themes '(modus-vivendi-tinted))
+  ;; (custom-enabled-themes '(modus-vivendi-tinted))
   (inhibit-default-init t "Don't load `default.el'.")
   (selection-coding-system 'utf-8)
   (auto-save-timeout 4)
@@ -481,6 +481,21 @@
          ("l" . recenter-top-bottom)))
 
 ;;; third-party packages
+(use-package doom-themes
+  :defer 0.01
+  :config
+  (setq doom-themes-enable-bold t)
+  (setq doom-themes-enable-italic t)
+  (load-theme 'doom-dracula t)
+  (doom-themes-visual-bell-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
+(use-package doom-modeline
+  :defer 0.01
+  :config
+  (doom-modeline-mode))
+
 (use-package undo-fu-session
   :hook
   (text-mode prog-mode))
