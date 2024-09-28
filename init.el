@@ -124,6 +124,8 @@
   (add-hook 'org-mode-hook 'visual-line-mode)
   ;; modes
   (column-number-mode)
+  ;; aliases
+  (defalias 'elisp-mode 'emacs-lisp-mode)
   (setq-default indent-tabs-mode nil)
   :custom
   (custom-enabled-themes '(modus-vivendi-tinted))
