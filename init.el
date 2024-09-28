@@ -337,7 +337,9 @@
   :ensure nil
   :defer 1
   :config
-  (show-paren-mode))
+  (show-paren-mode)
+  :custom
+  (show-paren-delay 0))
 
 (use-package password-cache
   :ensure nil
