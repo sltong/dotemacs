@@ -1,8 +1,12 @@
+# files
+custom.el
+package-quickstart.el
+
+# file wildcards
+*.elc
+
+# directories
+/.cask/
 eln-cache/
 elpa/
 var/
-
-*.elc
-
-custom.el
-package-quickstart.el
