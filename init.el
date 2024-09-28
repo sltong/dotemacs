@@ -795,10 +795,10 @@ This function adds the `expreg--sentence' expansion function to
                'which-key-mode)
   :diminish
   :custom
-  (beacon-blink-delay 0.25)
-  (beacon-blink-duration 0.25)
-  (beacon-color "#fcb948")
-  (beacon-size 32))
+  (beacon-blink-delay 0.15)
+  (beacon-blink-duration 0.5)
+  (beacon-color "#8d69e9")
+  (beacon-size 24))
 
 (use-package indent-bars
   :config
