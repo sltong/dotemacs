@@ -172,7 +172,10 @@
 ;; directories or file paths for redundancy.
 (use-package no-littering
   :demand t
-  :config
+  :init
+  ;; explicitly set "etc" and "var" directories for good measure
+  (setq no-littering-etc-directory user-emacs-etc-directory)
+  (setq no-littering-var-directory user-emacs-var-directory)
   (no-littering-theme-backups))
 
 (use-package exec-path-from-shell
@@ -336,10 +339,10 @@
 (use-package recentf
   :ensure nil
   :defer 1
-  :config
-  (add-to-list 'recentf-exclude
-               (recentf-expand-file-name no-littering-var-directory))
+  :init
   (recentf-mode)
+  (add-to-list 'recentf-exclude
+               (recentf-expand-file-name user-emacs-var-directory))
   :bind (("C-c f r" . recentf)
          :map λαω-file-map
          ("f" . recentf))
