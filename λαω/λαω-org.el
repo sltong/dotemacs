@@ -28,12 +28,16 @@
 
 ;;; Code:
 
+(require 'λαω-keys)
+
 (use-package org
   :ensure nil
   :defer 0.75
   :diminish org-indent-mode
   :bind (:map λαω-org-map
-         ("a" . org-agenda))
+         ("a" . org-agenda)
+         ("M-p" . org-metaup)
+         ("M-n" . org-metadown))
   :custom
   (org-startup-indented t)
   (org-special-ctrl-a/e t)
