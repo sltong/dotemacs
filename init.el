@@ -462,13 +462,15 @@
 
 (use-package whitespace
   :ensure nil
-  :diminish
   :hook
   (prog-mode text-mode)
+  :diminish
   :custom
   (whitespace-style '(face
                       trailing
                       tabs
+                      missing-newline-at-eof
+                      empty
                       indentation::space
                       space-after-tab
                       space-before-tab
