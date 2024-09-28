@@ -35,20 +35,19 @@
 (setq gc-cons-threshold most-positive-fixnum)
 (setq gc-cons-percentage 0.9)
 
-(setq user-emacs-etc-directory (convert-standard-filename
-                                (expand-file-name "etc/" user-emacs-directory)))
-(setq user-emacs-var-directory (convert-standard-filename
-                                (expand-file-name "var/" user-emacs-directory)))
-
-(setq package-user-dir (convert-standard-filename
-                        (expand-file-name "elpa/" user-emacs-var-directory)))
-
-;; store `eln-cache' in the "var" user-emacs-directory
+;; set `native-comp-eln-load-path'
 (when (and (fboundp 'startup-redirect-eln-cache)
            (fboundp 'native-comp-available-p)
            (native-comp-available-p))
   (startup-redirect-eln-cache
-   (expand-file-name "eln-cache/" user-emacs-var-directory)))
+   (convert-standard-filename
+    (expand-file-name  "var/eln-cache/" user-emacs-directory))))
+
+(setq package-user-dir (convert-standard-filename
+                        (expand-file-name "var/elpa/" user-emacs-directory)))
+
+;; load the newest version of a file irrespective of its extension
+(setq load-prefer-newer t)
 
 ;; temporarily hide warnings
 (setq warning-minimum-level :error)
@@ -63,20 +62,23 @@ can be set to nil during initialization to speed it up.")
 
 ;; don't try to preserve a frame's number of columns and don't round
 ;; frame sizes when resizing
+
 ;; these should optimize for the case when the frame font size is
 ;; different from the system's
 (setq frame-inhibit-implied-resize t)
 (setq frame-resize-pixelwise t)
 
 ;; initial and default frames
-(setq initial-frame-alist '((fullscreen . maximized)
+(setq initial-frame-alist '((fullscreen             . maximized)
                             (horizontal-scroll-bars . nil)
-                            (vertical-scroll-bars . nil)
-                            (tool-bar-lines . 0)))
-(setq default-frame-alist '((fullscreen . maximized)
+                            (vertical-scroll-bars   . nil)
+                            (tool-bar-lines         . 0)))
+(setq default-frame-alist '((fullscreen             . maximized)
                             (horizontal-scroll-bars . nil)
-                            (vertical-scroll-bars . nil)
-                            (tool-bar-lines . 0)))
+                            (vertical-scroll-bars   . nil)
+                            (tool-bar-lines         . 0)))
+
+(setq tooltip-mode nil)
 
 (setq inhibit-startup-screen t)
 
@@ -90,7 +92,7 @@ Restore the following:
 - garbage collection
 - displaying of warnings
 - `file-name-handler-alist'"
-  (setq gc-cons-threshold (* 1000 1000 16))
+  (setq gc-cons-threshold 16000000) ; 16MB
   (setq gc-cons-percentage 0.1)
   (setq warning-minimum-level :warning)
   (setq file-name-handler-alist file-name-handler-alist-pre-init))

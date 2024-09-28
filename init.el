@@ -54,38 +54,29 @@
 
 ;;; Code:
 
+(setq user-emacs-etc-directory (expand-file-name "etc/" user-emacs-directory))
+(setq user-emacs-var-directory (expand-file-name "var/" user-emacs-directory))
+
 ;;; package configurations
 (require 'package)
 (require 'use-package)
 
 (use-package package
   :ensure nil
-  :demand t
+  :defer nil
   :init
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-  :bind ("C-h p" . describe-package)
-  :custom
-  (package-quickstart-file
-   (expand-file-name "package-quickstart.el" user-emacs-var-directory))
-  (package-quickstart t
-   "Speed up start-up time by precomputing package activation actions."))
+  :bind ("C-h p" . describe-package))
 
 (use-package use-package
   :ensure nil
-  :demand t
+  :defer nil
   :custom
+  (use-package-always-defer t)
   (use-package-always-ensure t))
 
-;; system packages
-(use-package use-package-ensure-system-package)
-(use-package system-packages
-  :demand t)
-
-(setq load-prefer-newer t)
-
-;; automatically compile packages
 (use-package auto-compile
-  :demand t
+  :defer nil
   :config
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode))
@@ -93,6 +84,7 @@
 ;;; λαω
 (setq emacs-λαω-directory (expand-file-name "λαω/" user-emacs-directory))
 (use-package λαω
+  :defer nil
   :load-path emacs-λαω-directory)
 
 ;;; Emacs initialization and customizations
@@ -100,45 +92,39 @@
   :init
   ;; customizations file
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-  (unless (file-exists-p custom-file)
+  (if (file-exists-p custom-file)
+      (load custom-file)
     (message
-     "Custom file %s does not exist. Creating..."
+     "Customization file %s does not exist. Creating..."
      custom-file)
     (make-empty-file custom-file t))
-  (load custom-file)
 
   ;; themes directory
   (setq custom-themes-directory (expand-file-name
                                  "themes" user-emacs-etc-directory))
-  (unless (file-directory-p custom-themes-directory)
-    (message
-     "Custom themes directory %s does not exist. Creating..."
-     custom-themes-directory)
-    (make-directory custom-themes-directory t))
 
-  ;; hooks
-  (add-hook 'after-init-hook 'λαω-display-init-time-message)
   ;; ensure `λαω-remove-kill-ring-text-properties' is the first
   ;; function in `kill-emacs-hook'
   (add-hook 'kill-emacs-hook 'λαω-remove-kill-ring-text-properties -100)
-  (add-hook 'org-mode-hook 'visual-line-mode)
-  ;; modes
-  (column-number-mode)
   ;; aliases
   (defalias 'elisp-mode 'emacs-lisp-mode)
+  ;; default modes
   (setq-default indent-tabs-mode nil)
+  :hook
+  (after-init . λαω-display-init-time-message)
+  (org-mode . visual-line-mode)
   :custom
   (custom-enabled-themes '(modus-vivendi-tinted))
   (inhibit-default-init t "Don't load `default.el'.")
   (selection-coding-system 'utf-8)
-  (auto-save-timeout 5)
+  (auto-save-timeout 4)
   (auto-save-interval 65)
   (kill-ring-max 512)
   ;; undo
-  (undo-limit (* 1000 1000 1) "Increase undo information to 1MB.")
+  (undo-limit (* 1000000) "Increase undo information to 1MB.")
   ;; last-ditch outer limit for single undo commands
-  (undo-outer-limit (* 1000 1000 100)) ; 50MB
-  (undo-strong-limit (* 1000 1000 5)) ; 5MB
+  (undo-outer-limit (* 128000000)) ; 128MB
+  (undo-strong-limit (* 8000000)) ; 8MB
   ;; (minibuffer) history
   (history-length 1024)
   (history-delete-duplicates t)
@@ -165,13 +151,12 @@
   ;; Enable indentation/completion using the TAB key.
   (tab-always-indent 'complete))
 
-;;; early packages
 ;; load immediately, as soon as possible
 ;; later packages still explicitly set their modes' respective
 ;; directories or file paths for redundancy.
 (use-package no-littering
   :demand t
-  :init
+  :config
   ;; explicitly set "etc" and "var" directories for good measure
   (setq no-littering-etc-directory user-emacs-etc-directory)
   (setq no-littering-var-directory user-emacs-var-directory)
@@ -184,18 +169,28 @@
   :config
   (exec-path-from-shell-initialize))
 
-;; load early without demand
-(use-package delight)
-(use-package diminish)
+;; load after `emacs' pseudo-package
+(use-package simple
+  :ensure nil
+  :defer 0.4
+  :config
+  (column-number-mode)
+  :hook
+  (org-mode . visual-line-mode))
+
+;;; early packages
+(use-package delight :defer 0.3)
+(use-package diminish :defer 0.3)
 
 ;;; built-in packages
 ;; these packages should have :ensure explicitly set to nil in order
 ;; to prevent fetching them from repositories
 (use-package autorevert
   :ensure nil
+  :defer 1
   :config
   (global-auto-revert-mode)
-  :diminish (auto-revert-mode))
+  :diminish auto-revert-mode)
 
 (use-package cc-vars
   :ensure nil
@@ -211,20 +206,32 @@
 
 (use-package delsel
   :ensure nil
-  :init
-  (delete-selection-mode)) ; replace active selection with typed text
+  :defer 1
+  :config
+  (delete-selection-mode))
 
 (use-package desktop
   :ensure nil
-  :init
+  :defer nil
+  :config
   (desktop-save-mode)
   :custom
   (desktop-base-file-name ".desktop-session")
   (desktop-base-lock-name ".desktop-session.lock")
   (desktop-missing-file-warning t)
-  (desktop-auto-save-timeout 4)
-  (desktop-lazy-idle-delay 1)
-  (desktop-lazy-verbose nil))
+  (desktop-auto-save-timeout 1.5)
+  (desktop-restore-eager 3)
+  (desktop-lazy-idle-delay 0.5)
+  (desktop-lazy-verbose nil)
+  (desktop-clear-preserve-buffers
+   '("\\*scratch\\*"
+     "\\*Messages\\*"
+     "\\*server\\*"
+     "\\*tramp/.+\\*"
+     "\\*Warnings\\*"
+     "\\*Flymake log\\*")
+   "‘desktop-clear’ should not delete these buffers.")
+  (desktop-globals-to-clear '()))
 
 (use-package dired
   :ensure nil
@@ -245,6 +252,7 @@
 
 (use-package eldoc
   :ensure nil
+  :defer 1.5
   :diminish)
 
 (use-package elec-pair
@@ -266,6 +274,7 @@
 
 (use-package files
   :ensure nil
+  :defer 1
   :custom
   (backup-by-copying t) ; don't break hard or symbolic links
   (version-control t) ; always use numerically versioned backups
@@ -281,6 +290,7 @@
 
 (use-package frame
   :ensure nil
+  :defer 1
   :config
   (keymap-global-unset "C-z"))
 
@@ -303,33 +313,39 @@
 
 (use-package mb-depth
   :ensure nil
+  :defer 1.5
   :config
   (minibuffer-depth-indicate-mode))
 
 (use-package minibuffer
   :ensure nil
+  :commands minibuffer-mode
   :custom
   ;; tab cycle if there are only few candidates
   (completion-cycle-threshold 3))
 
 (use-package paren
   :ensure nil
+  :defer 1
   :config
   (show-paren-mode))
 
 (use-package password-cache
   :ensure nil
+  :defer 1
   :custom
   (password-cache-expiry (* 60 5))) ; 5 minutes
 
 (use-package pixel-scroll
   :ensure nil
   :if (display-graphic-p)
-  :init
+  :defer 1
+  :config
   (pixel-scroll-precision-mode))
 
 (use-package re-builder
   :ensure nil
+  :defer 1
   :custom
   (reb-re-syntax 'string)
   (reb-auto-match-limit 512))
@@ -337,7 +353,7 @@
 (use-package recentf
   :ensure nil
   :defer 1
-  :init
+  :config
   (recentf-mode)
   (add-to-list 'recentf-exclude
                (recentf-expand-file-name user-emacs-var-directory))
@@ -349,7 +365,8 @@
 
 (use-package repeat
   :ensure nil
-  :init
+  :defer 1
+  :config
   (repeat-mode)
   :custom
   (repeat-exit-timeout 1))
@@ -362,7 +379,8 @@
 
 (use-package savehist
   :ensure nil
-  :init
+  :defer 0.01
+  :config
   (savehist-mode)
   :custom
   (savehist-additional-variables '(kill-ring
@@ -372,12 +390,14 @@
 
 (use-package saveplace
   :ensure nil
+  :defer 1.5
   :config
   (save-place-mode))
 
 (use-package time
   :ensure nil
-  :init
+  :defer 0.03
+  :config
   (display-time-mode)
   :custom
   (display-time-24hr-format t)
@@ -389,7 +409,7 @@
 
 (use-package tramp
   :ensure nil
-  :defer t
+  :defer 1
   :custom
   (tramp-default-method "ssh")
   (tramp-backup-directory-alist backup-directory-alist)
@@ -399,24 +419,28 @@
 
 (use-package treesit
   :ensure nil
-  :init
+  :defer 2
+  :config
   (setq treesit-language-grammars-directory
         (expand-file-name "treesit/language-grammars" user-emacs-var-directory))
   (setq treesit-extra-load-path (list treesit-language-grammars-directory)))
 
 (use-package vc-hooks
   :ensure nil
+  :defer 1
   :custom
   (vc-make-backup-files t))
 
 (use-package winner
   :ensure nil
+  :defer 1.5
   :config
   (winner-mode))
 
 (use-package which-key
   :ensure nil
-  :init
+  :defer 0.4
+  :config
   (which-key-mode)
   :diminish
   :custom
@@ -453,11 +477,9 @@
   (text-mode prog-mode))
 
 (use-package avy
-  :defer 1
   :bind (("M-j" . avy-goto-char-timer)))
 
 (use-package expreg
-  :defer 3
   :config
   (defun λαω-expreg-expand-sentences ()
     "Expand sentences with `expreg'.
@@ -476,8 +498,8 @@ This function adds the `expreg--sentence' expansion function to
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
 (use-package eat
-  :config
-  (eat-eshell-visual-command-mode)
+  :hook
+  (eshell-load . eat-eshell-visual-command-mode)
   :bind (:map λαω-cli-map
          ("t" . eat)))
 
@@ -490,7 +512,7 @@ This function adds the `expreg--sentence' expansion function to
          ("v" . vterm)))
 
 (use-package orderless
-  :demand t
+  :defer 1
   :init
   ;; efficient prefix filtering for inputs shorter than 4 characters
   (defun orderless-fast-dispatch (word index total)
@@ -507,7 +529,41 @@ This function adds the `expreg--sentence' expansion function to
   (completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package consult
-  ;; Replace bindings. Lazily loaded by `use-package'.
+  :defer 1
+  :config
+  ;; Optionally configure the register formatting. This improves the register
+  ;; preview for `consult-register', `consult-register-load',
+  ;; `consult-register-store' and the Emacs built-ins.
+  (setq register-preview-delay 0.5
+        register-preview-function #'consult-register-format)
+
+  ;; Optionally tweak the register preview window.
+  ;; This adds thin lines, sorting and hides the mode line of the window.
+  (advice-add #'register-preview :override #'consult-register-window)
+
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+
+  ;; For some commands and buffer sources it is useful to configure the
+  ;; :preview-key on a per-command basis using the `consult-customize' macro.
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
+   ;; :preview-key "M-."
+   :preview-key '(:debounce 0.4 any))
+
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (setq consult-narrow-key "<") ;; "C-+"
+
+  ;; Optionally make narrowing help available in the minibuffer.
+  ;; You may want to use `embark-prefix-help-command' or which-key instead.
+  (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
+
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
          ("C-c h" . consult-history)
@@ -561,61 +617,19 @@ This function adds the `expreg--sentence' expansion function to
   ;; relevant when you use the default completion UI.
   :hook (completion-list-mode . consult-preview-at-point-mode)
 
-  ;; The :init configuration is always executed (Not lazy)
-  :init
-
-  ;; Optionally configure the register formatting. This improves the register
-  ;; preview for `consult-register', `consult-register-load',
-  ;; `consult-register-store' and the Emacs built-ins.
-  (setq register-preview-delay 0.5
-        register-preview-function #'consult-register-format)
-
-  ;; Optionally tweak the register preview window.
-  ;; This adds thin lines, sorting and hides the mode line of the window.
-  (advice-add #'register-preview :override #'consult-register-window)
-
-  ;; Use Consult to select xref locations with preview
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref)
-
-  ;; Configure other variables and modes in the :config section,
-  ;; after lazily loading the package.
-  :config
-
-  ;; Optionally configure preview. The default value
-  ;; is 'any, such that any key triggers the preview.
-  ;; (setq consult-preview-key 'any)
-  ;; (setq consult-preview-key "M-.")
-  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
-  ;; For some commands and buffer sources it is useful to configure the
-  ;; :preview-key on a per-command basis using the `consult-customize' macro.
-  (consult-customize
-   consult-theme :preview-key '(:debounce 0.2 any)
-   consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file consult-xref
-   consult--source-bookmark consult--source-file-register
-   consult--source-recent-file consult--source-project-recent-file
-   ;; :preview-key "M-."
-   :preview-key '(:debounce 0.4 any))
-
-  ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
-  (setq consult-narrow-key "<") ;; "C-+"
-
-  ;; Optionally make narrowing help available in the minibuffer.
-  ;; You may want to use `embark-prefix-help-command' or which-key instead.
-  ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
-)
+  :custom
+  (consult-preview-key 'any))
 
 (use-package consult-dir
-  :requires consult
+  :after consult
   :bind (("C-x C-d" . consult-dir)
          :map minibuffer-local-completion-map
          ("C-x C-d" . consult-dir)
          ("C-x C-j" . consult-dir-jump-file)))
 
 (use-package vertico
-  :init
+  :defer 1
+  :config
   (vertico-mode)
   :custom
   (vertico-cycle t) ; enable cycling for `vertico-next/previous'
@@ -623,32 +637,35 @@ This function adds the `expreg--sentence' expansion function to
   (vertico-resize nil)) ; affix minibuffer window size
 
 (use-package corfu
-  :init
+  :defer 1
+  :config
   (global-corfu-mode)
-  (add-hook 'eshell-mode-hook
-            (defun λαω-disable-corfu-auto-for-eshell ()
-              (setq-local corfu-auto nil)
-              (corfu-mode)))
   ;; corfu extensions
   (corfu-echo-mode)
   (corfu-history-mode)
   (corfu-popupinfo-mode)
-  ;; configure SPC for separator insertion
+  ;; :hook
+  ;; (eshell-mode . (defun λαω-disable-corfu-auto-for-eshell ()
+  ;;                  (setq-local corfu-auto nil)
+  ;;                  (corfu-mode)))
   :bind (:map corfu-map
+         ;; configure SPC for separator insertion
          ("SPC" . corfu-insert-separator))
   :custom
-  (corfu-cycle t)         ; enable cycling for `corfu-next/previous'
-  (corfu-separator ?\s)   ; orderless field separator
+  (corfu-cycle t) ; enable cycling for `corfu-next/previous'
+  (corfu-separator ?\s) ; orderless field separator
   (corfu-scroll-margin 3)
   (corfu-popupinfo-delay '(1.25 . 0.9)))
 
 (use-package corfu-terminal
-  :requires corfu
+  :after corfu
   :if (display-graphic-p)
-  :init
+  :defer 1.5
+  :config
   (corfu-terminal-mode))
 
 (use-package marginalia
+  :defer 1.25
   :config
   (marginalia-mode)
   :bind (("M-A" . marginalia-cycle))
@@ -656,10 +673,7 @@ This function adds the `expreg--sentence' expansion function to
   (marginalia-field-width 120))
 
 (use-package embark
-  :bind
-  (("C-." . embark-act)         ;; pick some comfortable binding
-   ("C-;" . embark-dwim)        ;; good alternative: M-.
-   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+  :defer 1
   :config
   ;; Optionally replace the key help with a completing-read interface
   (setq prefix-help-command #'embark-prefix-help-command)
@@ -670,14 +684,13 @@ This function adds the `expreg--sentence' expansion function to
                  (window-parameters (mode-line-format . none)))))
 
 (use-package embark-consult
-  :demand t
   ;; show consult previews as you move around an auto-updating embark
   ;; collect buffer
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package magit
-  :ensure-system-package git
+  :defer 1
   :commands (magit-auto-revert-mode magit-mode magit-wip-mode)
   :config
   (add-to-list 'magit-no-confirm 'safe-with-wip)
@@ -691,20 +704,23 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package magit-todos
   :after magit
+  :defer 1
   :config
   (magit-todos-mode))
 
 (use-package git-timemachine
-  :ensure-system-package git
   :bind (("C-c g t" . git-timemachine)
          :map λαω-git-map
          ("t" . git-timemachine)))
 
 (use-package diff-hl
-  :init
+  :defer 1
+  :config
   (global-diff-hl-mode)
   (diff-hl-flydiff-mode)
   :hook
+  (magit-pre-refresh . diff-hl-magit-pre-refresh)
+  (magit-post-refresh . diff-hl-magit-post-refresh)
   (dired-mode . diff-hl-dired-mode)
   :custom
   (diff-hl-update-async t)
@@ -712,6 +728,7 @@ This function adds the `expreg--sentence' expansion function to
   (diff-hl-flydiff-delay 0.2))
 
 (use-package yasnippet
+  :defer 1
   :config
   (keymap-unset yas-minor-mode-map "<tab>" t)
   (yas-minor-mode)
@@ -720,11 +737,12 @@ This function adds the `expreg--sentence' expansion function to
          ("y" . yas-insert-snippet)))
 
 (use-package yasnippet-snippets
-  :requires yasnippet)
+  :after yasnippet
+  :defer 1)
 
 (use-package whitespace-cleanup-mode
-  :defer 3
-  :init
+  :defer 1
+  :config
   (global-whitespace-cleanup-mode)
   :diminish)
 
@@ -739,9 +757,9 @@ This function adds the `expreg--sentence' expansion function to
   :bind ([remap goto-line] . goto-line-preview))
 
 (use-package beacon
-  :init
-  (beacon-mode)
+  :defer 1
   :config
+  (beacon-mode)
   (add-to-list 'beacon-dont-blink-major-modes
                'artist-mode
                'which-key-mode)
@@ -773,4 +791,5 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package colorful-mode
   :hook (prog-mode text-mode))
+
 ;;; init.el ends here
