@@ -765,4 +765,7 @@ This function adds the `expreg--sentence' expansion function to
                                 with_statement
                                 while_statement))))
 
+(use-package colorful-mode
+  :hook (prog-mode text-mode))
+
 ;;; init.el ends here
