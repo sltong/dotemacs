@@ -1,4 +1,4 @@
-;;; λαω-org.el --- λαω Org Mode(-related) -*- coding: utf-8; lexical-binding: t; -*-
+;;; λαω-org.el --- λαω Org(-related) -*- coding: utf-8; lexical-binding: t; -*-
 
 ;; Copyright (C) 2024 λαω
 
@@ -15,7 +15,7 @@
 
 ;; This program is distributed in the hope that it will be useful, but
 ;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 ;; Affero General Public License for more details.
 
 ;; You should have received a copy of the GNU Affero General Public
@@ -24,7 +24,7 @@
 
 ;;; Commentary:
 
-;; All things Org Mode.
+;; All things Org.
 
 ;;; Code:
 

@@ -169,5 +169,4 @@ Our word chain; it's broken.\", \"oh-no! our-word-chain; it's-broken.\"."
   (switch-to-buffer-other-window (get-scratch-buffer-create)))
 
 (provide 'λαω-functions)
-
 ;;; λαω-functions.el ends here

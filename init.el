@@ -772,5 +772,4 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package colorful-mode
   :hook (prog-mode text-mode))
-
 ;;; init.el ends here
