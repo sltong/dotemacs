@@ -444,7 +444,9 @@
   :ensure nil
   :defer 1.5
   :config
-  (winner-mode))
+  (winner-mode)
+  :bind (("C-c w C-/" . winner-undo)
+         ("C-c w C-?" . winner-redo)))
 
 (use-package which-key
   :ensure nil
