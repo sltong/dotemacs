@@ -70,11 +70,46 @@ URL `https://emacs.stackexchange.com/a/4191'"
                              (time-subtract after-init-time before-init-time)))
                     gcs-done))))
 
-;;; files
-(defun λαω-find-emacs-early-init-file ()
-  "Edit the Emacs user early init file."
+;;; directories
+(defun λαω-find-user-emacs-directory ()
+  "Visit `user-emacs-directory'."
   (interactive)
-  (find-file early-init-file))
+  (find-file user-emacs-directory))
+
+(defun λαω-find-org-directory ()
+  "Visit `org-directory'."
+  (interactive)
+  (find-file org-directory))
+
+;;; files
+(defun λαω-expand-λαω-file-name (filename)
+  "Concatenate \"λαω-\" with FILENAME and return the absolute file path."
+  (expand-file-name (concat "λαω-" filename) emacs-λαω-directory))
+
+(defun λαω-find-λαω-λαω-file ()
+  "Edit `λαω.el'."
+  (interactive)
+  (find-file (λαω-expand-λαω-file-name "λαω.el")))
+
+(defun λαω-find-λαω-custom-file ()
+  "Edit the λαω customizations file."
+  (interactive)
+  (find-file (λαω-expand-λαω-file-name "custom.el")))
+
+(defun λαω-find-λαω-functions-file ()
+  "Edit the λαω functions file."
+  (interactive)
+  (find-file (λαω-expand-λαω-file-name "functions.el")))
+
+(defun λαω-find-λαω-keys-file ()
+  "Edit the λαω keys file."
+  (interactive)
+  (find-file (λαω-expand-λαω-file-name "keys.el")))
+
+(defun λαω-find-λαω-org-file ()
+  "Edit the λαω org file."
+  (interactive)
+  (find-file (λαω-expand-λαω-file-name "org.el")))
 
 (defun λαω-find-emacs-init-file ()
   "Edit the Emacs user init file."
@@ -91,8 +126,27 @@ URL `https://emacs.stackexchange.com/a/4191'"
   (interactive)
   (find-file "~/.bashrc"))
 
-;;; utilities
+(defun λαω-find-emacs-early-init-file ()
+  "Edit the Emacs user early init file."
+  (interactive)
+  (find-file early-init-file))
 
+(defun λαω-find-emacs-user-init-file ()
+  "Edit the Emacs user init file."
+  (interactive)
+  (find-file user-init-file))
+
+(defun λαω-find-emacs-custom-file ()
+  "Edit the Emacs customizations file."
+  (interactive)
+  (find-file custom-file))
+
+(defun λαω-find-bashrc-file ()
+  "Edit the `bash' user startup file."
+  (interactive)
+  (find-file "~/.bashrc"))
+
+;;; utilities
 (defun λαω-downcase-and-hyphenate-region (region-start region-end)
   "Downcase words in the region and concatenate them with hyphens.
 

@@ -36,66 +36,97 @@
   :name "λαω")
 (keymap-set global-map "C-l" (cons "λαω" λαω-map))
 
+;; directory keymaps
+(defvar-keymap λαω-dir-map
+  :doc "Keymap for directories."
+  :name "dir"
+  "o" '("org" . λαω-find-org-directory)
+  "e" '("emacs" . λαω-find-user-emacs-directory))
+(keymap-set global-map
+            "C-c d" (cons "λαω-dir" λαω-dir-map))
+(keymap-set λαω-map
+            "d" (cons "dir" λαω-dir-map))
+
+;; file keymaps
 (defvar-keymap λαω-file-map
   :doc "Keymap for files."
-  :name "files")
-(keymap-set global-map "C-c f" (cons "λαω-files" λαω-file-map))
-(keymap-set λαω-map "f" (cons "files" λαω-file-map))
+  :name "file")
+(keymap-set global-map
+            "C-c f" (cons "λαω-file" λαω-file-map))
+(keymap-set λαω-map
+            "f" (cons "file" λαω-file-map))
 
-(defvar-keymap λαω-config-files-map
+;; config file keymaps
+(defvar-keymap λαω-file-config-map
   :doc "Keymap for configuration files."
-  :name "config")
-(keymap-set λαω-file-map "c" (cons "config" λαω-config-files-map))
+  :name "file-config")
+(keymap-set λαω-file-map
+            "c" (cons "config" λαω-file-config-map))
 
-(defvar-keymap λαω-emacs-config-files-map
+(defvar-keymap λαω-file-config-λαω-map
+  :doc "Keymap for λαω configurations."
+  :name "config-λαω"
+  "λ" '("λαω"       . λαω-find-λαω-λαω-file)
+  "l" '("λαω"       . λαω-find-λαω-λαω-file)
+  "c" '("custom"    . λαω-find-λαω-custom-file)
+  "f" '("functions" . λαω-find-λαω-functions-file)
+  "k" '("keys"      . λαω-find-λαω-keys-file)
+  "o" '("org"       . λαω-find-λαω-org-file))
+
+(keymap-set λαω-file-config-map
+            "l" (cons "λαω" λαω-file-config-λαω-map))
+
+(defvar-keymap λαω-file-config-emacs-map
   :doc "Keymap for Emacs configurations."
-  :name "emacs-config")
-(keymap-set λαω-config-files-map "e" (cons "emacs-config"
-                                           λαω-emacs-config-files-map))
+  :name "config-emacs"
+  "c" '("custom"     . λαω-find-emacs-custom-file)
+  "e" '("early-init" . λαω-find-emacs-early-init-file)
+  "i" '("init"       . λαω-find-emacs-user-init-file))
+(keymap-set λαω-file-config-map
+            "e" (cons "emacs" λαω-file-config-emacs-map))
 
-(defvar-keymap λαω-cli-config-files-map
+(defvar-keymap λαω-file-config-cli-map
   :doc "Keymap for command-line interface configurations."
-  :name "cli-config")
-(keymap-set λαω-config-files-map "c" (cons "cli-config"
-                                           λαω-cli-config-files-map))
+  :name "config-cli"
+  "b" '("bashrc" . λαω-find-bashrc-file))
+(keymap-set λαω-file-config-map
+            "c" (cons "cli" λαω-file-config-cli-map))
 
 (defvar-keymap λαω-git-map
   :doc "Keymap for git-related commands."
   :name "git")
-(keymap-set λαω-map "g" (cons "git" λαω-git-map))
+(keymap-set λαω-map
+            "g" (cons "git" λαω-git-map))
 
 (defvar-keymap λαω-cli-map
-  :doc "Keymap for shells and terminals.")
-(keymap-set global-map "C-c c" (cons "λαω-cli" λαω-cli-map))
-(keymap-set λαω-map "c" (cons "cli" λαω-cli-map))
+  :doc "Keymap for command-line interfaces."
+  :name "cli")
+(keymap-set global-map
+            "C-c c" (cons "λαω-cli" λαω-cli-map))
+(keymap-set λαω-map
+            "c" (cons "cli" λαω-cli-map))
 
 (defvar-keymap λαω-org-map
   :doc "Keymap for Org Mode."
   :name "org")
-(keymap-set global-map "C-c o" (cons "λαω-org" λαω-org-map))
-(keymap-set λαω-map "o" (cons "org" λαω-org-map))
+(keymap-set global-map
+            "C-c o" (cons "λαω-org" λαω-org-map))
+(keymap-set λαω-map
+            "o" (cons "org" λαω-org-map))
 
-;;; key bindings
+(defvar-keymap λαω-text-map
+  :doc "Keymap for text."
+  :name "text")
+(keymap-set global-map
+            "C-c t" (cons "λαω-text" λαω-text-map))
+(keymap-set λαω-map
+            "t" (cons "text" λαω-text-map))
 
+;; global key bindings
 (keymap-set λαω-map "s" 'scratch-buffer)
-
-;; config key bindings
-
-(keymap-set λαω-emacs-config-files-map
-            "e" '("early-init" . λαω-find-emacs-early-init-file))
-
-(keymap-set λαω-emacs-config-files-map
-            "i" '("init" . λαω-find-emacs-init-file))
-
-(keymap-set λαω-emacs-config-files-map
-            "c" '("custom" . λαω-find-emacs-custom-file))
-
-(keymap-set λαω-cli-config-files-map
-            "b" '("bashrc" . λαω-find-bashrc-file))
 
 ;; the rest of the key bindings can be found in a package's respective
 ;; `use-package' macro in `init.el'
 
 (provide 'λαω-keys)
-
 ;;; λαω-keys.el ends here
