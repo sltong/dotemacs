@@ -319,7 +319,7 @@
 (use-package ibuffer
   :ensure nil
   :bind (("C-x C-b" . ibuffer)
-         :map λαω-map
+         :map λαω-buffer-map
          ("b" . ibuffer)))
 
 (use-package mb-depth
@@ -484,8 +484,10 @@
 
 (use-package window
   :ensure nil
-  :bind (("C-c l" . recenter-top-bottom)
+  :bind (("C-c C-l" . recenter-top-bottom)
+         ("C-c l" . recenter-top-bottom)
          :repeat-map λαω-recenter-window-repeat-map
+         ("C-l" . recenter-top-bottom)
          ("l" . recenter-top-bottom)))
 
 ;;; third-party packages
@@ -732,13 +734,10 @@ This function adds the `expreg--sentence' expansion function to
   (add-to-list 'magit-no-confirm 'safe-with-wip)
   (magit-wip-mode)
   :diminish magit-wip-mode
-  :bind (("C-c g f" . magit-file-dispatch)
-         ("C-c g g" . magit-dispatch)
-         ("C-c g s" . magit-status)
-         :map λαω-git-map
+  :bind (:map λαω-git-map
+         ("d" . magit-dispatch)
          ("f" . magit-file-dispatch)
-         ("g" . magit-dispatch)
-         ("s" . magit-status)))
+         ("g" . magit-status)))
 
 (use-package magit-todos
   :after magit
@@ -747,8 +746,7 @@ This function adds the `expreg--sentence' expansion function to
   (magit-todos-mode))
 
 (use-package git-timemachine
-  :bind (("C-c g t" . git-timemachine)
-         :map λαω-git-map
+  :bind (:map λαω-git-map
          ("t" . git-timemachine)))
 
 (use-package diff-hl
