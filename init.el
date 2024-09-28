@@ -77,8 +77,9 @@
   (use-package-always-ensure t))
 
 ;; system packages
-(use-package system-packages)
 (use-package use-package-ensure-system-package)
+(use-package system-packages
+  :demand t)
 
 ;; λαω
 (setq emacs-λαω-directory (expand-file-name "λαω" user-emacs-directory))
