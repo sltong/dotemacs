@@ -122,6 +122,9 @@
   ;; function in `kill-emacs-hook'
   (add-hook 'kill-emacs-hook 'λαω-remove-kill-ring-text-properties -100)
   (add-hook 'org-mode-hook 'visual-line-mode)
+  ;; modes
+  (column-number-mode)
+  (setq-default indent-tabs-mode nil)
   :custom
   (custom-enabled-themes '(modus-vivendi-tinted))
   (inhibit-default-init t)
@@ -139,8 +142,6 @@
   (history-delete-duplicates t)
   (enable-recursive-minibuffers t)
   (truncate-lines t)
-  (column-number-mode t)
-  (indent-tabs-mode nil)
   ;; *scratch* buffer
   (initial-major-mode 'fundamental-mode
    "Set initial *scratch* buffer major mode to `fundamental-mode'.")
