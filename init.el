@@ -368,7 +368,7 @@
                (recentf-expand-file-name user-emacs-var-directory))
   :bind (("C-c f r" . recentf)
          :map λαω-file-map
-         ("f" . recentf))
+         ("r" . recentf))
   :custom
   (recentf-max-saved-items 64))
 
