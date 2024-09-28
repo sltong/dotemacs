@@ -127,7 +127,7 @@
   (setq-default indent-tabs-mode nil)
   :custom
   (custom-enabled-themes '(modus-vivendi-tinted))
-  (inhibit-default-init t)
+  (inhibit-default-init t "Don't load `default.el'.")
   (selection-coding-system 'utf-8)
   (auto-save-timeout 5)
   (auto-save-interval 65)
