@@ -530,11 +530,11 @@ This function adds the `expreg--sentence' expansion function to
          ("t" . eat)))
 
 (use-package vterm
-  ;; needed to compile libvterm
-  :ensure-system-package (cmake libtool)
   :config
   (keymap-unset vterm-mode-map "C-l" t)
-  :bind (:map λαω-cli-map
+  :bind (:map vterm-mode-map
+         ("C-q" . vterm-send-next-key)
+         :map λαω-cli-map
          ("v" . vterm)))
 
 (use-package orderless
