@@ -29,7 +29,6 @@
 ;;; Code:
 
 (require 'λαω-functions)
-(require 'λαω-custom)
 (require 'λαω-keys)
 (require 'λαω-org)
 

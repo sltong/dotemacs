@@ -30,7 +30,6 @@
 
 (use-package org
   :ensure nil
-  :defer λαω-use-package-defer-priority-medium
   :diminish org-indent-mode
   :bind (:map λαω-org-map
          ("a" . org-agenda))
