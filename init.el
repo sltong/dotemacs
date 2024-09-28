@@ -103,6 +103,15 @@
   (setq custom-themes-directory (expand-file-name
                                  "themes" user-emacs-etc-directory))
 
+  ;; font
+  (custom-set-faces
+   '(default ((t (:family "JetBrains Mono NL"
+                  :foundry "JB"
+                  :slant normal
+                  :weight regular
+                  :height 120
+                  :width normal)))))
+
   ;; ensure `λαω-remove-kill-ring-text-properties' is the first
   ;; function in `kill-emacs-hook'
   (add-hook 'kill-emacs-hook 'λαω-remove-kill-ring-text-properties -100)
