@@ -152,6 +152,7 @@
   (message-log-max 10000
    "Increase maximum number of lines in the message log buffer.")
   (use-short-answers t "Make `yes-or-no-p' accept \"y\" or \"n\".")
+  (yes-or-no-prompt "(y or n)")
   (default-input-method "greek")
   (sentence-end-double-space nil
    "Make Emacs recognize single spaces as sentence-ending.")
