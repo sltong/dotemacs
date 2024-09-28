@@ -726,11 +726,13 @@ This function adds the `expreg--sentence' expansion function to
   (add-to-list 'magit-no-confirm 'safe-with-wip)
   (magit-wip-mode)
   :diminish magit-wip-mode
-  :bind (("C-c g s" . magit-status)
+  :bind (("C-c g f" . magit-file-dispatch)
          ("C-c g g" . magit-dispatch)
-         ("C-c g f" . magit-file-dispatch)
+         ("C-c g s" . magit-status)
          :map λαω-git-map
-         ("g" . magit-status)))
+         ("f" . magit-file-dispatch)
+         ("g" . magit-dispatch)
+         ("s" . magit-status)))
 
 (use-package magit-todos
   :after magit
