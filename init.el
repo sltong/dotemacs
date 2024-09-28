@@ -707,7 +707,11 @@ This function adds the `expreg--sentence' expansion function to
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
-                 (window-parameters (mode-line-format . none)))))
+                 (window-parameters (mode-line-format . none))))
+  :bind
+  (("C-." . embark-act) ;; pick some comfortable binding
+   ("C-;" . embark-dwim) ;; good alternative: M-.
+   ("C-h B" . embark-bindings))) ;; alternative for `describe-bindings'
 
 (use-package embark-consult
   ;; show consult previews as you move around an auto-updating embark
