@@ -1,4 +1,4 @@
-;;; early-init.el --- Emacs user early initialization file -*- coding: utf-8; lexical-binding: t; -*-
+;;; early-init.el --- Emacs user early initialization file -*- coding: utf-8; lexical-binding: t; no-byte-compile: t; -*-
 
 ;; Copyright (C) 2024 λαω
 
