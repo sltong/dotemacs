@@ -309,10 +309,12 @@
 
 (use-package hideshow
   :ensure nil
-  :config
-  (hs-minor-mode)
+  :hook (prog-mode . hs-minor-mode)
+  :diminish (hs-minor-mode)
   :bind (("C-c C-<tab>" . hs-toggle-hiding)
-         ("C-c <tab>" . hs-toggle-hiding)))
+         ("C-c <tab>" . hs-toggle-hiding))
+  :custom
+  (hs-isearch-open t "Open both code and comment blocks when doing `isearch'."))
 
 (use-package ibuffer
   :ensure nil
