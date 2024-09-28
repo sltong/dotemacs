@@ -1,4 +1,4 @@
-;;; init.el --- Emacs user initialization file -*- coding: utf-8; lexical-binding: t; -*-
+;;; init.el --- Emacs user initialization file -*- coding: utf-8; lexical-binding: t; no-byte-compile: t; -*-
 
 ;; Copyright (C) 2024 λαω
 
@@ -81,8 +81,17 @@
 (use-package system-packages
   :demand t)
 
-;; λαω
-(setq emacs-λαω-directory (expand-file-name "λαω" user-emacs-directory))
+(setq load-prefer-newer t)
+
+;; automatically compile packages
+(use-package auto-compile
+  :demand t
+  :config
+  (auto-compile-on-load-mode)
+  (auto-compile-on-save-mode))
+
+;;; λαω
+(setq emacs-λαω-directory (expand-file-name "λαω/" user-emacs-directory))
 (use-package λαω
   :load-path emacs-λαω-directory)
 
@@ -115,7 +124,6 @@
   (add-hook 'org-mode-hook 'visual-line-mode)
   :custom
   (custom-enabled-themes '(modus-vivendi-tinted))
-  (load-prefer-newer t)
   (inhibit-default-init t)
   (selection-coding-system 'utf-8)
   (auto-save-timeout 5)
