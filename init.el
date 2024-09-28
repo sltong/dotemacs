@@ -149,7 +149,6 @@
    "Set initial *scratch* buffer major mode to `fundamental-mode'.")
   (initial-scratch-message nil)
   (visible-bell t) ; replace audible bell with visual one
-  (scroll-conservatively 101)
   (scroll-preserve-screen-position t)
   (message-log-max 10000
    "Increase maximum number of lines in the message log buffer.")
