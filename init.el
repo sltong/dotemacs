@@ -201,6 +201,7 @@
 
 (use-package crm
   :ensure nil
+  :commands (completing-read-multiple)
   :config
   (advice-add #'completing-read-multiple
               :filter-args #'λαω-crm-prompt-indicator))
