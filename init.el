@@ -835,17 +835,18 @@ This function adds the `expreg--sentence' expansion function to
   (diff-hl-flydiff-delay 0.2))
 
 (use-package yasnippet
+  :disabled
   :defer 1
   :config
-  (keymap-unset yas-minor-mode-map "<tab>" t)
+  (yas-reload-all)
   (yas-minor-mode)
   :bind (("C-c y e" . yas-expand)
          :map λαω-map
          ("y" . yas-insert-snippet)))
 
 (use-package yasnippet-snippets
-  :after yasnippet
-  :defer 1)
+  :disabled
+  :after yasnippet)
 
 (use-package whitespace-cleanup-mode
   :defer 1
