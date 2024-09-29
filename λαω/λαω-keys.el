@@ -108,6 +108,11 @@
 (keymap-global-set "C-c t" (cons "λαω-text" λαω-text-map))
 (keymap-set λαω-map "t" (cons "text" λαω-text-map))
 
+(defvar-keymap λαω-text-completion-map
+  :doc "Keymap for text completions."
+  :name "text-completion")
+(keymap-set λαω-text-map "c" (cons "completion" λαω-text-completion-map))
+
 (defvar-keymap λαω-cli-map
   :doc "Keymap for command-line interfaces."
   :name "cli")

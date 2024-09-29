@@ -748,6 +748,26 @@ This function adds the `expreg--sentence' expansion function to
   :config
   (corfu-terminal-mode))
 
+(use-package cape
+  :defer 1
+  :config
+  ;; Add to the global default value of
+  ;; `completion-at-point-functions' which is used by
+  ;; `completion-at-point'. The order of the functions matters, the
+  ;; first function returning a result wins. Note that the list of
+  ;; buffer-local completion functions takes precedence over the
+  ;; global list.
+  ;;  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-keyword)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  (add-hook 'completion-at-point-functions #'cape-elisp-symbol)
+  ;; (add-hook 'completion-at-point-functions #'cape-dict)
+  (add-hook 'completion-at-point-functions #'cape-history)
+  ;; (add-hook 'completion-at-point-functions #'cape-emoji)
+
+  (keymap-set λαω-text-completion-map "c" (cons "cape" cape-prefix-map)))
+
 (use-package marginalia
   :defer 1.25
   :config
