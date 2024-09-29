@@ -730,10 +730,6 @@ This function adds the `expreg--sentence' expansion function to
   (corfu-echo-mode)
   (corfu-history-mode)
   (corfu-popupinfo-mode)
-  ;; :hook
-  ;; (eshell-mode . (defun λαω-disable-corfu-auto-for-eshell ()
-  ;;                  (setq-local corfu-auto nil)
-  ;;                  (corfu-mode)))
   :bind (:map corfu-map
          ;; configure SPC for separator insertion
          ("SPC" . corfu-insert-separator))
