@@ -726,6 +726,7 @@ This function adds the `expreg--sentence' expansion function to
   :defer 1
   :config
   (global-corfu-mode)
+  (keymap-unset corfu-map "<RET>")
   ;; corfu extensions
   (corfu-echo-mode)
   (corfu-history-mode)
