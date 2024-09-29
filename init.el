@@ -648,7 +648,8 @@ This function adds the `expreg--sentence' expansion function to
 
   ;; Optionally make narrowing help available in the minibuffer.
   ;; You may want to use `embark-prefix-help-command' or which-key instead.
-  (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
+  (keymap-set consult-narrow-map
+              (concat consult-narrow-key " ?") #'consult-narrow-help)
 
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
