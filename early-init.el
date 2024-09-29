@@ -35,6 +35,14 @@
 (setq gc-cons-threshold most-positive-fixnum)
 (setq gc-cons-percentage 0.9)
 
+(defvar file-name-handler-alist-pre-init file-name-handler-alist
+  "Pre-`user-init-file' `file-name-handler-alist'.
+
+This variable stores the original `file-name-handler-alist' so that it
+can be set to nil during initialization to speed it up.")
+
+(setq file-name-handler-alist nil)
+
 ;; set `native-comp-eln-load-path'
 (when (and (fboundp 'startup-redirect-eln-cache)
            (fboundp 'native-comp-available-p)
@@ -52,19 +60,9 @@
 ;; temporarily hide warnings
 (setq warning-minimum-level :error)
 
-(defvar file-name-handler-alist-pre-init file-name-handler-alist
-  "Pre-`user-init-file' `file-name-handler-alist'.
-
-This variable stores the original `file-name-handler-alist' so that it
-can be set to nil during initialization to speed it up.")
-
-(setq file-name-handler-alist nil)
-
-;; don't try to preserve a frame's number of columns and don't round
-;; frame sizes when resizing
-
-;; these should optimize for the case when the frame font size is
-;; different from the system's
+;; Don't try to preserve a frame's number of columns and don't round
+;; frame sizes when resizing. These should optimize for the case when
+;; the frame font size is different from the system's.
 (setq frame-inhibit-implied-resize t)
 (setq frame-resize-pixelwise t)
 
@@ -73,6 +71,7 @@ can be set to nil during initialization to speed it up.")
                             (horizontal-scroll-bars . nil)
                             (vertical-scroll-bars   . nil)
                             (tool-bar-lines         . 0)))
+
 (setq default-frame-alist '((fullscreen             . maximized)
                             (horizontal-scroll-bars . nil)
                             (vertical-scroll-bars   . nil)
