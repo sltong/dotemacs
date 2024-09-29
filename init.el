@@ -82,43 +82,50 @@
   (auto-compile-on-save-mode))
 
 ;;; λαω
-(setq emacs-λαω-directory (expand-file-name "λαω/" user-emacs-directory))
+(defvar λαω-emacs-directory (expand-file-name "λαω/" user-emacs-directory)
+  "Emacs λαω directory.")
+
 (use-package λαω
   :defer nil
-  :load-path emacs-λαω-directory)
+  :load-path λαω-emacs-directory)
 
-;;; Emacs initialization and customizations
+;;; Emacs initialization and (built-in package) customizations
 (use-package emacs
   :init
-  ;; customizations file
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (if (file-exists-p custom-file)
       (load custom-file)
     (message
-     "Customization file %s does not exist. Creating..."
+     "`custom.el' does not exist. Creating it..."
      custom-file)
     (make-empty-file custom-file t))
 
-  ;; themes directory
-  (setq custom-themes-directory (expand-file-name
-                                 "themes" user-emacs-etc-directory))
-
-  ;; font
-  (custom-set-faces
-   '(default ((t (:family "JetBrains Mono NL"
-                  :foundry "JB"
-                  :slant normal
-                  :weight regular
-                  :height 120
-                  :width normal)))))
+  ;; default fonts
+  (if (display-graphic-p)
+      (progn
+        (when (member "JetBrains Mono NL" (font-family-list))
+          (add-to-list 'default-frame-alist
+                       '(font . "JetBrains Mono NL"))
+          (custom-set-faces
+           '(fixed-pitch-serif ((t (:family "JetBrains Mono NL"))))))
+        (when (member "IBM Plex Sans" (font-family-list))
+          (custom-set-faces
+           '(variable-pitch ((t (:family "IBM Plex Sans")))))))
+    (message "Emacs is not running graphically. Skipping setting default font.")
+    nil)
 
   ;; ensure `λαω-remove-kill-ring-text-properties' is the first
   ;; function in `kill-emacs-hook'
   (add-hook 'kill-emacs-hook 'λαω-remove-kill-ring-text-properties -100)
+
+  :config
+  (setopt custom-theme-directory (expand-file-name
+                                  "themes" user-emacs-etc-directory))
   ;; aliases
   (defalias 'elisp-mode 'emacs-lisp-mode)
   ;; default modes
   (setq-default indent-tabs-mode nil)
+
   :hook
   (after-init . λαω-display-init-time-message)
   (org-mode . visual-line-mode)
@@ -128,6 +135,7 @@
          ("s" . 'scratch-buffer))
 
   :custom
+  (column-number-mode t)
   ;; (custom-enabled-themes '(modus-vivendi-tinted))
   (inhibit-default-init t "Don't load `default.el'.")
   (selection-coding-system 'utf-8)
@@ -183,20 +191,11 @@
   :config
   (exec-path-from-shell-initialize))
 
-;; load after `emacs' pseudo-package
-(use-package simple
-  :ensure nil
-  :defer 0.4
-  :config
-  (column-number-mode)
-  :hook
-  (org-mode . visual-line-mode))
-
 ;;; early packages
 (use-package delight :defer 0.3)
 (use-package diminish :defer 0.3)
 
-;;; built-in packages
+;;; included packages
 ;; these packages should have :ensure explicitly set to nil in order
 ;; to prevent fetching them from repositories
 (use-package autorevert
@@ -206,7 +205,14 @@
   (global-auto-revert-mode)
   :diminish auto-revert-mode)
 
-(use-package cc-vars
+(use-package bookmark
+  :ensure nil
+  :defer 0.75
+  :custom
+  (bookmark-menu-confirm-deletion t)
+  (bookmark-menu-length 80))
+
+(use-package cc-mode
   :ensure nil
   :custom
   (c-basic-offset 4))
@@ -232,11 +238,21 @@
   :custom
   (desktop-base-file-name ".desktop-session")
   (desktop-base-lock-name ".desktop-session.lock")
-  (desktop-missing-file-warning t)
+  (desktop-missing-file-warning t
+   "Offer to recreate the buffers of deleted files.")
   (desktop-auto-save-timeout 1.5)
   (desktop-restore-eager 3)
   (desktop-lazy-idle-delay 0.5)
   (desktop-lazy-verbose nil)
+  (desktop-globals-to-save '(desktop-missing-file-warning
+                             file-name-history
+                             kill-ring
+                             kmacro-ring
+                             regexp-search-ring
+                             register-alist
+                             search-ring
+                             tags-file-name
+                             tags-table-list))
   (desktop-clear-preserve-buffers
    '("\\*scratch\\*"
      "\\*Messages\\*"
@@ -245,10 +261,12 @@
      "\\*Warnings\\*"
      "\\*Flymake log\\*")
    "‘desktop-clear’ should not delete these buffers.")
-  (desktop-globals-to-clear '()))
+  (desktop-globals-to-clear '()
+   "Don't clear any global variables with `desktop-clear'."))
 
 (use-package dired
   :ensure nil
+  :defer nil
   :bind (:map dired-mode-map
          ("b" . dired-up-directory)
          ("+" . dired-create-empty-file)
@@ -302,11 +320,9 @@
   :ensure nil
   :bind ("C-h P" . finder-by-keyword))
 
-(use-package frame
+(use-package flymake
   :ensure nil
-  :defer 1
-  :config
-  (keymap-global-unset "C-z"))
+  :hook (prog-mode))
 
 (use-package help-fns
   :ensure nil
@@ -320,6 +336,24 @@
          ("C-c <tab>" . hs-toggle-hiding))
   :custom
   (hs-isearch-open t "Open both code and comment blocks when doing `isearch'."))
+
+(use-package hl-line
+  :defer 1
+  :init
+  (defun λαω-disable-hl-line-mode-temporarily (func &rest args)
+    "Temporarily disable `global-hl-line-mode' when calling FUNC.
+
+Credit to Sacha Chua. See:
+URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
+    (if global-hl-line-mode
+        (progn
+          (global-hl-line-mode -1)
+          (prog1 (apply func args)
+            (global-hl-line-mode 1)))
+      (apply func args)))
+  (advice-add #'face-at-point :around #'λαω-disable-hl-line-mode-temporarily)
+  :config
+  (global-hl-line-mode))
 
 (use-package ibuffer
   :ensure nil
@@ -404,7 +438,8 @@
   (savehist-additional-variables '(kill-ring
                                    kmacro-ring
                                    regexp-search-ring
-                                   search-ring)))
+                                   search-ring
+                                   Info-history)))
 
 (use-package saveplace
   :ensure nil
@@ -449,6 +484,15 @@
   :custom
   (vc-make-backup-files t))
 
+(use-package window
+  :ensure nil
+  :defer nil
+  :custom
+  ;; See:
+  ;; https://www.masteringemacs.org/article/demystifying-emacs-window-manager
+  (switch-to-buffer-obey-display-actions t
+   "treat manual buffer switching the same as programmatic switching"))
+
 (use-package winner
   :ensure nil
   :defer 1.5
@@ -464,7 +508,7 @@
   (which-key-mode)
   :diminish
   :custom
-  (which-key-idle-delay 0.3)
+  (which-key-idle-delay 0.25)
   (which-key-preserve-window-configuration t)
   (which-key-max-description-length nil)
   (which-key-dont-use-unicode nil)
