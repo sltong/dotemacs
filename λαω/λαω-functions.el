@@ -28,7 +28,17 @@
 
 ;;; Code:
 
-;;; Emacs configurations
+;;; Emacs configuration functions
+(defun λαω-display-init-time-message ()
+  "Display an Emacs initialization time and garbage collections message."
+  (run-with-idle-timer
+   3 nil (lambda ()
+           (message "Emacs loaded in %s with %d garbage collections."
+                    (format "%.2f seconds"
+                            (float-time
+                             (time-subtract after-init-time before-init-time)))
+                    gcs-done))))
+
 (defun λαω-crm-prompt-indicator (args)
   "Prompt indicator for `completing-read-multiple'.
 
@@ -76,27 +86,17 @@ URL `https://emacs.stackexchange.com/a/4191'"
                             "package-quickstart.elc"))))
     (when (y-or-n-p "Delete all generated Emacs data?")
       (message "Deleting generated files in `user-emacs-directory'...")
-      (mapcar (lambda (file)
+      (mapc (lambda (file)
                 (when (file-exists-p file)
                   (funcall #'delete-file file delete-by-moving-to-trash)))
               files-to-delete)
       (message
        "Deleting generated directories and their files...")
-      (mapcar (lambda (dir)
+      (mapc (lambda (dir)
                 (when (file-exists-p (directory-file-name dir))
                   (funcall #'delete-directory dir t delete-by-moving-to-trash)))
               dirs-to-delete)
       (message "Generated Emacs data was deleted successfully."))))
-
-(defun λαω-display-init-time-message ()
-  "Display an Emacs initialization time and garbage collections message."
-  (run-with-idle-timer
-   3 nil (lambda ()
-           (message "Emacs loaded in %s with %d garbage collections."
-                    (format "%.2f seconds"
-                            (float-time
-                             (time-subtract after-init-time before-init-time)))
-                    gcs-done))))
 
 ;;; directories
 (defun λαω-find-user-emacs-directory ()
@@ -112,12 +112,12 @@ URL `https://emacs.stackexchange.com/a/4191'"
 ;;; files
 (defun λαω-expand-λαω-file-name (filename)
   "Concatenate \"λαω-\" with FILENAME and return the absolute file path."
-  (expand-file-name (concat "λαω-" filename) emacs-λαω-directory))
+  (expand-file-name (concat "λαω-" filename) λαω-emacs-directory))
 
-(defun λαω-find-λαω-λαω-file ()
+(defun λαω-find-λαω-file ()
   "Edit `λαω.el'."
   (interactive)
-  (find-file (λαω-expand-λαω-file-name "λαω.el")))
+  (find-file (expand-file-name "λαω.el" λαω-emacs-directory)))
 
 (defun λαω-find-λαω-custom-file ()
   "Edit the λαω customizations file."
@@ -163,16 +163,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
   "Edit the Emacs user init file."
   (interactive)
   (find-file user-init-file))
-
-(defun λαω-find-emacs-custom-file ()
-  "Edit the Emacs customizations file."
-  (interactive)
-  (find-file custom-file))
-
-(defun λαω-find-bashrc-file ()
-  "Edit the `bash' user startup file."
-  (interactive)
-  (find-file "~/.bashrc"))
 
 ;;; utilities
 (defun λαω-downcase-and-hyphenate-region (region-start region-end)

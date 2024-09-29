@@ -122,6 +122,11 @@
   :hook
   (after-init . λαω-display-init-time-message)
   (org-mode . visual-line-mode)
+
+  :bind (("C-x C-k" . kill-current-buffer)
+         :map λαω-buffer-map
+         ("s" . 'scratch-buffer))
+
   :custom
   ;; (custom-enabled-themes '(modus-vivendi-tinted))
   (inhibit-default-init t "Don't load `default.el'.")
@@ -371,7 +376,7 @@
   (add-to-list 'recentf-exclude
                (recentf-expand-file-name user-emacs-var-directory))
   :bind (("C-c f r" . recentf)
-         :map λαω-file-map
+         :map λαω-files-map
          ("r" . recentf))
   :custom
   (recentf-max-saved-items 64))
@@ -486,6 +491,8 @@
   :ensure nil
   :bind (("C-c C-l" . recenter-top-bottom)
          ("C-c l" . recenter-top-bottom)
+         :map λαω-map
+         ("C-l" . recenter-top-bottom)
          :repeat-map λαω-recenter-window-repeat-map
          ("C-l" . recenter-top-bottom)
          ("l" . recenter-top-bottom)))

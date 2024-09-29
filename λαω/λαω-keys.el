@@ -39,7 +39,7 @@
 
 (require 'λαω-functions)
 
-;;; global key unbinds and rebinds
+;;; global key key unbinds
 (keymap-global-unset "C-l") ; `recenter-top-bottom'
 (keymap-global-unset "C-z") ; `suspend-frame'
 
@@ -50,61 +50,54 @@
 (keymap-global-set "C-l" (cons "λαω" λαω-map))
 
 ;; directory keymaps
-(defvar-keymap λαω-dir-map
+(defvar-keymap λαω-dirs-map
   :doc "Keymap for directories."
-  :name "dir"
+  :name "dirs"
   "o" '("org" . λαω-find-org-directory)
   "e" '("emacs" . λαω-find-user-emacs-directory))
-(keymap-global-set "C-c d" (cons "λαω-dir" λαω-dir-map))
-(keymap-set λαω-map "d" (cons "dir" λαω-dir-map))
+(keymap-global-set "C-c d" (cons "λαω-dirs" λαω-dirs-map))
+(keymap-set λαω-map "d" (cons "dirs" λαω-dirs-map))
 
 ;; file keymaps
-(defvar-keymap λαω-file-map
+(defvar-keymap λαω-files-map
   :doc "Keymap for files."
-  :name "file")
-(keymap-global-set "C-c f" (cons "λαω-file" λαω-file-map))
-(keymap-set λαω-map "f" (cons "file" λαω-file-map))
+  :name "files")
+(keymap-global-set "C-c f" (cons "λαω-file" λαω-files-map))
+(keymap-set λαω-map "f" (cons "files" λαω-files-map))
 
-;; config file keymaps
-(defvar-keymap λαω-file-config-map
-  :doc "Keymap for configuration files."
-  :name "file-config")
-(keymap-set λαω-file-map "c" (cons "config" λαω-file-config-map))
-
-(defvar-keymap λαω-file-config-λαω-map
+(defvar-keymap λαω-files-λαω-map
   :doc "Keymap for λαω configurations."
-  :name "config-λαω"
-  "λ" '("λαω"       . λαω-find-λαω-λαω-file)
-  "l" '("λαω"       . λαω-find-λαω-λαω-file)
+  :name "λαω-files"
+  "l" '("λαω"       . λαω-find-λαω-file)
   "c" '("custom"    . λαω-find-λαω-custom-file)
   "f" '("functions" . λαω-find-λαω-functions-file)
   "k" '("keys"      . λαω-find-λαω-keys-file)
   "o" '("org"       . λαω-find-λαω-org-file))
-(keymap-set λαω-file-config-map "l" (cons "λαω" λαω-file-config-λαω-map))
+(keymap-set λαω-files-map "l" (cons "λαω" λαω-files-λαω-map))
 
-(defvar-keymap λαω-file-config-emacs-map
+(defvar-keymap λαω-files-emacs-map
   :doc "Keymap for Emacs configurations."
-  :name "config-emacs"
+  :name "emacs-files"
   "c" '("custom"     . λαω-find-emacs-custom-file)
   "e" '("early-init" . λαω-find-emacs-early-init-file)
   "i" '("init"       . λαω-find-emacs-user-init-file))
-(keymap-set λαω-file-config-map "e" (cons "emacs" λαω-file-config-emacs-map))
+(keymap-set λαω-files-map "e" (cons "emacs" λαω-files-emacs-map))
 
-(defvar-keymap λαω-file-config-cli-map
+(defvar-keymap λαω-files-cli-map
   :doc "Keymap for command-line interface configurations."
-  :name "config-cli"
+  :name "cli-files"
   "b" '("bashrc" . λαω-find-bashrc-file))
-(keymap-set λαω-file-config-map "c" (cons "cli" λαω-file-config-cli-map))
+(keymap-set λαω-files-map "c" (cons "cli" λαω-files-cli-map))
 
-;; Emacs UI
+;; Emacs structures
 (defvar-keymap λαω-buffer-map
-  :doc "Keymap for buffers."
+  :doc "Keymap for Emacs buffers."
   :name "buffer")
 (keymap-global-set "C-c b" (cons "λαω-buffer" λαω-buffer-map))
 (keymap-set λαω-map "b" (cons "buffer" λαω-buffer-map))
 
 (defvar-keymap λαω-window-map
-  :doc "Keymap for windows."
+  :doc "Keymap for Emacs windows."
   :name "window")
 (keymap-global-set "C-c w" (cons "λαω-window" λαω-window-map))
 (keymap-set λαω-map "w" (cons "window" λαω-window-map))
@@ -115,29 +108,23 @@
 (keymap-global-set "C-c t" (cons "λαω-text" λαω-text-map))
 (keymap-set λαω-map "t" (cons "text" λαω-text-map))
 
-(defvar-keymap λαω-git-map
-  :doc "Keymap for git-related commands."
-  :name "git")
-(keymap-global-set "C-c g" (cons "λαω-git" λαω-git-map))
-(keymap-set λαω-map "g" (cons "git" λαω-git-map))
-
 (defvar-keymap λαω-cli-map
   :doc "Keymap for command-line interfaces."
   :name "cli")
 (keymap-global-set "C-c c" (cons "λαω-cli" λαω-cli-map))
 (keymap-set λαω-map "c" (cons "cli" λαω-cli-map))
 
+(defvar-keymap λαω-git-map
+  :doc "Keymap for git-related commands."
+  :name "git")
+(keymap-global-set "C-c g" (cons "λαω-git" λαω-git-map))
+(keymap-set λαω-map "g" (cons "git" λαω-git-map))
+
 (defvar-keymap λαω-org-map
   :doc "Keymap for Org Mode."
   :name "org")
 (keymap-global-set "C-c o" (cons "λαω-org" λαω-org-map))
 (keymap-set λαω-map "o" (cons "org" λαω-org-map))
-
-(defvar-keymap λαω-text-map
-  :doc "Keymap for text."
-  :name "text")
-(keymap-global-set "C-c t" (cons "λαω-text" λαω-text-map))
-(keymap-set λαω-map "t" (cons "text" λαω-text-map))
 
 (provide 'λαω-keys)
 ;;; λαω-keys.el ends here
