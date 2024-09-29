@@ -606,7 +606,8 @@ This function adds the `expreg--sentence' expansion function to
   :config
   (orderless-define-completion-style orderless-fast
     (orderless-style-dispatchers '(orderless-fast-dispatch))
-    (orderless-matching-styles '(orderless-literal orderless-regexp)))
+    (orderless-matching-styles
+     '(orderless-flex orderless-literal orderless-regexp)))
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
