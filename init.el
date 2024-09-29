@@ -862,20 +862,6 @@ This function adds the `expreg--sentence' expansion function to
 (use-package goto-line-preview
   :bind ([remap goto-line] . goto-line-preview))
 
-(use-package beacon
-  :defer 1
-  :config
-  (beacon-mode)
-  (add-to-list 'beacon-dont-blink-major-modes
-               'artist-mode
-               'which-key-mode)
-  :diminish
-  :custom
-  (beacon-blink-delay 0.15)
-  (beacon-blink-duration 0.5)
-  (beacon-color "#8d69e9")
-  (beacon-size 24))
-
 (use-package indent-bars
   :config
   (require 'indent-bars-ts)
