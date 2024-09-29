@@ -340,7 +340,7 @@
 (use-package hl-line
   :defer 1
   :init
-  (defun λαω-disable-hl-line-mode-temporarily (func &rest args)
+  (defun λαω-disable-global-hl-line-mode-temporarily (func &rest args)
     "Temporarily disable `global-hl-line-mode' when calling FUNC.
 
 Credit to Sacha Chua. See:
@@ -351,7 +351,8 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
           (prog1 (apply func args)
             (global-hl-line-mode 1)))
       (apply func args)))
-  (advice-add #'face-at-point :around #'λαω-disable-hl-line-mode-temporarily)
+  (advice-add #'face-at-point
+              :around #'λαω-disable-global-hl-line-mode-temporarily)
   :config
   (global-hl-line-mode))
 
