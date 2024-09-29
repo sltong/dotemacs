@@ -100,6 +100,11 @@
      custom-file)
     (make-empty-file custom-file t))
 
+  ;; themes
+  (setopt custom-theme-directory (expand-file-name
+                                  "themes" user-emacs-etc-directory))
+  (load-theme 'modus-vivendi-tinted)
+
   ;; default fonts
   (if (display-graphic-p)
       (progn
@@ -119,8 +124,6 @@
   (add-hook 'kill-emacs-hook 'λαω-remove-kill-ring-text-properties -100)
 
   :config
-  (setopt custom-theme-directory (expand-file-name
-                                  "themes" user-emacs-etc-directory))
   ;; aliases
   (defalias 'elisp-mode 'emacs-lisp-mode)
   ;; default modes
@@ -543,16 +546,6 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
          ("l" . recenter-top-bottom)))
 
 ;;; third-party packages
-(use-package doom-themes
-  :defer 0.01
-  :config
-  (setq doom-themes-enable-bold t)
-  (setq doom-themes-enable-italic t)
-  (load-theme 'doom-dracula t)
-  (doom-themes-visual-bell-config)
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config))
-
 (use-package doom-modeline
   :defer 0.01
   :config
