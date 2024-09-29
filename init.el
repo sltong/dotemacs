@@ -738,7 +738,8 @@ This function adds the `expreg--sentence' expansion function to
   (corfu-cycle t) ; enable cycling for `corfu-next/previous'
   (corfu-separator ?\s) ; orderless field separator
   (corfu-scroll-margin 3)
-  (corfu-popupinfo-delay '(1.25 . 0.9)))
+  (corfu-popupinfo-delay '(0.5 . 0.25))
+  (corfu-preview-current t))
 
 (use-package corfu-terminal
   :after corfu
