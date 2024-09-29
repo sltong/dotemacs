@@ -714,7 +714,7 @@ This function adds the `expreg--sentence' expansion function to
          ("C-x C-j" . consult-dir-jump-file)))
 
 (use-package vertico
-  :defer 1
+  :defer 0.5
   :config
   (vertico-mode)
   :custom
