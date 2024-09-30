@@ -237,25 +237,22 @@
   :ensure nil
   :defer nil
   :config
+  ;; prevent bug where line numbers disappear/reappear multiple times
+  ;; on desktop restore
   (desktop-save-mode)
+  (add-to-list 'desktop-minor-mode-handlers
+               '(cons display-line-numbers-mode
+                      λαω-desktop-restore-display-line-numbers-mode))
   :custom
   (desktop-base-file-name ".desktop-session")
   (desktop-base-lock-name ".desktop-session.lock")
   (desktop-missing-file-warning t
    "Offer to recreate the buffers of deleted files.")
   (desktop-auto-save-timeout 1.5)
+  (desktop-auto-save-timeout 1.5)
   (desktop-restore-eager 3)
   (desktop-lazy-idle-delay 0.5)
   (desktop-lazy-verbose nil)
-  (desktop-globals-to-save '(desktop-missing-file-warning
-                             file-name-history
-                             kill-ring
-                             kmacro-ring
-                             regexp-search-ring
-                             register-alist
-                             search-ring
-                             tags-file-name
-                             tags-table-list))
   (desktop-clear-preserve-buffers
    '("\\*scratch\\*"
      "\\*Messages\\*"
@@ -280,7 +277,7 @@
 
 (use-package display-line-numbers
   :ensure nil
-  :hook (prog-mode . display-line-numbers-mode)
+  :hook (prog-mode)
   :custom
   (display-line-numbers-grow-only t)
   (display-line-numbers-width 3))

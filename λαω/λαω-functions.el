@@ -53,6 +53,16 @@ comma."
                 (car args))
         (cdr args)))
 
+(defun λαω-desktop-restore-display-line-numbers-mode ()
+  "Activate `display-line-numbers-mode' for the correct buffers.
+
+This solves a bug where duplicate `display-line-numbers-mode' in a saved
+buffer's desktop `desktop-create-buffer' minor modes entry cause line
+numbers to disappear and reappear multiple times."
+  (if (derived-mode-p 'prog-mode)
+      (display-line-numbers-mode)
+    (display-line-numbers-mode -1)))
+
 (defun λαω-remove-text-properties-in-region (region-start region-end)
     "Remove text properties in region."
     (interactive "r")
