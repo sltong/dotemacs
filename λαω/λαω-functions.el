@@ -53,6 +53,13 @@ comma."
                 (car args))
         (cdr args)))
 
+(defun λαω-remove-text-properties-in-region (region-start region-end)
+    "Remove text properties in region."
+    (interactive "r")
+    (when (use-region-p)
+      (save-excursion
+      (set-text-properties region-start region-end nil))))
+
 (defun λαω-remove-kill-ring-text-properties ()
     "Remove all text properties from `kill-ring' entries.
 
