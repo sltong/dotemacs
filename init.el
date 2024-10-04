@@ -66,6 +66,7 @@
 (require 'λαω-functions)
 (require 'λαω-keys)
 (require 'λαω-org)
+(require 'λαω-themes)
 
 ;;; package configurations
 (require 'package)
@@ -109,11 +110,11 @@
   ;; default fonts
   (if (display-graphic-p)
       (progn
-        (when (member "JetBrains Mono NL" (font-family-list))
+        (when (member "Iosevka Law" (font-family-list))
           (add-to-list 'default-frame-alist
-                       '(font . "JetBrains Mono NL"))
+                       '(font . "Iosevka Law-14"))
           (custom-set-faces
-           '(fixed-pitch-serif ((t (:family "JetBrains Mono NL"))))))
+           '(fixed-pitch-serif ((t (:family "Iosevka Law"))))))
         (when (member "IBM Plex Sans" (font-family-list))
           (custom-set-faces
            '(variable-pitch ((t (:family "IBM Plex Sans")))))))

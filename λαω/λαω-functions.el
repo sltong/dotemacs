@@ -86,6 +86,17 @@ URL `https://emacs.stackexchange.com/a/4191'"
   "Locally enable `truncate-lines'."
   (setq-local truncate-lines t))
 
+(defun λαω-reload-λαω-theme ()
+  "Load the λαω theme.
+
+Disable all other themes beforehand."
+  (interactive)
+  (let ((non-λαω-themes (remq 'law custom-enabled-themes)))
+    (when non-λαω-themes
+      (message "Disabling all other themes...")
+      (mapc #'disable-theme non-λαω-themes))
+    (message "Loading λαω theme...")
+    (load-theme 'λαω t)))
 (defun λαω-reset-emacs ()
   "Reset Emacs by deleting all generated package, cache, and user data."
   (interactive)
