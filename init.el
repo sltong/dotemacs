@@ -372,6 +372,12 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
          :map λαω-buffer-map
          ("b" . ibuffer)))
 
+(use-package isearch
+  :ensure nil
+  :custom
+  (isearch-repeat-on-direction-change t)
+  (isearch-lazy-count t))
+
 (use-package mb-depth
   :ensure nil
   :defer 1.5
