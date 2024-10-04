@@ -54,8 +54,18 @@
 
 ;;; Code:
 
-(setq user-emacs-etc-directory (expand-file-name "etc/" user-emacs-directory))
-(setq user-emacs-var-directory (expand-file-name "var/" user-emacs-directory))
+(when init-file-debug
+  (setq use-package-verbose t
+        use-package-expand-minimally nil
+        use-package-compute-statistics t
+             debug-on-error t))
+
+;;; λαω
+(add-to-list 'load-path (expand-file-name "λαω/" user-emacs-directory))
+(require 'λαω)
+(require 'λαω-functions)
+(require 'λαω-keys)
+(require 'λαω-org)
 
 ;;; package configurations
 (require 'package)
@@ -81,14 +91,6 @@
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode))
 
-;;; λαω
-(defvar λαω-emacs-directory (expand-file-name "λαω/" user-emacs-directory)
-  "Emacs λαω directory.")
-
-(use-package λαω
-  :defer nil
-  :load-path λαω-emacs-directory)
-
 ;;; Emacs initialization and (built-in package) customizations
 (use-package emacs
   :init
@@ -101,9 +103,8 @@
     (make-empty-file custom-file t))
 
   ;; themes
-  (setopt custom-theme-directory (expand-file-name
-                                  "themes" user-emacs-etc-directory))
-  (load-theme 'modus-vivendi-tinted)
+  (setopt custom-theme-directory
+          (expand-file-name "themes/" λαω-emacs-etc-directory))
 
   ;; default fonts
   (if (display-graphic-p)
@@ -183,8 +184,8 @@
   :demand t
   :config
   ;; explicitly set "etc" and "var" directories for good measure
-  (setq no-littering-etc-directory user-emacs-etc-directory)
-  (setq no-littering-var-directory user-emacs-var-directory)
+  (setq no-littering-etc-directory λαω-emacs-etc-directory)
+  (setq no-littering-var-directory λαω-emacs-var-directory)
   (no-littering-theme-backups))
 
 (use-package exec-path-from-shell
@@ -409,7 +410,7 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   :config
   (recentf-mode)
   (add-to-list 'recentf-exclude
-               (recentf-expand-file-name user-emacs-var-directory))
+               (recentf-expand-file-name λαω-emacs-var-directory))
   :bind (("C-c f r" . recentf)
          :map λαω-files-map
          ("r" . recentf))
@@ -476,7 +477,7 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   :defer 2
   :config
   (setq treesit-language-grammars-directory
-        (expand-file-name "treesit/language-grammars" user-emacs-var-directory))
+        (expand-file-name "treesit/language-grammars/" λαω-emacs-var-directory))
   (setq treesit-extra-load-path (list treesit-language-grammars-directory)))
 
 (use-package vc-hooks

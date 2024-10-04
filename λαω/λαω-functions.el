@@ -28,7 +28,7 @@
 
 ;;; Code:
 
-;;; Emacs configuration functions
+(require 'λαω)
 (defun λαω-display-init-time-message ()
   "Display an Emacs initialization time and garbage collections message."
   (run-with-idle-timer
@@ -90,8 +90,8 @@ URL `https://emacs.stackexchange.com/a/4191'"
   "Reset Emacs by deleting all generated package, cache, and user data."
   (interactive)
   (let ((dirs-to-delete (list package-user-dir
-                              user-emacs-var-directory
-                              (expand-file-name "eln-cache"
+                              λαω-emacs-var-directory
+                              (expand-file-name "eln-cache/"
                                                 user-emacs-directory)))
         (files-to-delete (mapcar
                           (lambda (file-name)

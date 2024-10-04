@@ -28,9 +28,28 @@
 
 ;;; Code:
 
-(require 'λαω-functions)
-(require 'λαω-keys)
-(require 'λαω-org)
+;;; customizations
+(defgroup λαω nil
+  "λαω"
+  :prefix "λαω-"
+  :group 'local)
+
+(defcustom λαω-emacs-directory (expand-file-name "λαω/" user-emacs-directory)
+  "λαω directory in `user-emacs-directory'."
+  :type 'directory)
+
+(defcustom λαω-emacs-etc-directory (expand-file-name
+                                     "etc/" user-emacs-directory)
+  "\"etc\" directory containing miscellaneous Emacs configurations."
+  :type 'directory)
+
+(defcustom λαω-emacs-var-directory (expand-file-name
+                                     "var/" user-emacs-directory)
+  "\"var\" directory holding Emacs compiled files and package data.
+
+This directory contains Emacs Lisp packages, natively-compiled *.eln
+files, and package data."
+  :type 'directory)
 
 (provide 'λαω)
 ;;; λαω.el ends here
