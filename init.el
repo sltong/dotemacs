@@ -332,7 +332,8 @@
 
 (use-package flymake
   :ensure nil
-  :hook (prog-mode))
+  :hook (prog-mode)
+  :diminish)
 
 (use-package help-fns
   :ensure nil
