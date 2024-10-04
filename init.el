@@ -135,9 +135,14 @@
   (after-init . λαω-display-init-time-message)
   (org-mode . visual-line-mode)
 
-  :bind (("C-x C-k" . kill-current-buffer)
+  :bind (;; global key bindings
+         ("C-x C-k" . kill-current-buffer)
+         ("M-<RET>" . default-indent-new-line)
          :map λαω-buffer-map
-         ("s" . 'scratch-buffer))
+         ("s" . 'scratch-buffer)
+         :map λαω-text-map
+         ("-" . text-scale-decrease)
+         ("=" . text-scale-increase))
 
   :custom
   (column-number-mode t)
@@ -280,6 +285,8 @@
 (use-package display-line-numbers
   :ensure nil
   :hook (prog-mode)
+  :bind (:map λαω-buffer-map
+         ("l" . display-line-numbers-mode))
   :custom
   (display-line-numbers-grow-only t)
   (display-line-numbers-width 3))
@@ -334,8 +341,7 @@
   :ensure nil
   :hook (prog-mode . hs-minor-mode)
   :diminish (hs-minor-mode)
-  :bind (("C-c C-<tab>" . hs-toggle-hiding)
-         ("C-c <tab>" . hs-toggle-hiding))
+  :bind ("C-<tab>" . hs-toggle-hiding)
   :custom
   (hs-isearch-open t "Open both code and comment blocks when doing `isearch'."))
 
@@ -555,7 +561,8 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   (text-mode prog-mode))
 
 (use-package avy
-  :bind (("M-j" . avy-goto-char-timer)))
+  :defer nil
+  :bind (("C-j" . avy-goto-char-timer)))
 
 (use-package expreg
   :config

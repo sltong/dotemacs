@@ -26,20 +26,25 @@
 
 ;; Keymaps and key bindings.
 
-;; "C-l" globally unset and then bound to `λαω-map'.
+;; "C-l" is globally unset and bound to `λαω-map'.
+
+;; Global key unbindings are located here. Global key (re)binds may be
+;; found either in this file (by `keymap-global-set' or in a λαω
+;; keymap) if they're bound to built-in package commands, or in
+;; `user-init-file' if they're for non-built-in packages.
 
 ;; First-level `λαω-map' commands are bound with a control modifier.
-;; These are considered command shortcuts. For example,
-;; `recenter-top-bottom' might be bound to "C-l C-l".
+;; These are command shortcuts. For example, `recenter-top-bottom' is
+;; bound to "C-l C-l".
 
 ;; Package-specific command key bindings can be found in their
-;; respective package's `use-package' macro in `init.el'.
+;; respective package's `use-package' declaration in `init.el'.
 
 ;;; Code:
 
 (require 'λαω-functions)
 
-;;; global key key unbinds
+;;; global key unbindings
 (keymap-global-unset "C-l") ; `recenter-top-bottom'
 (keymap-global-unset "C-z") ; `suspend-frame'
 
@@ -49,30 +54,31 @@
   :name "λαω")
 (keymap-global-set "C-l" (cons "λαω" λαω-map))
 
+;; file keymaps
+(defvar-keymap λαω-files-map
+  :doc "Keymap for files."
+  :name "files"
+  "~" '("home" . λαω-visit-~))
+(keymap-global-set "C-c f" (cons "λαω-file" λαω-files-map))
+(keymap-set λαω-map "f" (cons "files" λαω-files-map))
+
 ;; directory keymaps
 (defvar-keymap λαω-dirs-map
   :doc "Keymap for directories."
   :name "dirs"
   "o" '("org" . λαω-find-org-directory)
   "e" '("emacs" . λαω-find-user-emacs-directory))
-(keymap-global-set "C-c d" (cons "λαω-dirs" λαω-dirs-map))
-(keymap-set λαω-map "d" (cons "dirs" λαω-dirs-map))
-
-;; file keymaps
-(defvar-keymap λαω-files-map
-  :doc "Keymap for files."
-  :name "files")
-(keymap-global-set "C-c f" (cons "λαω-file" λαω-files-map))
-(keymap-set λαω-map "f" (cons "files" λαω-files-map))
+(keymap-set λαω-files-map "d" (cons "dirs" λαω-dirs-map))
 
 (defvar-keymap λαω-files-λαω-map
   :doc "Keymap for λαω configurations."
   :name "λαω-files"
-  "l" '("λαω"       . λαω-find-λαω-file)
-  "c" '("custom"    . λαω-find-λαω-custom-file)
-  "f" '("functions" . λαω-find-λαω-functions-file)
-  "k" '("keys"      . λαω-find-λαω-keys-file)
-  "o" '("org"       . λαω-find-λαω-org-file))
+  "\x3bb" '("λαω" . λαω-find-λαω-file) ; λ
+  "l"     '("λαω"       . λαω-find-λαω-file)
+  "c"     '("custom"    . λαω-find-λαω-custom-file)
+  "f"     '("functions" . λαω-find-λαω-functions-file)
+  "k"     '("keys"      . λαω-find-λαω-keys-file)
+  "o"     '("org"       . λαω-find-λαω-org-file))
 (keymap-set λαω-files-map "l" (cons "λαω" λαω-files-λαω-map))
 
 (defvar-keymap λαω-files-emacs-map
@@ -89,13 +95,16 @@
   "b" '("bashrc" . λαω-find-bashrc-file))
 (keymap-set λαω-files-map "c" (cons "cli" λαω-files-cli-map))
 
-;; Emacs structures
+;;; Emacs structures keymaps
 (defvar-keymap λαω-buffer-map
   :doc "Keymap for Emacs buffers."
-  :name "buffer")
+  :name "buffer"
+  "s" #'scratch-buffer
+  "m" '("messages" . λαω-switch-to-messages-buffer))
 (keymap-global-set "C-c b" (cons "λαω-buffer" λαω-buffer-map))
 (keymap-set λαω-map "b" (cons "buffer" λαω-buffer-map))
 
+;; windows
 (defvar-keymap λαω-window-map
   :doc "Keymap for Emacs windows."
   :name "window")
@@ -112,6 +121,13 @@
   :doc "Keymap for text completions."
   :name "text-completion")
 (keymap-set λαω-text-map "c" (cons "completion" λαω-text-completion-map))
+
+;; (defvar-keymap λαω-dev-map
+;;   :doc "Keymap for software development and programming."
+;;   :name "software-dev")
+
+;; (keymap-global-set "C-c d" (cons "λαω-dev" λαω-dev-map))
+;; (keymap-set λαω-map "d" (cons "cli" λαω-dev-map))
 
 (defvar-keymap λαω-cli-map
   :doc "Keymap for command-line interfaces."
@@ -130,6 +146,28 @@
   :name "org")
 (keymap-global-set "C-c o" (cons "λαω-org" λαω-org-map))
 (keymap-set λαω-map "o" (cons "org" λαω-org-map))
+
+;;; repeat keymaps
+(defvar-keymap λαω-window-repeat-map
+  :doc "Keymap for repeatable `window' commands."
+  :name "window-repeat"
+  :repeat t
+  ;; resizing
+  "-" #'shrink-window-horizontally
+  "=" #'enlarge-window-horizontally
+  "_" #'shrink-window
+  "+" #'enlarge-window
+  ;; scrolling
+  "C-l" #'recenter-top-bottom
+  "l" #'recenter-top-bottom)
+
+(defvar-keymap λαω-text-repeat-map
+  :doc "Keymap for text manipulation and management."
+  :name "text-repeat"
+  :repeat t
+  ;; resizing
+  "-" #'text-scale-decrease
+  "=" #'text-scale-increase)
 
 (provide 'λαω-keys)
 ;;; λαω-keys.el ends here
