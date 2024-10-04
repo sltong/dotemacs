@@ -165,6 +165,7 @@
   ;; *scratch* buffer
   (initial-major-mode 'fundamental-mode
    "Set initial *scratch* buffer major mode to `fundamental-mode'.")
+  (use-dialog-box nil "Disable pop-up dialog boxes when questioned.")
   (initial-scratch-message nil)
   (visible-bell t) ; replace audible bell with visual one
   (scroll-preserve-screen-position t)
