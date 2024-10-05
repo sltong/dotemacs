@@ -291,7 +291,6 @@
 
 (use-package display-line-numbers
   :ensure nil
-  :hook (prog-mode)
   :bind (:map λαω-buffer-map
          ("l" . display-line-numbers-mode))
   :custom
