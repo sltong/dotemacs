@@ -440,7 +440,7 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   :config
   (repeat-mode)
   :custom
-  (repeat-exit-timeout 1))
+  (repeat-exit-timeout 1.25))
 
 (use-package replace
   :ensure nil
