@@ -55,7 +55,7 @@
   ;; babel
   (org-confirm-babel-evaluate nil)
   ;; todo
-  (org-todo-keywords '((sequence "TODO(t)" "DOING(d)" "POSTPONED(p)"
+  (org-todo-keywords '((sequence "TODO(t)" "MAYBE(m)" "DOING(d)" "POSTPONED(p)"
                                  "|" "DONE(f)" "CANCELLED(x)")))
   ;; exporting
   (org-html-doctype "html5")
