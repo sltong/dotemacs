@@ -585,6 +585,7 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   (which-key-mode)
   :diminish
   :custom
+  (which-key-use-C-h-commands nil)
   (which-key-idle-delay 0.25)
   (which-key-preserve-window-configuration t)
   (which-key-max-description-length nil)
