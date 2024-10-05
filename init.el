@@ -183,7 +183,9 @@
   ;; alternative, try `cape-dict'.
   (text-mode-ispell-word-completion nil)
   ;; Enable indentation/completion using the TAB key.
-  (tab-always-indent 'complete))
+  (tab-always-indent 'complete)
+  (eval-expression-print-level nil
+   "Don't set a limit on printed expression evaluations."))
 
 ;; load immediately, as soon as possible
 ;; later packages still explicitly set their modes' respective
