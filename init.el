@@ -896,6 +896,7 @@ This function adds the `expreg--sentence' expansion function to
   :defer 1
   :config
   (global-diff-hl-mode)
+  (diff-hl-margin-mode)
   (diff-hl-flydiff-mode)
   :hook
   (magit-pre-refresh . diff-hl-magit-pre-refresh)
