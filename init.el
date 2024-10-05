@@ -597,10 +597,12 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
 
 (use-package whitespace
   :ensure nil
-  :hook
-  (prog-mode text-mode)
+  :defer 1
+  :config
+  (global-whitespace-mode)
   :diminish
   :custom
+  (whitespace-global-modes '(prog-mode))
   (whitespace-style '(face
                       trailing
                       tabs
