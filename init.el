@@ -293,6 +293,13 @@
   (display-line-numbers-grow-only t)
   (display-line-numbers-width 3))
 
+(use-package eglot
+  :ensure nil
+  :hook
+  (elixir-ts-mode . eglot-ensure)
+  (heex-ts-mode . eglot-ensure)
+  (python-ts-mode . eglot-ensure))
+
 (use-package eldoc
   :ensure nil
   :defer 1.5
