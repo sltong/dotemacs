@@ -124,6 +124,10 @@
   ;; ensure `λαω-remove-kill-ring-text-properties' is the first
   ;; function in `kill-emacs-hook'
   (add-hook 'kill-emacs-hook 'λαω-remove-kill-ring-text-properties -100)
+  (add-hook 'input-method-activate-hook
+            #'λαω-minibuffer-input-method-indicator-activate)
+  (add-hook 'input-method-deactivate-hook
+            #'λαω-minibuffer-input-method-indicator-deactivate)
 
   :config
   ;; aliases

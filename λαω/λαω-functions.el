@@ -39,6 +39,27 @@
                              (time-subtract after-init-time before-init-time)))
                     gcs-done))))
 
+;; Show input method in minibuffer.
+;;
+;; Credit to Akito Mikami.
+;; See: https://a64.work/posts/2023-01-14-emacs-input-method-minibuffer-indicator.html
+(defvar-local λαω-minibuffer-input-method-overlay nil
+  "Overlay showing the active input method.")
+
+(defun λαω-minibuffer-input-method-indicator-activate ()
+  "Show input method indicator in minibuffer."
+  (when (minibufferp)
+    (unless λαω-minibuffer-input-method-overlay
+      (setq λαω-minibuffer-input-method-overlay
+            (make-overlay (point-min) (point-min) nil nil t)))
+    (overlay-put λαω-minibuffer-input-method-overlay 'after-string
+                 (format "[%s] " current-input-method-title))))
+
+(defun λαω-minibuffer-input-method-indicator-deactivate ()
+  "Hide input method indicator in minibuffer."
+  (when (minibufferp)
+    (overlay-put λαω-minibuffer-input-method-overlay 'after-string nil)))
+
 (defun λαω-crm-prompt-indicator (args)
   "Prompt indicator for `completing-read-multiple'.
 
