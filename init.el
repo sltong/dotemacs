@@ -476,6 +476,7 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   (save-place-mode))
 
 (use-package time
+  :disabled t
   :ensure nil
   :defer 0.03
   :config
