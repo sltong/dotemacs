@@ -591,6 +591,7 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   (which-key-preserve-window-configuration t)
   (which-key-max-description-length nil)
   (which-key-dont-use-unicode nil)
+  (which-key-show-prefix 'top)
   (which-key-prefix-prefix "*")
   (which-key-separator " → "))
 
