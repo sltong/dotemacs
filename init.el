@@ -224,6 +224,7 @@
   :defer 0.75
   :custom
   (bookmark-menu-confirm-deletion t)
+  (bookmark-bmenu-file-column 40)
   (bookmark-menu-length 80))
 
 (use-package cc-mode
