@@ -36,6 +36,9 @@
   :type 'directory
   :group 'λαω)
 
+(setopt custom-theme-directory
+        (expand-file-name "themes/" λαω-emacs-directory))
+
 (add-to-list 'custom-theme-load-path λαω-themes-directory)
 
 (load-theme 'λαω t)

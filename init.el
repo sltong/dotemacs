@@ -104,10 +104,6 @@
     (make-empty-file custom-file t))
   (load custom-file)
 
-  ;; themes
-  (setopt custom-theme-directory
-          (expand-file-name "themes/" λαω-emacs-etc-directory))
-
   ;; default fonts
   (if (display-graphic-p)
       (progn
@@ -151,7 +147,6 @@
 
   :custom
   (column-number-mode t)
-  ;; (custom-enabled-themes '(modus-vivendi-tinted))
   (inhibit-default-init t "Don't load `default.el'.")
   (selection-coding-system 'utf-8)
   (auto-save-timeout 4)
