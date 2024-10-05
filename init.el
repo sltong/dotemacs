@@ -253,10 +253,10 @@
   :config
   ;; prevent bug where line numbers disappear/reappear multiple times
   ;; on desktop restore
-  (desktop-save-mode)
   (add-to-list 'desktop-minor-mode-handlers
                '(cons display-line-numbers-mode
                       λαω-desktop-restore-display-line-numbers-mode))
+  (desktop-save-mode)
   :custom
   (desktop-base-file-name ".desktop-session")
   (desktop-base-lock-name ".desktop-session.lock")
