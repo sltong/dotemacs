@@ -32,7 +32,7 @@
 (defun λαω-display-init-time-message ()
   "Display an Emacs initialization time and garbage collections message."
   (run-with-idle-timer
-   3 nil (lambda ()
+   3.5 nil (lambda ()
            (message "Emacs loaded in %s with %d garbage collections."
                     (format "%.2f seconds"
                             (float-time
