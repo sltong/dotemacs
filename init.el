@@ -942,11 +942,16 @@ This function adds the `expreg--sentence' expansion function to
   (require 'indent-bars-ts)
   :hook (prog-mode)
   :custom
-  (indent-bars-color '(highlight :face-bg t :blend 0.25))
+  (indent-bars-color '(highlight :face-bg t :blend 0.2))
+  (indent-bars-highlight-current-depth '(:blend 0.65))
   (indent-bars-pattern ".")
-  (indent-bars-width-frac 0.2)
-  (indent-bars-pad-frac 0.2)
+  (indent-bars-width-frac 0.25)
+  (indent-bars-pad-frac 0.5)
   (indent-bars-display-on-blank-lines nil)
+  (indent-bars-no-descend-lists nil)
+  (indent-bars-color-by-depth nil)
+  (indent-bars-starting-column 0)
+  ;; treesit support
   (indent-bars-treesit-support t)
   (indent-bars-treesit-ignore-blank-lines-types '("module"))
   (indent-bars-treesit-scope '((function_definition
