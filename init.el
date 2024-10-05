@@ -964,5 +964,8 @@ This function adds the `expreg--sentence' expansion function to
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)))
 
+(use-package sly
+  :mode ("\\.lisp\\'"))
+
 
 ;;; init.el ends here
