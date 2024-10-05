@@ -568,7 +568,7 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   ;; See:
   ;; https://www.masteringemacs.org/article/demystifying-emacs-window-manager
   (switch-to-buffer-obey-display-actions t
-   "treat manual buffer switching the same as programmatic switching"))
+   "Treat manual buffer switching the same as programmatic switching."))
 
 (use-package winner
   :ensure nil
