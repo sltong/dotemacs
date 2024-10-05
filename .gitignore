@@ -10,3 +10,4 @@ package-quickstart.el
 eln-cache/
 elpa/
 var/
+tree-sitter/
