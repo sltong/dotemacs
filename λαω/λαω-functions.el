@@ -153,71 +153,57 @@ Disable all other themes beforehand."
               dirs-to-delete)
       (message "Generated Emacs data was deleted successfully."))))
 
-;;; directories
-(defun λαω-find-user-emacs-directory ()
-  "Visit `user-emacs-directory'."
-  (interactive)
-  (find-file user-emacs-directory))
+(defun λαω-make-visit-file-function (file-name &optional doc function-suffix)
+  "Create a function that visits FILE-NAME.
 
-(defun λαω-find-org-directory ()
-  "Visit `org-directory'."
-  (interactive)
-  (find-file org-directory))
+FILE-NAME is appended to \"λαω-visit-\" to define the function's suffix.
+If FILE-NAME is a symbol, use that symbol's name. Optionally,
+FUNCTION-SUFFIX can be explicitly passed instead.
 
-;;; files
+An optional DOC string can be passed for the function's documentation."
+  (let* ((function-suffix (or function-suffix
+                              (if (symbolp file-name)
+                                  (symbol-name file-name)
+                                file-name)))
+         (function-name (concat "λαω-visit-"
+                                function-suffix)))
+    (apply `(defalias ,(intern function-name)
+              (lambda ()
+                ,(or doc
+                     (format "Visit %s."
+                              (if (symbolp file-name)
+                                  (concat "`" function-suffix "'")
+                                function-suffix)))
+               (interactive)
+               (find-file ,file-name))))))
+
 (defun λαω-expand-λαω-file-name (filename)
-  "Concatenate \"λαω-\" with FILENAME and return the absolute file path."
+  "Return the absolute file path for the λαω FILENAME.
+
+Concatenate \"λαω-\" with FILENAME and return its absolute file path
+(relative to `λαω-emacs-directory')."
   (expand-file-name (concat "λαω-" filename) λαω-emacs-directory))
 
-(defun λαω-find-λαω-file ()
-  "Edit `λαω.el'."
-  (interactive)
-  (find-file (expand-file-name "λαω.el" λαω-emacs-directory)))
-
-(defun λαω-find-λαω-custom-file ()
-  "Edit the λαω customizations file."
-  (interactive)
-  (find-file (λαω-expand-λαω-file-name "custom.el")))
-
-(defun λαω-find-λαω-functions-file ()
-  "Edit the λαω functions file."
-  (interactive)
-  (find-file (λαω-expand-λαω-file-name "functions.el")))
-
-(defun λαω-find-λαω-keys-file ()
-  "Edit the λαω keys file."
-  (interactive)
-  (find-file (λαω-expand-λαω-file-name "keys.el")))
-
-(defun λαω-find-λαω-org-file ()
-  "Edit the λαω org file."
-  (interactive)
-  (find-file (λαω-expand-λαω-file-name "org.el")))
-
-(defun λαω-find-emacs-init-file ()
-  "Edit the Emacs user init file."
-  (interactive)
-  (find-file user-init-file))
-
-(defun λαω-find-emacs-custom-file ()
-  "Edit the Emacs customizations file."
-  (interactive)
-  (find-file custom-file))
-
-(defun λαω-find-bashrc-file ()
-  "Edit the `bash' user startup file."
-  (interactive)
-  (find-file "~/.bashrc"))
-
-(defun λαω-find-emacs-early-init-file ()
-  "Edit the Emacs user early init file."
-  (interactive)
-  (find-file early-init-file))
-
-(defun λαω-find-emacs-user-init-file ()
-  "Edit the Emacs user init file."
-  (interactive)
-  (find-file user-init-file))
+;; create functions to visit files and directories
+(λαω-make-visit-file-function
+ (convert-standard-filename "~") "Visit home directory." "home-directory")
+(λαω-make-visit-file-function 'user-emacs-directory)
+(λαω-make-visit-file-function 'λαω-themes-directory)
+(λαω-make-visit-file-function 'custom-file nil "emacs-custom-file")
+(λαω-make-visit-file-function 'early-init-file nil "emacs-early-init-file")
+(λαω-make-visit-file-function 'user-init-file nil "emacs-user-init-file")
+(λαω-make-visit-file-function "~/.bashrc" nil "bashrc")
+;; visit λαω files and directories
+(λαω-make-visit-file-function
+ (expand-file-name "λαω.el" λαω-emacs-directory) nil "λαω-file")
+(λαω-make-visit-file-function
+ (λαω-expand-λαω-file-name "functions.el") nil "λαω-functions-file")
+(λαω-make-visit-file-function
+ (λαω-expand-λαω-file-name "keys.el") nil "λαω-keys-file")
+(λαω-make-visit-file-function
+ (λαω-expand-λαω-file-name "org.el") nil "λαω-org-file")
+(λαω-make-visit-file-function
+ (λαω-expand-λαω-file-name "themes.el") nil "λαω-themes-file")
 
 ;;; utilities
 (defun λαω-downcase-and-hyphenate-region (region-start region-end)

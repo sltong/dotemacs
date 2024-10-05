@@ -28,12 +28,15 @@
 
 ;;; Code:
 
+(require 'λαω-functions)
 (require 'λαω-keys)
 
 (use-package org
   :ensure nil
   :defer 0.75
   :diminish org-indent-mode
+  :config
+  (λαω-make-visit-file-function 'org-directory)
   :bind (:map λαω-org-map
          ("a" . org-agenda)
          ("M-p" . org-metaup)

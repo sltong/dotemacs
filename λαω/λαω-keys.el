@@ -57,8 +57,7 @@
 ;; file keymaps
 (defvar-keymap λαω-files-map
   :doc "Keymap for files."
-  :name "files"
-  "~" '("home" . λαω-visit-~))
+  :name "files")
 (keymap-global-set "C-c f" (cons "λαω-file" λαω-files-map))
 (keymap-set λαω-map "f" (cons "files" λαω-files-map))
 
@@ -66,41 +65,40 @@
 (defvar-keymap λαω-dirs-map
   :doc "Keymap for directories."
   :name "dirs"
-  "o" '("org" . λαω-find-org-directory)
-  "e" '("emacs" . λαω-find-user-emacs-directory))
+  "~" '("home" . λαω-visit-home-directory)
+  "o" '("org" . λαω-visit-org-directory)
+  "e" '("emacs" . λαω-visit-user-emacs-directory))
 (keymap-set λαω-files-map "d" (cons "dirs" λαω-dirs-map))
 
 (defvar-keymap λαω-files-λαω-map
   :doc "Keymap for λαω configurations."
   :name "λαω-files"
-  "\x3bb" '("λαω" . λαω-find-λαω-file) ; λ
-  "l"     '("λαω"       . λαω-find-λαω-file)
-  "c"     '("custom"    . λαω-find-λαω-custom-file)
-  "f"     '("functions" . λαω-find-λαω-functions-file)
-  "k"     '("keys"      . λαω-find-λαω-keys-file)
-  "o"     '("org"       . λαω-find-λαω-org-file))
+  "\x3bb" '("λαω" . λαω-visit-λαω-file) ; λ
+  "l"     '("λαω"       . λαω-visit-λαω-file)
+  "f"     '("functions" . λαω-visit-λαω-functions-file)
+  "k"     '("keys"      . λαω-visit-λαω-keys-file)
+  "o"     '("org"       . λαω-visit-λαω-org-file))
 (keymap-set λαω-files-map "l" (cons "λαω" λαω-files-λαω-map))
 
 (defvar-keymap λαω-files-emacs-map
   :doc "Keymap for Emacs configurations."
   :name "emacs-files"
-  "c" '("custom"     . λαω-find-emacs-custom-file)
-  "e" '("early-init" . λαω-find-emacs-early-init-file)
-  "i" '("init"       . λαω-find-emacs-user-init-file))
+  "c" '("custom"     . λαω-visit-emacs-custom-file)
+  "e" '("early-init" . λαω-visit-emacs-early-init-file)
+  "i" '("init"       . λαω-visit-emacs-user-init-file))
 (keymap-set λαω-files-map "e" (cons "emacs" λαω-files-emacs-map))
 
 (defvar-keymap λαω-files-cli-map
   :doc "Keymap for command-line interface configurations."
   :name "cli-files"
-  "b" '("bashrc" . λαω-find-bashrc-file))
+  "b" '("bashrc" . λαω-visit-bashrc-file))
 (keymap-set λαω-files-map "c" (cons "cli" λαω-files-cli-map))
 
 ;;; Emacs structures keymaps
 (defvar-keymap λαω-buffer-map
   :doc "Keymap for Emacs buffers."
   :name "buffer"
-  "s" #'scratch-buffer
-  "m" '("messages" . λαω-switch-to-messages-buffer))
+  "s" #'scratch-buffer)
 (keymap-global-set "C-c b" (cons "λαω-buffer" λαω-buffer-map))
 (keymap-set λαω-map "b" (cons "buffer" λαω-buffer-map))
 
