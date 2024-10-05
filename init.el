@@ -560,11 +560,6 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
          ("l" . recenter-top-bottom)))
 
 ;;; third-party packages
-(use-package doom-modeline
-  :defer 0.01
-  :config
-  (doom-modeline-mode))
-
 (use-package undo-fu-session
   :hook
   (text-mode prog-mode))
