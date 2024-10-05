@@ -972,5 +972,54 @@ This function adds the `expreg--sentence' expansion function to
 (use-package sly
   :mode ("\\.lisp\\'"))
 
+(use-package image-roll
+  :vc (:url "https://github.com/aikrahguzar/image-roll.el"))
+
+(use-package qpdf.el
+  :vc (:url "https://github.com/orgtre/qpdf.el")
+  :after pdf-tools
+  :defer nil
+  :commands qpdf)
+
+(use-package pdf-tools
+  :vc (:url "https://github.com/aikrahguzar/pdf-tools"
+       :branch "upstream-pdf-roll"
+       :lisp-dir "lisp/")
+  :defer 1
+  :commands (pdf-view-mode pdf-view-roll-minor-mode)
+  :init
+  (defun λαω-fix-pdf-selection ()
+    "Replace pdf with one where selection shows transparently."
+    (interactive)
+    (unless (equal (file-name-extension (buffer-file-name)) "pdf")
+      (error "Buffer should visit a pdf file."))
+    (unless (equal major-mode 'pdf-view-mode)
+      (pdf-view-mode))
+    ;; save file in QDF-mode
+    (qpdf-run (list
+               (concat "--infile="
+                       (buffer-file-name))
+               "--qdf --object-streams=disable"
+               "--replace-input"))
+    ;; do replacements
+    (text-mode)
+    (read-only-mode -1)
+    (while (re-search-forward "3 Tr" nil t)
+      (replace-match "7 Tr" nil nil))
+    (save-buffer)
+    (pdf-view-mode))
+  :config
+  (pdf-loader-install)
+  (add-hook 'pdf-view-mode-hook #'pdf-view-roll-minor-mode)
+  :custom
+  (pdf-cache-image-limit 128)
+  (pdf-cache-prefetch-delay 0.25)
+  (pdf-view-resize-factor 1.1)
+  (pdf-view-max-image-width 1080))
+
+(use-package saveplace-pdf-view
+  :defer nil
+  :after pdf-tools)
+
 
 ;;; init.el ends here
