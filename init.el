@@ -152,11 +152,12 @@
   (auto-save-timeout 4)
   (auto-save-interval 65)
   (kill-ring-max 512)
+  (large-file-warning-threshold (* 1024 1024 128)) ; 128 MiB
   ;; undo
-  (undo-limit (* 1000000) "Increase undo information to 1MB.")
+  (undo-limit (* 1024 1024 1) "Increase max undo information to 1MiB.")
   ;; last-ditch outer limit for single undo commands
-  (undo-outer-limit (* 128000000)) ; 128MB
-  (undo-strong-limit (* 8000000)) ; 8MB
+  (undo-outer-limit (* 1024 1024 128)) ; 128 MiB
+  (undo-strong-limit (* 1024 1024 8)) ; 8 MiB
   ;; (minibuffer) history
   (history-length 1024)
   (history-delete-duplicates t)

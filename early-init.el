@@ -91,7 +91,7 @@ Restore the following:
 - garbage collection
 - displaying of warnings
 - `file-name-handler-alist'"
-  (setq gc-cons-threshold 16000000) ; 16MB
+  (setq gc-cons-threshold (* 1024 1024 16)) ; 16MiB
   (setq gc-cons-percentage 0.1)
   (setq warning-minimum-level :warning)
   (setq file-name-handler-alist file-name-handler-alist-pre-init))
