@@ -619,9 +619,14 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
          ("C-c l" . recenter-top-bottom)
          :map λαω-map
          ("C-l" . recenter-top-bottom)
-         :repeat-map λαω-recenter-window-repeat-map
-         ("C-l" . recenter-top-bottom)
-         ("l" . recenter-top-bottom)))
+         :map λαω-window-map
+         ;; scrolling
+         ("l" . recenter-top-bottom)
+         ;; resizing
+         ("-" . shrink-window-horizontally)
+         ("=" . enlarge-window-horizontally)
+         ("_" . shrink-window)
+         ("+" . enlarge-window)))
 
 ;;; third-party packages
 (use-package undo-fu-session
