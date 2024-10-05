@@ -102,6 +102,7 @@
      "`custom.el' does not exist. Creating it..."
      custom-file)
     (make-empty-file custom-file t))
+  (load custom-file)
 
   ;; themes
   (setopt custom-theme-directory
