@@ -457,8 +457,7 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   (savehist-additional-variables '(kill-ring
                                    kmacro-ring
                                    regexp-search-ring
-                                   search-ring
-                                   Info-history)))
+                                   search-ring)))
 
 (use-package saveplace
   :ensure nil
