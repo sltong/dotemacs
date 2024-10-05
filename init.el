@@ -957,7 +957,7 @@ This function adds the `expreg--sentence' expansion function to
                                 while_statement))))
 
 (use-package colorful-mode
-  :hook (prog-mode text-mode))
+  :hook (text-mode custom-mode))
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
