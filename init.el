@@ -111,7 +111,7 @@
           (add-to-list 'default-frame-alist
                        '(font . "Iosevka Law-14"))
           (custom-set-faces
-           '(fixed-pitch-serif ((t (:family "Iosevka Law"))))))
+           '(fixed-pitch ((t (:family "Iosevka Law"))))))
         (when (member "IBM Plex Sans" (font-family-list))
           (custom-set-faces
            '(variable-pitch ((t (:family "IBM Plex Sans")))))))
