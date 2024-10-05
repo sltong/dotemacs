@@ -118,6 +118,7 @@
     (message "Emacs is not running graphically. Skipping setting default font.")
     nil)
 
+  ;; hooks
   ;; ensure `λαω-remove-kill-ring-text-properties' is the first
   ;; function in `kill-emacs-hook'
   (add-hook 'kill-emacs-hook 'λαω-remove-kill-ring-text-properties -100)
@@ -135,6 +136,7 @@
   :hook
   (after-init . λαω-display-init-time-message)
   (org-mode . visual-line-mode)
+  (markdown-mode . visual-line-mode)
 
   :bind (;; global key bindings
          ("C-x C-k" . kill-current-buffer)
@@ -949,5 +951,11 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package colorful-mode
   :hook (prog-mode text-mode))
+
+(use-package markdown-mode
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)))
+
 
 ;;; init.el ends here
