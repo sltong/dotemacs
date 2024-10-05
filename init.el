@@ -389,8 +389,9 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   :ensure nil
   :commands minibuffer-mode
   :custom
-  ;; tab cycle if there are only few candidates
-  (completion-cycle-threshold 3))
+  ;; useful for `corfu'
+  (completion-cycle-threshold 2
+   "Cycle through completion candidates if there's only two."))
 
 (use-package paren
   :ensure nil
