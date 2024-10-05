@@ -98,7 +98,8 @@
 (defvar-keymap λαω-buffer-map
   :doc "Keymap for Emacs buffers."
   :name "buffer"
-  "s" #'scratch-buffer)
+  "s" #'scratch-buffer
+  "m" '("messages" . λαω-switch-to-messages-buffer))
 (keymap-global-set "C-c b" (cons "λαω-buffer" λαω-buffer-map))
 (keymap-set λαω-map "b" (cons "buffer" λαω-buffer-map))
 

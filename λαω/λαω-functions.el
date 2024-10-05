@@ -205,6 +205,12 @@ Concatenate \"λαω-\" with FILENAME and return its absolute file path
 (λαω-make-visit-file-function
  (λαω-expand-λαω-file-name "themes.el") nil "λαω-themes-file")
 
+;;; buffers
+(defun λαω-visit-message-log-buffer ()
+  "Visit the message log buffer."
+  (interactive)
+  (switch-to-buffer "*Messages*"))
+
 ;;; utilities
 (defun λαω-downcase-and-hyphenate-region (region-start region-end)
   "Downcase words in the region and concatenate them with hyphens.
