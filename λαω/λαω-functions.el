@@ -29,6 +29,7 @@
 ;;; Code:
 
 (require 'λαω)
+
 (defun λαω-display-init-time-message ()
   "Display an Emacs initialization time and garbage collections message."
   (run-with-idle-timer
@@ -124,6 +125,7 @@ Disable all other themes beforehand."
       (mapc #'disable-theme non-λαω-themes))
     (message "Loading λαω theme...")
     (load-theme 'λαω t)))
+
 (defun λαω-reset-emacs ()
   "Reset Emacs by deleting all generated package, cache, and user data."
   (interactive)
