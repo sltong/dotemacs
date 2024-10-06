@@ -124,7 +124,7 @@
 
    ;; isearch
    `(isearch ((,class (:background ,green :foreground ,bg :weight bold))))
-   `(isearch-fail ((((class color) (min-colors 88) (background light)) (:background "RosyBrown1")) (((class color) (min-colors 88) (background dark)) (:background "red4")) (((class color) (min-colors 16)) (:background "red")) (((class color) (min-colors 8)) (:background "red")) (((class color grayscale)) (:foreground "grey")) (t (:inverse-video t))))
+   `(isearch-fail ((,class (:background ,bg-min-red :foreground ,pink))))
    `(isearch-group-1 ((,class (:background ,hl :foreground ,teal))))
    `(isearch-group-2 ((,class (:background ,hl :foreground ,blue))))
 
