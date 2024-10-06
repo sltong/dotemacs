@@ -538,6 +538,10 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
     :ensure nil
     :mode "\\.ex[s]?\\'")
 
+  (use-package heex-ts-mode
+    :ensure nil
+    :mode "\\.heex\\'")
+
   (use-package javascript-ts-mode
     :ensure nil
     :mode "\\.js[x]?\\'")
