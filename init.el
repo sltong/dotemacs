@@ -376,7 +376,9 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   (advice-add #'face-at-point
               :around #'λαω-disable-hl-line-mode-temporarily)
   :hook
-  (prog-mode))
+  (prog-mode)
+  :custom
+  (hl-line-sticky-flag nil))
 
 (use-package ibuffer
   :ensure nil
