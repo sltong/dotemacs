@@ -204,7 +204,7 @@
 
 (use-package exec-path-from-shell
   :demand t
-  :if (or (memq window-system '(mac ns x))
+  :if (or (memq window-system '(mac ns pgtk x))
           (daemonp))
   :config
   (exec-path-from-shell-initialize))
