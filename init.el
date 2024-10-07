@@ -670,12 +670,16 @@ This function adds the `expreg--sentence' expansion function to
          ("t" . eat)))
 
 (use-package vterm
+  :defer nil
   :config
   (keymap-unset vterm-mode-map "C-l" t)
   :bind (:map vterm-mode-map
-         ("C-q" . vterm-send-next-key)
-         :map λαω-cli-map
-         ("v" . vterm)))
+         ("C-q" . vterm-send-next-key)))
+
+(use-package multi-vterm
+  :requires vterm
+  :bind (:map λαω-cli-map
+         ("v" . multi-vterm)))
 
 (use-package orderless
   :defer 1
