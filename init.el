@@ -135,6 +135,8 @@
 
   :hook
   (after-init . λαω-display-init-time-message)
+  ;; visual-line-mode
+  (help-mode . visual-line-mode)
   (org-mode . visual-line-mode)
   (markdown-mode . visual-line-mode)
 
