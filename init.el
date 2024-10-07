@@ -963,7 +963,6 @@ This function adds the `expreg--sentence' expansion function to
   (indent-bars-display-on-blank-lines nil)
   (indent-bars-no-descend-lists nil)
   (indent-bars-color-by-depth nil)
-  (indent-bars-starting-column 0)
   ;; treesit support
   (indent-bars-treesit-support t)
   (indent-bars-treesit-ignore-blank-lines-types '("module"))
