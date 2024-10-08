@@ -149,15 +149,20 @@
 (keymap-set λαω-map "o" (cons "org" λαω-org-map))
 
 ;;; repeat keymaps
-(defvar-keymap λαω-window-repeat-map
-  :doc "Keymap for repeatable `window' commands."
-  :name "window-repeat"
+(defvar-keymap λαω-window-resize-repeat-map
+  :doc "Keymap for repeatable `window' resizing commands."
+  :name "window-resize-repeat"
   :repeat t
   ;; resizing
   "-" #'shrink-window-horizontally
   "=" #'enlarge-window-horizontally
   "_" #'shrink-window
-  "+" #'enlarge-window
+  "+" #'enlarge-window)
+
+(defvar-keymap λαω-window-recenter-repeat-map
+  :doc "Keymap for repeatable `window' recentering commands."
+  :name "window-recenter-repeat"
+  :repeat t
   ;; scrolling
   "C-l" #'recenter-top-bottom
   "l" #'recenter-top-bottom)
