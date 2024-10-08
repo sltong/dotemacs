@@ -104,19 +104,6 @@
     (make-empty-file custom-file t))
   (load custom-file)
 
-  ;; default fonts
-  (if (display-graphic-p)
-      (progn
-        (when (member "Iosevka Law" (font-family-list))
-          (add-to-list 'default-frame-alist
-                       '(font . "Iosevka Law-14"))
-          (custom-set-faces
-           '(fixed-pitch ((t (:family "Iosevka Law"))))))
-        (when (member "IBM Plex Sans" (font-family-list))
-          (custom-set-faces
-           '(variable-pitch ((t (:family "IBM Plex Sans")))))))
-    (message "Emacs is not running graphically. Skipping setting default font.")
-    nil)
 
   ;; hooks
   ;; ensure `λαω-remove-kill-ring-text-properties' is the first

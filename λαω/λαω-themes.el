@@ -30,6 +30,21 @@
 
 (require 'λαω)
 
+;; fonts
+(if (display-graphic-p)
+    (progn
+      (when (member "Iosevka Law" (font-family-list))
+        (add-to-list 'default-frame-alist
+                     '(font . "Iosevka Law-14"))
+        (custom-set-faces
+         '(fixed-pitch ((t (:family "Iosevka Law"))))))
+      (when (member "IBM Plex Sans" (font-family-list))
+        (custom-set-faces
+         '(variable-pitch ((t (:family "IBM Plex Sans"))))
+         '(variable-pitch-text ((t (:inherit (variable-pitch) :height 1.05)))))))
+  (message "Emacs is not running graphically. Skipping setting default font.")
+  nil)
+
 (defcustom λαω-themes-directory (expand-file-name
                                  "themes/" λαω-emacs-directory)
   "λαω themes directory."
