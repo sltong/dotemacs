@@ -65,9 +65,11 @@
 (defvar-keymap λαω-dirs-map
   :doc "Keymap for directories."
   :name "dirs"
-  "~" '("home" . λαω-visit-home-directory)
-  "o" '("org" . λαω-visit-org-directory)
-  "e" '("emacs" . λαω-visit-user-emacs-directory))
+  "\x3bb" '("λαω" . λαω-visit-λαω-emacs-directory) ; λ
+  "l"     '("λαω" . λαω-visit-λαω-emacs-directory)
+  "~"     '("home" . λαω-visit-home-directory)
+  "o"     '("org" . λαω-visit-org-directory)
+  "e"     '("emacs" . λαω-visit-user-emacs-directory))
 (keymap-set λαω-files-map "d" (cons "dirs" λαω-dirs-map))
 
 (defvar-keymap λαω-files-λαω-map

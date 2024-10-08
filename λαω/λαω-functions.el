@@ -187,6 +187,7 @@ Concatenate \"λαω-\" with FILENAME and return its absolute file path
   (expand-file-name (concat "λαω-" filename) λαω-emacs-directory))
 
 ;; create functions to visit files and directories
+(λαω-make-visit-file-function 'λαω-emacs-directory)
 (λαω-make-visit-file-function
  (convert-standard-filename "~") "Visit home directory." "home-directory")
 (λαω-make-visit-file-function 'user-emacs-directory)
