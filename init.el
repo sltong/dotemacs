@@ -64,6 +64,7 @@
 (add-to-list 'load-path (expand-file-name "λαω/" user-emacs-directory))
 (require 'λαω)
 (require 'λαω-functions)
+(require 'λαω-languages)
 (require 'λαω-keys)
 (require 'λαω-org)
 (require 'λαω-themes)
