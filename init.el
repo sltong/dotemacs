@@ -496,32 +496,52 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   :ensure nil
   :defer 2
   :init
-  (setq treesit-language-grammars-directory
-        (expand-file-name "treesit/language-grammars/" λαω-emacs-var-directory))
-  (setq treesit-extra-load-path (list treesit-language-grammars-directory))
+  (defcustom λαω-treesit-language-grammars-directory
+    "Directory for tree-sitter language grammars."
+    (expand-file-name "treesit/language-grammars/" λαω-emacs-var-directory)
+    :type 'directory)
+
+  (defun λαω-install-treesit-language-grammars (&optional install-directory)
+    "Install all language grammars in `treesit-language-source-alist'.
+
+Optionally install the grammars in INSTALL-DIRECTORY. Otherwise, install
+them in `λαω-treesit-language-grammars-directory'."
+    (interactive)
+    (if (featurep 'treesit)
+        (let ((install-directory
+               (directory-file-name
+                (or install-directory
+                    λαω-treesit-language-grammars-directory))))
+          (mapcar (lambda (language)
+                    (treesit-install-language-grammar language install-directory))
+                  (mapcar #'car treesit-language-source-alist)))
+      (error "`treesit' is not installed")))
+
   :config
-  ;; language grammar setup
-  (setq treesit-language-source-alist
-        '((css "https://github.com/tree-sitter/tree-sitter-css" "v0.23.0")
-          (elixir "https://github.com/elixir-lang/tree-sitter-elixir" "v0.3.1")
-          (heex
-           "https://github.com/phoenixframework/tree-sitter-heex")
-          (html "https://github.com/tree-sitter/tree-sitter-html" "v0.23.0")
-          (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.0")
-          (json "https://github.com/tree-sitter/tree-sitter-json" "v0.23.0")
-          (python "https://github.com/tree-sitter/tree-sitter-python" "v0.23.2")
-          ;; (markdown
-          ;;  "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
-          ;;  "v0.3.2"
-          ;;  "tree-sitter-markdown/src")
-          ;; (markdown-inline
-          ;;  "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
-          ;;  "v0.3.2"
-          ;;  "tree-sitter-markdown-inline/src"))
-          (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.0" "tsx/src")
-          (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.0" "typescript/src")
-          (xml "https://github.com/tree-sitter-grammars/tree-sitter-xml" "v0.6.4" "xml/src")
-          (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml"))))
+  (add-to-list 'treesit-extra-load-path
+               λαω-treesit-language-grammars-directory)
+  :custom
+  (treesit-language-source-alist
+   '((css "https://github.com/tree-sitter/tree-sitter-css" "v0.23.0")
+     (elixir "https://github.com/elixir-lang/tree-sitter-elixir" "v0.3.1")
+     (heex
+      "https://github.com/phoenixframework/tree-sitter-heex")
+     (html "https://github.com/tree-sitter/tree-sitter-html" "v0.23.0")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.0")
+     (json "https://github.com/tree-sitter/tree-sitter-json" "v0.23.0")
+     (python "https://github.com/tree-sitter/tree-sitter-python" "v0.23.2")
+     ;; (markdown
+     ;;  "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+     ;;  "v0.3.2"
+     ;;  "tree-sitter-markdown/src")
+     ;; (markdown-inline
+     ;;  "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+     ;;  "v0.3.2"
+     ;;  "tree-sitter-markdown-inline/src"))
+     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.0" "tsx/src")
+     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.0" "typescript/src")
+     (xml "https://github.com/tree-sitter-grammars/tree-sitter-xml" "v0.6.4" "xml/src")
+     (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml"))))
 
   ;; *-ts-mode setup
   (use-package elixir-ts-mode

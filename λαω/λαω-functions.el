@@ -108,12 +108,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
   "Locally enable `truncate-lines'."
   (setq-local truncate-lines t))
 
-(defun λαω-install-treesit-language-grammars ()
-  "Install all language grammars in `treesit-language-source-alist'."
-  (interactive)
-  (mapc #'treesit-install-language-grammar
-        (mapcar #'car treesit-language-source-alist)))
-
 (defun λαω-reload-λαω-theme ()
   "Load the λαω theme.
 
