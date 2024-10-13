@@ -60,41 +60,49 @@
         use-package-compute-statistics t
              debug-on-error t))
 
-;;; λαω
-(add-to-list 'load-path (expand-file-name "λαω/" user-emacs-directory))
-(require 'λαω)
-(require 'λαω-functions)
-(require 'λαω-languages)
-(require 'λαω-keys)
-(require 'λαω-org)
-(require 'λαω-themes)
-
 ;;; package configurations
 (require 'package)
 (require 'use-package)
 
 (use-package package
   :ensure nil
-  :defer nil
+  :demand t
   :init
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   :bind ("C-h p" . describe-package))
 
 (use-package use-package
   :ensure nil
-  :defer nil
+  :demand t
   :custom
-  (use-package-always-defer t)
-  (use-package-always-ensure t))
+  (use-package-always-ensure t)
+  (use-package-hook-name-suffix nil))
 
 (use-package auto-compile
-  :defer nil
+  :demand t
   :config
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode))
 
+;;; λαω
+(add-to-list 'load-path (expand-file-name "λαω/" user-emacs-directory))
+(require 'λαω)
+(require 'λαω-functions)
+(require 'λαω-languages)
+(require 'λαω-keys)
+(require 'λαω-themes)
+(require 'λαω-org)
+;;(require 'λαω-mode-line-bell)
+;; (use-package λαω-mode-line-bell
+;;   :ensure nil
+;;   :config (λαω-mode-line-bell-mode))
+(use-package mode-line-bell-pulse
+  :ensure nil
+  :config (mode-line-bell-pulse-mode))
+
 ;;; Emacs initialization and (built-in package) customizations
 (use-package emacs
+  :demand t
   :init
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (if (file-exists-p custom-file)
@@ -105,39 +113,29 @@
     (make-empty-file custom-file t))
   (load custom-file)
 
-
   ;; hooks
-  ;; ensure `λαω-remove-kill-ring-text-properties' is the first
+  ;; "-100" ensures `λαω-remove-kill-ring-text-properties' is the first
   ;; function in `kill-emacs-hook'
   (add-hook 'kill-emacs-hook 'λαω-remove-kill-ring-text-properties -100)
   (add-hook 'input-method-activate-hook
             #'λαω-minibuffer-input-method-indicator-activate)
   (add-hook 'input-method-deactivate-hook
             #'λαω-minibuffer-input-method-indicator-deactivate)
-
-  :config
-  ;; aliases
-  (defalias 'elisp-mode 'emacs-lisp-mode)
   ;; default modes
   (setq-default indent-tabs-mode nil)
 
-  :hook
-  (after-init . λαω-display-init-time-message)
-  ;; visual-line-mode
-  (help-mode . visual-line-mode)
-  (org-mode . visual-line-mode)
-  (markdown-mode . visual-line-mode)
+  ;; aliases
+  (defalias 'elisp-mode 'emacs-lisp-mode)
 
-  :bind (;; global key bindings
-         ("C-x C-k" . kill-current-buffer)
-         ("M-<RET>" . default-indent-new-line)
-         :map λαω-buffer-map
-         ("s" . 'scratch-buffer)
-         :map λαω-text-map
-         ("-" . text-scale-decrease)
-         ("=" . text-scale-increase))
+  :hook
+  (after-init-hook . λαω-display-init-time-message)
+  (help-mode-hook . visual-line-mode)
+  (org-mode-hook . visual-line-mode)
+  (markdown-mode-hook . visual-line-mode)
 
   :custom
+  (set-language-environment "UTF-8")
+  ;; simple
   (column-number-mode t)
   (inhibit-default-init t "Don't load `default.el'.")
   (selection-coding-system 'utf-8)
@@ -153,20 +151,49 @@
   ;; (minibuffer) history
   (history-length 1024)
   (history-delete-duplicates t)
+  ;; (mode-line-format '("%e" mode-line-front-space
+  ;;                     (:propertize
+  ;;                      ("%12b"
+  ;;                       display (min-width (6.0))))
+  ;;                     " "
+  ;;                     (project-mode-line
+  ;;                      project-mode-line-format)
+  ;;                     " "
+  ;;                     (vc-mode vc-mode)
+  ;;                     mode-line-misc-info
+  ;;                     mode-line-format-right-align
+  ;;                     mode-line-modes
+  ;;                     " "
+  ;;                     (:propertize
+  ;;                      (""
+  ;;                       "%o"
+  ;;                       display (min-width (2.0))))
+  ;;                     " "
+  ;;                     (:propertize
+  ;;                      ("%l"
+  ;;                       ":"
+  ;;                       "%c"
+  ;;                       display (min-width (10.0))))
+  ;;                     mode-line-end-spaces))
   (enable-recursive-minibuffers t)
   (truncate-lines t)
+  (find-file-visit-truename t)
+  (vc-follow-symlinks t)
+  (mode-line-right-align-edge 'right-fringe)
+  (mode-line-percent-position '(-3 "%o"))
+  (fill-column 80)
   ;; *scratch* buffer
   (initial-major-mode 'fundamental-mode
    "Set initial *scratch* buffer major mode to `fundamental-mode'.")
   (use-dialog-box nil "Disable pop-up dialog boxes when questioned.")
   (initial-scratch-message nil)
-  (visible-bell t) ; replace audible bell with visual one
+  ;; (visible-bell t) ; replace audible bell with visual one
   (scroll-preserve-screen-position t)
+  (scroll-conservatively 0)
   (message-log-max 10000
    "Increase maximum number of lines in the message log buffer.")
   (use-short-answers t "Make `yes-or-no-p' accept \"y\" or \"n\".")
   (yes-or-no-prompt "(y or n)")
-  (default-input-method "greek-babel")
   (sentence-end-double-space nil
    "Make Emacs recognize single spaces as sentence-ending.")
   (delete-by-moving-to-trash t
@@ -176,8 +203,9 @@
   (text-mode-ispell-word-completion nil)
   ;; Enable indentation/completion using the TAB key.
   (tab-always-indent 'complete)
-  (eval-expression-print-level nil
-   "Don't set a limit on printed expression evaluations."))
+  ;; don't set a limit on printed expression evaluations
+  (eval-expression-print-level nil)
+  (eval-expression-print-length nil))
 
 ;; load immediately, as soon as possible
 ;; later packages still explicitly set their modes' respective
@@ -191,29 +219,44 @@
   (no-littering-theme-backups))
 
 (use-package exec-path-from-shell
-  :demand t
   :if (or (memq window-system '(mac ns pgtk x))
           (daemonp))
+  :demand t
   :config
   (exec-path-from-shell-initialize))
 
 ;;; early packages
-(use-package delight :defer 0.3)
-(use-package diminish :defer 0.3)
+;; put all minor modes on the mode line in one menu
+(use-package minions
+  :commands (minions-mode glasses-mode)
+  :config (minions-mode 1))
 
-;;; included packages
+;;; built-in packages
 ;; these packages should have :ensure explicitly set to nil in order
 ;; to prevent fetching them from repositories
+(use-package auth-source
+  :defer 1
+  :custom
+  ;; add alternative port 23 for SSH
+  ;; and add IMAP port 1143 and SMTP port 1025 for Proton Mail Bridge
+  (auth-source-protocols '((imap "imap" "imaps" "143" "993" "1143")
+                           (pop3 "pop3" "pop" "pop3s" "110" "995")
+                           (ssh "ssh" "22" "23")
+                           (sftp "sftp" "115")
+                           (smtp "smtp" "25" "1025"))))
+
+(use-package auth-source-pass
+  :ensure nil
+  :config
+  (auth-source-pass-enable))
+
 (use-package autorevert
   :ensure nil
-  :defer 1
   :config
-  (global-auto-revert-mode)
-  :diminish auto-revert-mode)
+  (global-auto-revert-mode))
 
 (use-package bookmark
   :ensure nil
-  :defer 0.75
   :custom
   (bookmark-menu-confirm-deletion t)
   (bookmark-bmenu-file-column 40)
@@ -221,56 +264,58 @@
 
 (use-package cc-mode
   :ensure nil
+  :defer 3
   :custom
   (c-basic-offset 4))
 
 (use-package crm
   :ensure nil
+  :defer 3
   :commands (completing-read-multiple)
   :config
   (advice-add #'completing-read-multiple
               :filter-args #'λαω-crm-prompt-indicator))
 
+;; replace active region when doing a delete or replace action instead of
+;; ignoring it
 (use-package delsel
   :ensure nil
-  :defer 1
   :config
   (delete-selection-mode))
 
-(use-package desktop
-  :ensure nil
-  :defer nil
-  :config
-  ;; prevent bug where line numbers disappear/reappear multiple times
-  ;; on desktop restore
-  (add-to-list 'desktop-minor-mode-handlers
-               '(cons display-line-numbers-mode
-                      λαω-desktop-restore-display-line-numbers-mode))
-  (desktop-save-mode)
-  :custom
-  (desktop-base-file-name ".desktop-session")
-  (desktop-base-lock-name ".desktop-session.lock")
-  (desktop-missing-file-warning t
-   "Offer to recreate the buffers of deleted files.")
-  (desktop-auto-save-timeout 1.5)
-  (desktop-auto-save-timeout 1.5)
-  (desktop-restore-eager 3)
-  (desktop-lazy-idle-delay 0.5)
-  (desktop-lazy-verbose nil)
-  (desktop-clear-preserve-buffers
-   '("\\*scratch\\*"
-     "\\*Messages\\*"
-     "\\*server\\*"
-     "\\*tramp/.+\\*"
-     "\\*Warnings\\*"
-     "\\*Flymake log\\*")
-   "‘desktop-clear’ should not delete these buffers.")
-  (desktop-globals-to-clear '()
-   "Don't clear any global variables with `desktop-clear'."))
+;; (use-package desktop
+;;   :ensure nil
+;;   :defer nil
+;;   :config
+;;   ;; prevent bug where line numbers disappear/reappear multiple times
+;;   ;; on desktop restore
+;;   (add-to-list 'desktop-minor-mode-handlers
+;;                '(cons display-line-numbers-mode
+;;                       λαω-desktop-restore-display-line-numbers-mode))
+;;   (desktop-save-mode)
+;;   :custom
+;;   (desktop-base-file-name ".desktop-session")
+;;   (desktop-base-lock-name ".desktop-session.lock")
+;;   (desktop-missing-file-warning t
+;;    "Offer to recreate the buffers of deleted files.")
+;;   (desktop-auto-save-timeout 1.5)
+;;   (desktop-auto-save-timeout 1.5)
+;;   (desktop-restore-eager 3)
+;;   (desktop-lazy-idle-delay 0.5)
+;;   (desktop-lazy-verbose nil)
+;;   (desktop-clear-preserve-buffers
+;;    '("\\*scratch\\*"
+;;      "\\*Messages\\*"
+;;      "\\*server\\*"
+;;      "\\*tramp/.+\\*"
+;;      "\\*Warnings\\*"
+;;      "\\*Flymake log\\*")
+;;    "‘desktop-clear’ should not delete these buffers.")
+;;   (desktop-globals-to-clear '()
+;;    "Don't clear any global variables with `desktop-clear'."))
 
 (use-package dired
   :ensure nil
-  :defer nil
   :bind (:map dired-mode-map
          ("b" . dired-up-directory)
          ("+" . dired-create-empty-file)
@@ -278,6 +323,10 @@
   :custom
   (dired-listing-switches "-ahl")
   (dired-auto-revert-buffer t))
+
+(use-package display-fill-column-indicator
+  :ensure nil
+  :hook (prog-mode-hook . display-fill-column-indicator-mode))
 
 (use-package display-line-numbers
   :ensure nil
@@ -290,18 +339,17 @@
 (use-package eglot
   :ensure nil
   :hook
-  (elixir-ts-mode . eglot-ensure)
-  (heex-ts-mode . eglot-ensure)
-  (python-ts-mode . eglot-ensure))
+  (elixir-ts-mode-hook . eglot-ensure)
+  (heex-ts-mode-hook . eglot-ensure)
+  (python-ts-mode-hook . eglot-ensure))
 
 (use-package eldoc
   :ensure nil
-  :defer 1.5
-  :diminish)
+  :defer 1)
 
 (use-package elec-pair
   :ensure nil
-  :hook (prog-mode . electric-pair-local-mode))
+  :hook (prog-mode-hook . electric-pair-local-mode))
 
 (use-package eshell
   :ensure nil
@@ -318,7 +366,6 @@
 
 (use-package files
   :ensure nil
-  :defer 1
   :custom
   (backup-by-copying t) ; don't break hard or symbolic links
   (version-control t) ; always use numerically versioned backups
@@ -334,8 +381,46 @@
 
 (use-package flymake
   :ensure nil
-  :hook (prog-mode)
-  :diminish)
+  :hook (prog-mode-hook . flymake-mode)
+  :custom
+  (flymake-fringe-indicator-position nil))
+
+(use-package gnus
+  :ensure nil
+  :defer 3
+  :hook (gnus-group-mode-hook . gnus-topic-mode)
+  :custom
+  (gnus-select-method '(nnimap "proton"
+                               (nnimap-address "127.0.0.1")
+                               (nnimap-server-port 1143)
+                               (nnimap-stream starttls)
+                               (nnimap-inbox "Inbox")
+                               (nnimap-split-methods default)
+                               (nnimap-record-commands t)))
+  (gnus-secondary-select-methods '((nntp "news.usenetserver.com")))
+  (gnus-use-cache t)
+  (gnus-asynchronous t)
+  (gnus-use-header-prefetch t)
+  (gnus-verbose 10)
+  (gnus-save-killed-list nil)
+  (gnus-inhibit-startup-message t))
+
+(use-package gnus-group
+  :ensure nil
+  :after gnus
+  :defer 3
+  :config
+  (add-to-list 'gnus-topic-alist '(("proton"
+                                    "nnimap+proton:Inbox"
+                                    "nnimap+proton:Drafts"
+                                    "nnimap+proton:Sent"
+                                    "nnimap+proton:Starred"
+                                    "nnimap+proton:Spam"
+                                    "nnimap+proton:Trash")))
+  :custom
+  (gnus-topic-topology '(("Gnus" visible)
+                         (("misc" visible))
+                         (("Proton" visible nil nil)))))
 
 (use-package help-fns
   :ensure nil
@@ -343,14 +428,12 @@
 
 (use-package hideshow
   :ensure nil
-  :hook (prog-mode . hs-minor-mode)
-  :diminish (hs-minor-mode)
+  :hook (prog-mode-hook . hs-minor-mode)
   :bind ("C-<tab>" . hs-toggle-hiding)
   :custom
   (hs-isearch-open t "Open both code and comment blocks when doing `isearch'."))
 
 (use-package hl-line
-  :defer 1
   :init
   (defun λαω-disable-hl-line-mode-temporarily (func &rest args)
     "Temporarily disable `global-hl-line-mode' when calling FUNC.
@@ -366,9 +449,8 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   (advice-add #'face-at-point
               :around #'λαω-disable-hl-line-mode-temporarily)
   :hook
-  (prog-mode)
-  :custom
-  (hl-line-sticky-flag nil))
+  (prog-mode-hook . hl-line-mode)
+  (text-mode-hook . hl-line-mode))
 
 (use-package ibuffer
   :ensure nil
@@ -384,7 +466,7 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
 
 (use-package mb-depth
   :ensure nil
-  :defer 1.5
+  :defer 2
   :config
   (minibuffer-depth-indicate-mode))
 
@@ -398,9 +480,7 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
 
 (use-package paren
   :ensure nil
-  :defer 1
-  :config
-  (show-paren-mode)
+  :hook (prog-mode-hook . show-paren-mode)
   :custom
   (show-paren-delay 0))
 
@@ -413,13 +493,13 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
 (use-package pixel-scroll
   :ensure nil
   :if (display-graphic-p)
-  :defer 1
+  :defer 2
   :config
   (pixel-scroll-precision-mode))
 
 (use-package re-builder
   :ensure nil
-  :defer 1
+  :defer t
   :custom
   (reb-re-syntax 'string)
   (reb-auto-match-limit 512))
@@ -447,13 +527,11 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
 
 (use-package replace
   :ensure nil
-  :bind (("C-c r" . query-replace-regexp)
-         :map λαω-map
-         ("r" . query-replace-regexp)))
+  :bind (("C-c r" . query-replace-regexp)))
 
 (use-package savehist
   :ensure nil
-  :defer 0.01
+  :defer 1
   :config
   (savehist-mode)
   :custom
@@ -464,14 +542,19 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
 
 (use-package saveplace
   :ensure nil
-  :defer 1.5
+  :defer 1
   :config
   (save-place-mode))
 
-(use-package time
-  :disabled t
+(use-package shr
   :ensure nil
-  :defer 0.03
+  :defer t
+  :custom
+  (shr-use-colors nil))
+
+(use-package time
+  :disabled
+  :ensure nil
   :config
   (display-time-mode)
   :custom
@@ -494,7 +577,6 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
 
 (use-package treesit
   :ensure nil
-  :defer 2
   :init
   (defcustom λαω-treesit-language-grammars-directory
     "Directory for tree-sitter language grammars."
@@ -574,13 +656,11 @@ them in `λαω-treesit-language-grammars-directory'."
 
 (use-package vc-hooks
   :ensure nil
-  :defer 1
   :custom
   (vc-make-backup-files t))
 
 (use-package window
   :ensure nil
-  :defer nil
   :custom
   ;; See:
   ;; https://www.masteringemacs.org/article/demystifying-emacs-window-manager
@@ -589,7 +669,6 @@ them in `λαω-treesit-language-grammars-directory'."
 
 (use-package winner
   :ensure nil
-  :defer 1.5
   :config
   (winner-mode)
   :bind (("C-c w C-/" . winner-undo)
@@ -597,26 +676,24 @@ them in `λαω-treesit-language-grammars-directory'."
 
 (use-package which-key
   :ensure nil
-  :defer 0.4
+  :defer 0.5
   :config
   (which-key-mode)
-  :diminish
   :custom
-  (which-key-use-C-h-commands nil)
-  (which-key-idle-delay 0.25)
+  ;; (which-key-use-C-h-commands nil)
+  (which-key-idle-delay 0.3)
   (which-key-preserve-window-configuration t)
   (which-key-max-description-length nil)
   (which-key-dont-use-unicode nil)
   (which-key-show-prefix 'top)
+  (which-key-side-window-max-height 7)
   (which-key-prefix-prefix "*")
   (which-key-separator " → "))
 
 (use-package whitespace
   :ensure nil
-  :defer 1
   :config
   (global-whitespace-mode)
-  :diminish
   :custom
   (whitespace-global-modes '(prog-mode))
   (whitespace-style '(face
@@ -631,26 +708,27 @@ them in `λαω-treesit-language-grammars-directory'."
 
 (use-package window
   :ensure nil
-  :bind (("C-c C-l" . recenter-top-bottom)
-         ("C-c l" . recenter-top-bottom)
-         :map λαω-map
-         ("C-l" . recenter-top-bottom)
+  :bind (;; ("C-c C-l" . recenter-top-bottom)
+         ;; ("C-c l" . recenter-top-bottom)
+         ;; :map λαω-map
+         ;; ("C-l" . recenter-top-bottom)
          :map λαω-window-map
-         ;; scrolling
-         ("l" . recenter-top-bottom)
-         ;; resizing
          ("-" . shrink-window-horizontally)
          ("=" . enlarge-window-horizontally)
          ("_" . shrink-window)
          ("+" . enlarge-window)))
 
 ;;; third-party packages
+(use-package pass
+  :defer 0.5)
+
 (use-package undo-fu-session
   :hook
-  (text-mode prog-mode))
+  (text-mode-hook . undo-fu-session-mode)
+  (prog-mode-hook . undo-fu-session-mode))
 
 (use-package avy
-  :defer nil
+  ;; default is `electric-newline-and-maybe-indent'
   :bind (("C-j" . avy-goto-char-timer)))
 
 (use-package expreg
@@ -662,7 +740,7 @@ This function adds the `expreg--sentence' expansion function to
 `expreg-functions'."
     (add-to-list 'expreg-functions 'expreg--sentence))
 
-  :hook (text-mode . λαω-expreg-expand-sentences)
+  :hook (text-mode-hook . λαω-expreg-expand-sentences)
   :bind (("C->" . expreg-expand)
          ("C-<" . expreg-contract)))
 
@@ -673,7 +751,7 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package eat
   :hook
-  (eshell-load . eat-eshell-visual-command-mode)
+  (eshell-load-hook . eat-eshell-visual-command-mode)
   :bind (:map λαω-cli-map
          ("t" . eat)))
 
@@ -681,16 +759,12 @@ This function adds the `expreg--sentence' expansion function to
   :defer nil
   :config
   (keymap-unset vterm-mode-map "C-l" t)
-  :bind (:map vterm-mode-map
+  :bind (:map λαω-cli-map
+         ("v" . vterm)
+         :map vterm-mode-map
          ("C-q" . vterm-send-next-key)))
 
-(use-package multi-vterm
-  :requires vterm
-  :bind (:map λαω-cli-map
-         ("v" . multi-vterm)))
-
 (use-package orderless
-  :defer 1
   :init
   ;; efficient prefix filtering for inputs shorter than 4 characters
   (defun orderless-fast-dispatch (word index total)
@@ -705,11 +779,11 @@ This function adds the `expreg--sentence' expansion function to
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
   ;; enable file wildcard support using partial completion
-  (completion-category-overrides '((file (styles partial-completion)))))
+  (completion-category-overrides
+   '((file (styles orderless basic partial-completion)))))
 
 (use-package consult
-  :defer 1
-  :config
+  :init
   ;; Optionally configure the register formatting. This improves the register
   ;; preview for `consult-register', `consult-register-load',
   ;; `consult-register-store' and the Emacs built-ins.
@@ -724,6 +798,7 @@ This function adds the `expreg--sentence' expansion function to
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
 
+  :config
   ;; For some commands and buffer sources it is useful to configure the
   ;; :preview-key on a per-command basis using the `consult-customize' macro.
   (consult-customize
@@ -792,24 +867,19 @@ This function adds the `expreg--sentence' expansion function to
          :map minibuffer-local-map
          ("M-s" . consult-history)                 ; orig. next-matching-history-element
          ("M-r" . consult-history))                ; orig. previous-matching-history-element
-
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI.
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-
   :custom
   (consult-preview-key 'any))
 
 (use-package consult-dir
   :after consult
+  :init
   :bind (("C-x C-d" . consult-dir)
          :map minibuffer-local-completion-map
          ("C-x C-d" . consult-dir)
          ("C-x C-j" . consult-dir-jump-file)))
 
 (use-package vertico
-  :defer 0.5
-  :config
+  :init
   (vertico-mode)
   :custom
   (vertico-cycle t) ; enable cycling for `vertico-next/previous'
@@ -817,28 +887,43 @@ This function adds the `expreg--sentence' expansion function to
   (vertico-resize nil)) ; affix minibuffer window size
 
 (use-package corfu
-  :defer 1
-  :config
+  :init
+  (defun λαω-disable-corfu-auto-locally ()
+    "Locally disable `corfu-mode' automatic completion."
+    (setq-local corfu-auto nil)
+    (corfu-mode))
   (global-corfu-mode)
   (keymap-unset corfu-map "<RET>")
+  (define-key corfu-map [remap next-line] nil)
+  (define-key corfu-map [remap previous-line] nil)
   ;; corfu extensions
   (corfu-echo-mode)
   (corfu-history-mode)
   (corfu-popupinfo-mode)
+  :hook (eshell-mode-hook . λαω-disable-corfu-auto-locally)
   :bind (:map corfu-map
+         ("M-n" . corfu-next)
+         ("M-p" . corfu-previous)
          ;; configure SPC for separator insertion
          ("SPC" . corfu-insert-separator))
   :custom
+  (corfu-auto t)
+  (corfu-auto-delay 0.4)
+  (corfu-quit-no-match 'separator)
   (corfu-cycle t) ; enable cycling for `corfu-next/previous'
   (corfu-separator ?\s) ; orderless field separator
   (corfu-scroll-margin 3)
-  (corfu-popupinfo-delay '(0.45 . 0.2))
-  (corfu-preview-current t))
+  (corfu-popupinfo-delay '(1.0 . 0.2))
+  (corfu-max-width 80)
+  (corfu-popupinfo-hide nil)
+  (corfu-popupinfo-max-height 12)
+  (corfu-preview-current nil)
+  (corfu-quit-no-match t)
+  (corfu-count 7))
 
 (use-package corfu-terminal
-  :after corfu
   :if (display-graphic-p)
-  :defer 1.5
+  :after corfu
   :config
   (corfu-terminal-mode))
 
@@ -860,10 +945,13 @@ This function adds the `expreg--sentence' expansion function to
   (add-hook 'completion-at-point-functions #'cape-history)
   ;; (add-hook 'completion-at-point-functions #'cape-emoji)
 
+  ;; use `cape''s cache buster to refresh completion table
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+
   (keymap-set λαω-text-completion-map "c" (cons "cape" cape-prefix-map)))
 
 (use-package marginalia
-  :defer 1.25
+  :defer 1
   :config
   (marginalia-mode)
   :bind (("M-A" . marginalia-cycle))
@@ -871,11 +959,8 @@ This function adds the `expreg--sentence' expansion function to
   (marginalia-field-width 120))
 
 (use-package embark
-  :defer 1
   :config
-  ;; Optionally replace the key help with a completing-read interface
-  (setq prefix-help-command #'embark-prefix-help-command)
-  ;; Hide the mode line of the Embark live/completions buffers
+  ;; Hide the mode line of the Embark Live/Completions buffers
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
@@ -889,15 +974,13 @@ This function adds the `expreg--sentence' expansion function to
   ;; show consult previews as you move around an auto-updating embark
   ;; collect buffer
   :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
+  (embark-collect-mode-hook . consult-preview-at-point-mode))
 
 (use-package magit
-  :defer 1
   :commands (magit-auto-revert-mode magit-mode magit-wip-mode)
   :config
   (add-to-list 'magit-no-confirm 'safe-with-wip)
   (magit-wip-mode)
-  :diminish magit-wip-mode
   :bind (:map λαω-git-map
          ("d" . magit-dispatch)
          ("f" . magit-file-dispatch)
@@ -905,7 +988,7 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package magit-todos
   :after magit
-  :defer 1
+  :defer 2
   :config
   (magit-todos-mode))
 
@@ -917,20 +1000,18 @@ This function adds the `expreg--sentence' expansion function to
   :defer 1
   :config
   (global-diff-hl-mode)
-  (diff-hl-margin-mode)
+  ;; (diff-hl-margin-mode)
   (diff-hl-flydiff-mode)
   :hook
-  (magit-pre-refresh . diff-hl-magit-pre-refresh)
-  (magit-post-refresh . diff-hl-magit-post-refresh)
-  (dired-mode . diff-hl-dired-mode)
+  (magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
+  (magit-post-refresh-hook . diff-hl-magit-post-refresh)
+  (dired-mode-hook . diff-hl-dired-mode)
   :custom
   (diff-hl-update-async t)
-  (diff-hl-draw-borders nil)
-  (diff-hl-flydiff-delay 0.2))
+  (diff-hl-side 'right))
 
 (use-package yasnippet
   :disabled
-  :defer 1
   :config
   (yas-reload-all)
   (yas-minor-mode)
@@ -943,10 +1024,9 @@ This function adds the `expreg--sentence' expansion function to
   :after yasnippet)
 
 (use-package whitespace-cleanup-mode
-  :defer 1
+  :defer 2
   :config
-  (global-whitespace-cleanup-mode)
-  :diminish)
+  (global-whitespace-cleanup-mode))
 
 (use-package ialign
   :bind (:map λαω-text-map
@@ -961,13 +1041,20 @@ This function adds the `expreg--sentence' expansion function to
 (use-package indent-bars
   :config
   (require 'indent-bars-ts)
-  :hook (prog-mode)
+  :hook (prog-mode-hook . indent-bars-mode)
   :custom
-  (indent-bars-color '(highlight :face-bg t :blend 0.2))
-  (indent-bars-highlight-current-depth '(:blend 0.65))
-  (indent-bars-pattern ".")
+  (indent-bars-color '(highlight
+                       :face-bg t
+                       :blend 0.5))
+  (indent-bars-highlight-current-depth '(:pattern "."
+                                         :blend 0.75))
+  (indent-bars-pattern " . .")
   (indent-bars-width-frac 0.25)
-  (indent-bars-pad-frac 0.5)
+  ;; For centering while taking into account `indent-bars-width-frac',
+  ;; subtract half of its value from half of total possible offset:
+  ;; pad-frac = 0.5 - (width-frac / 2)
+  (indent-bars-pad-frac 0.375
+   "Indent bar offset from leftmost character edges.")
   (indent-bars-display-on-blank-lines nil)
   (indent-bars-no-descend-lists nil)
   (indent-bars-color-by-depth nil)
@@ -982,7 +1069,12 @@ This function adds the `expreg--sentence' expansion function to
                                 while_statement))))
 
 (use-package colorful-mode
-  :hook (text-mode custom-mode))
+  :hook
+  (text-mode-hook . colorful-mode)
+  (custom-mode-hook . colorful-mode))
+
+(use-package wgrep
+  :defer t)
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
@@ -990,29 +1082,30 @@ This function adds the `expreg--sentence' expansion function to
          ("\\.md\\'" . markdown-mode)))
 
 (use-package sly
-  :mode ("\\.lisp\\'"))
+  :mode ("\\.lisp\\'" . sly-mode))
 
 (use-package image-roll
-  :vc (:url "https://github.com/aikrahguzar/image-roll.el"))
+  :vc (:url "https://github.com/aikrahguzar/image-roll.el")
+  :defer t)
 
 (use-package qpdf.el
   :vc (:url "https://github.com/orgtre/qpdf.el")
   :after pdf-tools
-  :defer nil
+  :defer t
   :commands qpdf)
 
 (use-package pdf-tools
   :vc (:url "https://github.com/aikrahguzar/pdf-tools"
        :branch "upstream-pdf-roll"
        :lisp-dir "lisp/")
-  :defer 1
   :commands (pdf-view-mode pdf-view-roll-minor-mode)
+  :defer 2
   :init
   (defun λαω-fix-pdf-selection ()
     "Replace pdf with one where selection shows transparently."
     (interactive)
     (unless (equal (file-name-extension (buffer-file-name)) "pdf")
-      (error "Buffer should visit a pdf file."))
+      (error "Buffer should visit a pdf file"))
     (unless (equal major-mode 'pdf-view-mode)
       (pdf-view-mode))
     ;; save file in QDF-mode
@@ -1038,8 +1131,70 @@ This function adds the `expreg--sentence' expansion function to
   (pdf-view-max-image-width 1080))
 
 (use-package saveplace-pdf-view
-  :defer nil
-  :after pdf-tools)
+  :after pdf-tools
+  :defer t)
 
+(use-package spacious-padding
+  :config
+  (spacious-padding-mode)
+  :custom
+  (spacious-padding-widths
+   '(:internal-border-width 16
+     :right-divider-width 8
+     :header-line-width 3
+     :mode-line-width 4)))
+
+(use-package gptel
+  :bind (("C-c M-g" . gptel-menu))
+  :hook
+  (gptel-post-stream-hook . gptel-auto-scroll)
+  (gptel-post-response-functions-hook . gptel-end-of-response)
+  :custom
+  (gptel-model "gpt-4o-mini"))
+
+(use-package unfill
+  :defer t)
+
+(use-package xkcd
+  :defer t)
+
+(use-package literate-calc-mode
+  :defer t)
+
+(use-package nov
+  :mode ("\\.epub\\'" . nov-mode)
+  :hook (nov-mode-hook . visual-line-mode)
+  :custom
+  (nov-text-width t))
+
+(use-package iedit
+  :bind (:map λαω-text-map
+              ("i" . iedit-mode)))
+
+(use-package lorem-ipsum
+  :defer t)
+
+(use-package blimpy
+  :vc (:url "https://github.com/progfolio/blimpy")
+  :defer t)
+
+(use-package visual-fill-column
+  :hook ((Info-mode-hook . visual-fill-column-mode)
+         (help-mode-hook . visual-fill-column-mode)
+         (nov-mode-hook . visual-fill-column-mode))
+  :bind (:map λαω-buffer-map
+         ("f" . visual-fill-column-mode))
+  :custom
+  (visual-fill-column-center-text t))
+
+(use-package dap-mode
+  :defer t)
+
+;; (use-package move-text
+;;   :bind (("M-n" . move-text-down)
+;;          ("M-p" . move-text-up)))
+
+(use-package sicp
+  :defer 3)
 
 ;;; init.el ends here

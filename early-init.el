@@ -51,6 +51,9 @@ can be set to nil during initialization to speed it up.")
    (convert-standard-filename
     (expand-file-name  "var/eln-cache/" user-emacs-directory))))
 
+;; suppress native compilation warnings
+(setq native-comp-async-report-warnings-errors 'silent)
+
 (setq package-user-dir (convert-standard-filename
                         (expand-file-name "var/elpa/" user-emacs-directory)))
 

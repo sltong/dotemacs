@@ -33,14 +33,14 @@
 
 (use-package org
   :ensure nil
-  :defer 0.75
-  :diminish org-indent-mode
+  :init
   :config
   (λαω-make-visit-file-function 'org-directory)
   :bind (:map λαω-org-map
          ("a" . org-agenda)
          ("M-p" . org-metaup)
          ("M-n" . org-metadown))
+  :diminish org-indent-mode
   :custom
   (org-startup-indented t)
   (org-special-ctrl-a/e t)
@@ -60,6 +60,59 @@
   ;; exporting
   (org-html-doctype "html5")
   (org-html-head-include-default-style nil))
+
+(use-package org-noter)
+
+;; `org-noter' modules
+(use-package org-noter-pdf
+  :ensure nil
+  :after org-noter)
+
+(use-package org-noter-nov
+  :ensure nil
+  :after nov)
+
+(use-package org-pdftools
+  :hook (org-mode-hook . org-pdftools-setup-link))
+
+(use-package org-noter-pdftools
+  :after org-noter
+  :config
+  ;; Add a function to ensure precise note is inserted
+  (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+                                                   (not org-noter-insert-note-no-questions)
+                                                 org-noter-insert-note-no-questions))
+           (org-pdftools-use-isearch-link t)
+           (org-pdftools-use-freepointer-annot t))
+       (org-noter-insert-note (org-noter--get-precise-info)))))
+
+  ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
+  (defun org-noter-set-start-location (&optional arg)
+    "When opening a session with this document, go to the current location.
+With a prefix ARG, remove start location."
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((inhibit-read-only t)
+           (ast (org-noter--parse-root))
+           (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+       (with-current-buffer (org-noter--session-notes-buffer session)
+         (org-with-wide-buffer
+          (goto-char (org-element-property :begin ast))
+          (if arg
+              (org-entry-delete nil org-noter-property-note-location)
+            (org-entry-put nil org-noter-property-note-location
+                           (org-noter--pretty-print-location location))))))))
+  (with-eval-after-load 'pdf-annot
+    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+
+(use-package org-roam)
+
+(use-package org-ql)
+
+(use-package org-download)
 
 (provide 'λαω-org)
 

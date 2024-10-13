@@ -44,14 +44,23 @@
 
 (require 'λαω-functions)
 
-;;; global key unbindings
+;;; global key (re/un)bindings
 (keymap-global-unset "C-l") ; `recenter-top-bottom'
-(keymap-global-unset "C-z") ; `suspend-frame'
+;; `suspend-frame'
+(keymap-global-unset "C-z")
+(keymap-global-unset "C-x C-z")
+
+(keymap-global-set "C-x C-k" #'kill-current-buffer)
+(keymap-global-set "M-<RET>" #'electric-newline-and-maybe-indent)
 
 ;;; keymaps
 (defvar-keymap λαω-map
   :doc "λαω keymap."
-  :name "λαω")
+  :name "λαω"
+  "C-a" #'apropos
+  "C-l" #'λαω-recenter-fourths
+  "C-r" #'query-replace-regexp
+  "C-\\" #'toggle-input-method)
 (keymap-global-set "C-l" (cons "λαω" λαω-map))
 
 ;; file keymaps
@@ -96,12 +105,19 @@
   "b" '("bashrc" . λαω-visit-bashrc-file))
 (keymap-set λαω-files-map "c" (cons "cli" λαω-files-cli-map))
 
-;;; Emacs structures keymaps
+;;; Keymaps for Emacs and its structures
+(defvar-keymap λαω-emacs-map
+  :doc "Keymap for Emacs."
+  :name "emacs"
+  "r" #'restart-emacs)
+(keymap-global-set "C-c e" (cons "λαω-emacs" λαω-emacs-map))
+(keymap-set λαω-map "e" (cons "emacs" λαω-emacs-map))
+
 (defvar-keymap λαω-buffer-map
   :doc "Keymap for Emacs buffers."
   :name "buffer"
   "s" #'scratch-buffer
-  "m" '("messages" . λαω-switch-to-messages-buffer))
+  "m" '("messages" . λαω-visit-message-log-buffer))
 (keymap-global-set "C-c b" (cons "λαω-buffer" λαω-buffer-map))
 (keymap-set λαω-map "b" (cons "buffer" λαω-buffer-map))
 
@@ -114,7 +130,9 @@
 
 (defvar-keymap λαω-text-map
   :doc "Keymap for text."
-  :name "text")
+  :name "text"
+  "-" #'text-scale-decrease
+  "=" #'text-scale-increase)
 (keymap-global-set "C-c t" (cons "λαω-text" λαω-text-map))
 (keymap-set λαω-map "t" (cons "text" λαω-text-map))
 
@@ -164,8 +182,8 @@
   :name "window-recenter-repeat"
   :repeat t
   ;; scrolling
-  "C-l" #'recenter-top-bottom
-  "l" #'recenter-top-bottom)
+  "C-l" #'λαω-recenter-fourths
+  "l" #'λαω-recenter-fourths)
 
 (defvar-keymap λαω-text-repeat-map
   :doc "Keymap for text manipulation and management."

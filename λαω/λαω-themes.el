@@ -31,19 +31,41 @@
 (require 'λαω)
 
 ;; fonts
-(if (display-graphic-p)
-    (progn
-      (when (member "Iosevka Law" (font-family-list))
-        (add-to-list 'default-frame-alist
-                     '(font . "Iosevka Law-14"))
-        (custom-set-faces
-         '(fixed-pitch ((t (:family "Iosevka Law"))))))
-      (when (member "IBM Plex Sans" (font-family-list))
-        (custom-set-faces
-         '(variable-pitch ((t (:family "IBM Plex Sans"))))
-         '(variable-pitch-text ((t (:inherit (variable-pitch) :height 1.05)))))))
-  (message "Emacs is not running graphically. Skipping setting default font.")
-  nil)
+(defun λαω-set-default-fonts ()
+  "Set default fonts."
+  (interactive)
+  (progn
+    (when (member "Iosevka Law" (font-family-list))
+      (add-to-list 'initial-frame-alist
+                   '(font . "Iosevka Law-14"))
+      (add-to-list 'default-frame-alist
+                   '(font . "Iosevka Law-14"))
+      (custom-set-faces
+       '(fixed-pitch ((t (:family "Iosevka Law"))))))
+    (when (member "IBM Plex Sans" (font-family-list))
+      (custom-set-faces
+       '(variable-pitch ((t (:family "IBM Plex Sans"))))
+       '(variable-pitch-text ((t (:inherit (variable-pitch)
+                                           :height 1.05))))))))
+
+(defun λαω-set-emacs-server-frame-fonts ()
+  "Set fonts when running Emacs as a server/daemon.
+
+Remove this function from `server-before-make-frame-hook' so it only
+runs for the initial, created frame."
+  (message "Setting default ")
+  (λαω-set-default-fonts)
+  (remove-hook 'server-after-make-frame-hook
+               #'λαω-set-emacs-server-frame-fonts))
+
+(add-hook 'server-after-make-frame-hook
+          #'λαω-set-emacs-server-frame-fonts)
+
+;; Set fonts for non-daemon
+(when (not (daemonp))
+  (λαω-set-default-fonts))
+
+(add-hook 'server-before-make-frame-hook #'λαω-set-emacs-server-frame-fonts)
 
 (defcustom λαω-themes-directory (expand-file-name
                                  "themes/" λαω-emacs-directory)

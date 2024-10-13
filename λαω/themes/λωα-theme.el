@@ -1,35 +1,46 @@
-;;; λαω-theme.el --- λαω theme -*- coding: utf-8; lexical-binding: t; -*-
-(deftheme λαω
+;;; λωα-theme.el --- λωα theme -*- coding: utf-8; lexical-binding: t; -*-
+(deftheme λωα
   "λαω theme."
-  :background-mode 'dark
   :kind 'color-scheme)
 
 (let* ((class '((class color) (min-colors 88)))
-       (bg "#15141c")
-       (fg "#cdcbcf")
 
-       (theme-50  "#f5f3ff")
-       (theme-100 "#cfc2fe")
-       (theme-200 "#a79bd4")
-       (theme-300 "#8275ac")
-       (theme-400 "#5e5185")
-       (theme-500 "#3d2f62")
-       (theme-600 "#382265")
-       (theme-700 "#310d64")
-       (theme-800 "#280058")
-       (theme-900 "#1f0046")
+       (theme-50  "#f8f2ff")
+       (theme-100 "#dcbffe")
+       (theme-200 "#b599d6")
+       (theme-300 "#9075af")
+       (theme-400 "#6d5389")
+       (theme-500 "#4c3167")
+       (theme-600 "#472267")
+       (theme-700 "#3f0764")
+       (theme-800 "#310051")
+       (theme-900 "#25003f")
+
+       (theme-light-100 "#ebdaff")
+       (theme-light-200 "#dec2ff")
+       (theme-light-300 "#ccb0ed")
+       (theme-light-400 "#ba9edb")
+       (theme-light-500 "#a98cca")
+       (theme-light-600 "#8f6bb7")
+       (theme-light-700 "#6d3f98")
+       (theme-light-800 "#4b0278")
+
+       (bg theme-50)
+       (fg "#453457")
 
        (bg-theme "#3a3254")
        (bg-theme-darker "#27223b")
        (fg-theme "#d3caf5")
 
-       (hl "#3a3653")
-       (hl-3/4 "#312d48")
-       (hl-1/2 "#242137")
-       (hl-1/4 "#1d1b2d")
+       (bg-highlight theme-light-100)
 
-       (bg-inactive "#1d1d28")
-       (fg-inactive "#7d7a82")
+       (hl "#403a4e")
+       (hl-3/4 "#353143")
+       (hl-1/2 "#211e2a")
+       (hl-1/4 "#18161e")
+
+       (bg-inactive "#e8dcf7")
+       (fg-inactive "#8f8899")
 
        ;; minimum allowable contrast (15 Lc) for backgrounds on top of
        ;; the main background
@@ -40,40 +51,38 @@
 
        (black "#060509")
        (white "#eeedf5")
-       (red "#ee5263")
-       (pink "#ffb9cc")
-       (blue "#9fd2ff")
-       (teal "#8adbd3")
-       (yellow "#e6cb77")
+       (red "#662425")
+       (pink "#63233a")
+       (blue "#27396e")
+       (teal "#277877")
+       (yellow "#6b5b01")
        (yellow-bright "#f8f442")
-       (green "#a2dc8c")
-       (orange "#ffbf91")
-       (magenta "#eabdf8")
-       (violet "#cfc7ff")
+       (green "#204811")
+       (orange "#622b01")
+       (magenta "#572855")
+       (violet "#35356c")
        (light-grey "#9894a6")
        (grey "#817c91")
 
-       (comment "#9692a4")
-       (string "#e2cb8b")
+       (bg-mode-line theme-light-100)
+       (fg-mode-line theme-500)
+       (bg-hl-line "#eadbfa")
+
+       (comment "#b7a2d1")
+       (string yellow)
        (fg-link "#91ce79")
        (fg-link-visited "#6ea558")
-
-       (bg-diff-hl-change "#363418") (fg-diff-hl-change "#7b7744")
-       (bg-diff-hl-insert "#263924") (fg-diff-hl-insert "#5c8059")
-       (bg-diff-hl-delete "#472a26") (fg-diff-hl-delete "#9a655d")
        )
 
   (custom-theme-set-faces
-   'λαω
-   `(λαω-mode-line-bell-warning ((,class (:background ,bg-min-yellow))))
-
+   'λωα
    `(default ((,class (:background ,bg :foreground ,fg))))
-   `(cursor  ((,class (:background ,yellow))))
+   `(cursor  ((,class (:background "#b396ff"))))
    `(escape-glyph ((,class (:foreground ,fg-theme))))
    `(homoglyph ((,class (:foreground ,fg-theme))))
    `(minibuffer-prompt ((,class (:foreground ,fg-theme))))
-   `(highlight ((,class (:background ,hl))))
-   `(region ((,class (:background ,hl :foreground ,fg))))
+   `(highlight ((,class (:background ,bg-highlight))))
+   `(region ((,class (:background ,bg-highlight :foreground ,fg))))
    `(shadow ((,class (:foreground ,grey))))
    `(secondary-selection ((,class (:background ,hl
                                                :foreground ,green
@@ -139,7 +148,7 @@
    `(vertical-border ((,class (:foreground ,hl-3/4))))
 
    ;; mode line
-   `(mode-line ((,class (:background ,bg-theme))))
+   `(mode-line ((,class (:background ,bg-mode-line :foreground ,fg-mode-line))))
    `(mode-line-active ((,class (:inherit (mode-line)))))
    `(mode-line-buffer-id ((,class (:weight bold))))
    `(mode-line-emphasis ((,class (:weight bold))))
@@ -186,18 +195,14 @@
    `(custom-button-mouse ((,class (:inherit (custom-button)))))
    `(custom-button-pressed ((,class (:inherit (custom-button) :background ,bg-theme-darker :foreground ,comment))))
 
-   `(dired-async-failures ((,class (:foreground ,red)))p)
-   `(dired-async-message ((,class (:foreground ,violet))))
-   `(dired-async-mode-message ((,class (:foreground ,violet))))
-
-   `(diff-hl-change ((,class (:background ,bg-diff-hl-change :foreground ,fg-diff-hl-change))))
-   `(diff-hl-delete ((,class (:background ,bg-diff-hl-delete :foreground ,fg-diff-hl-delete))))
-   `(diff-hl-insert ((,class (:background ,bg-diff-hl-insert :foreground ,fg-diff-hl-insert))))
+   `(diff-hl-change ((,class (:background ,bg-min-yellow :foreground ,yellow))))
+   `(diff-hl-delete ((,class (:background ,bg-min-red :foreground ,red))))
+   `(diff-hl-insert ((,class (:background ,bg-min-green :foreground ,green))))
 
    `(dired-broken-symlink ((,class (:foreground ,red))))
    `(dired-marked ((,class (:inherit (warning) :weight bold))))
 
-   `(fill-column-indicator ((,class (:foreground ,bg-inactive))))
+   `(fill-column-indicator ((,class (:foreground ,theme-light-100))))
 
    `(eglot-inlay-hint-face ((,class (:inherit (font-lock-comment-face)
                                               :height 0.9))))
@@ -247,7 +252,7 @@
    `(gnus-server-opened     ((,class (:foreground ,green :slant italic))))
    `(gnus-server-offline    ((,class (:foreground ,grey :slant italic))))
 
-   `(hl-line ((,class (:inherit (highlight) :background ,hl-1/2 :extend t))))
+   `(hl-line ((,class (:background ,bg-hl-line))))
    `(hl-todo ((,class (:foreground ,yellow))))
 
    `(Info-quoted ((,class (:inherit (font-lock-constant-face)))))
@@ -258,6 +263,7 @@
    `(line-number ((,class (:inherit (font-lock-comment-face)))))
    `(line-number-current-line ((,class (:inherit (line-number)
                                                  :foreground ,light-grey))))
+
 
    `(magit-section-heading ((,class (:foreground ,green
                                                  :extend t
@@ -313,5 +319,5 @@
    `(vterm-color-white ((,class (:background ,white :foreground ,white))))
    ))
 
-(provide-theme 'λαω)
-;;; λαω-theme.el ends here
+(provide-theme 'λωα)
+;;; λωα-theme.el ends here

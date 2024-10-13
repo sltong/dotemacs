@@ -24,9 +24,16 @@
 
 ;;; Commentary:
 
-;; λαω
+;; "ἐγὼ τὸ ἄλφα καὶ τὸ ὦ, ὁ πρῶτος καὶ ὁ ἔσχατος, ἡ ἀρχὴ καὶ τὸ τέλος."
+;; - Ἀποκάλυψις Ἰωάννου 22:13, Ἰησοῦς
 
 ;;; Code:
+
+(require 'cl-lib)
+
+;;; personal information
+(setopt user-full-name "λαω")
+(setopt user-mail-address "lambda.alpha.omega@proton.me")
 
 ;;; customizations
 (defgroup λαω nil
@@ -49,6 +56,15 @@
 
 This directory contains Emacs Lisp packages, natively-compiled *.eln
 files, and package data."
+  :type 'directory)
+
+(defcustom λαω-treesit-language-grammars-directory (expand-file-name
+                                                    "tree-sitter/"
+                                                    λαω-emacs-var-directory)
+  "The directory where tree-sitter language grammars are installed.
+
+This directory can be passed to `treesit-install-language-grammar' as an
+optional argument."
   :type 'directory)
 
 (provide 'λαω)

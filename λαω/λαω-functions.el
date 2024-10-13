@@ -189,7 +189,7 @@ Concatenate \"λαω-\" with FILENAME and return its absolute file path
 (λαω-make-visit-file-function 'custom-file nil "emacs-custom-file")
 (λαω-make-visit-file-function 'early-init-file nil "emacs-early-init-file")
 (λαω-make-visit-file-function 'user-init-file nil "emacs-user-init-file")
-(λαω-make-visit-file-function "~/.bashrc" nil "bashrc")
+(λαω-make-visit-file-function "~/.bashrc" nil "bashrc-file")
 ;; visit λαω files and directories
 (λαω-make-visit-file-function
  (expand-file-name "λαω.el" λαω-emacs-directory) nil "λαω-file")
@@ -202,6 +202,10 @@ Concatenate \"λαω-\" with FILENAME and return its absolute file path
 (λαω-make-visit-file-function
  (λαω-expand-λαω-file-name "themes.el") nil "λαω-themes-file")
 
+(defun λαω-wsl-visit-windows-user-directory ()
+  "Visit the Windows user directory if it is mounted in WSL."
+  nil)
+
 ;;; buffers
 (defun λαω-visit-message-log-buffer ()
   "Visit the message log buffer."
@@ -209,6 +213,73 @@ Concatenate \"λαω-\" with FILENAME and return its absolute file path
   (switch-to-buffer "*Messages*"))
 
 ;;; utilities
+(defun λαω-newline-without-break (&optional arg interactive)
+  "Insert a newline without breaking line at point.
+
+Pass ARG and INTERACTIVE to `newline'."
+  (interactive "*P\np")
+  (move-end-of-line 1)
+  (newline arg interactive))
+
+(defun λαω-recenter-thirds (&optional arg)
+  "Scroll the window so that current line is some third into it.
+
+With prefix ARG, scroll the window one-third from the bottom.
+
+If the current line is already positioned at the desired third, scroll
+to the other third (respecting ARG)."
+  (interactive "P")
+  (let* ((window-height (window-body-height))
+         (one-third (ceiling (/ window-height 3.0)))
+         (two-thirds (- window-height one-third))
+         (cur-line-win-pos (count-lines (window-start) (point)))
+         (tolerance 1))
+    (cond ((<= (abs (- cur-line-win-pos one-third)) tolerance)
+           (recenter two-thirds))
+          ((<= (abs (- cur-line-win-pos two-thirds)) tolerance)
+           (recenter one-third))
+          (arg
+           (recenter (- one-third)))
+          (t
+           (recenter one-third)))))
+
+(defun λαω-recenter-fourths (&optional arg)
+    "Scroll the window so that current line is some fourth into it.
+
+With prefix ARG, scroll the window from the bottom.
+
+If the current line is already positioned at some fourth, scroll
+to the next fourth (respecting ARG)."
+  (interactive "P")
+  (let* ((interval (/ (window-body-height) 4))
+         (fourths '())
+         (fourths (progn
+                    (dotimes (nth-fourth 3)
+                      (push (* interval (1+ nth-fourth)) fourths))
+                    (setq fourths (nreverse fourths))))
+         (one-fourth (car fourths))
+         (three-fourths (car (last fourths)))
+         (cur-line-number (count-lines (window-start) (point)))
+         (tolerance 2)
+         (matching-fourth-index (seq-position
+                                 fourths
+                                 cur-line-number
+                                 (lambda (fourth cur-line-number)
+                                   (<= (abs (- cur-line-number fourth))
+                                       tolerance)))))
+    (cond ((and arg (eq 0 matching-fourth-index))
+           (recenter three-fourths))
+          ((and (not arg) (eq 2 matching-fourth-index))
+           (recenter one-fourth))
+          (matching-fourth-index
+           (let ((target-index (% (+ matching-fourth-index (if arg -1 1))
+                                  3)))
+             (recenter (elt fourths target-index))))
+          (arg
+           (recenter three-fourths))
+          (t
+           (recenter one-fourth)))))
+
 (defun λαω-downcase-and-hyphenate-region (region-start region-end)
   "Downcase words in the region and concatenate them with hyphens.
 
