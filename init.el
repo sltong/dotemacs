@@ -456,7 +456,15 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   :ensure nil
   :bind (("C-x C-b" . ibuffer)
          :map λαω-buffer-map
-         ("b" . ibuffer)))
+         ("b" . ibuffer))
+  :custom
+  (ibuffer-formats '((mark modified read-only " "
+                      (name 26 26 :left :elide) " "
+                      (filename 26 26 :left :elide) " "
+                      (size 8 -1 :right) " ")
+                     (mark modified read-only " "
+                      (name 26 -1 :left :elide) " "
+                      filename-and-process))))
 
 (use-package isearch
   :ensure nil
@@ -762,7 +770,10 @@ This function adds the `expreg--sentence' expansion function to
   :bind (:map λαω-cli-map
          ("v" . vterm)
          :map vterm-mode-map
-         ("C-q" . vterm-send-next-key)))
+         ("C-q" . vterm-send-next-key))
+  :custom
+  (vterm-max-scrollback 12000)
+  (vterm-timer-delay 0.01))
 
 (use-package orderless
   :init
