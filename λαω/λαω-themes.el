@@ -67,12 +67,6 @@ runs for the initial, created frame."
 
 (add-hook 'server-before-make-frame-hook #'λαω-set-emacs-server-frame-fonts)
 
-(defcustom λαω-themes-directory (expand-file-name
-                                 "themes/" λαω-emacs-directory)
-  "λαω themes directory."
-  :type 'directory
-  :group 'λαω)
-
 (setopt custom-theme-directory
         (expand-file-name "themes/" λαω-emacs-directory))
 

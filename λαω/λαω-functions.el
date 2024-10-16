@@ -30,79 +30,12 @@
 
 (require 'λαω)
 
-(defun λαω-display-init-time-message ()
-  "Display an Emacs initialization time and garbage collections message."
-  (run-with-idle-timer
-   3.5 nil (lambda ()
-           (message "Emacs loaded in %s with %d garbage collections."
-                    (format "%.2f seconds"
-                            (float-time
-                             (time-subtract after-init-time before-init-time)))
-                    gcs-done))))
-
-;; Show input method in minibuffer.
-;;
-;; Credit to Akito Mikami.
-;; See: https://a64.work/posts/2023-01-14-emacs-input-method-minibuffer-indicator.html
-(defvar-local λαω-minibuffer-input-method-overlay nil
-  "Overlay showing the active input method.")
-
-(defun λαω-minibuffer-input-method-indicator-activate ()
-  "Show input method indicator in minibuffer."
-  (when (minibufferp)
-    (unless λαω-minibuffer-input-method-overlay
-      (setq λαω-minibuffer-input-method-overlay
-            (make-overlay (point-min) (point-min) nil nil t)))
-    (overlay-put λαω-minibuffer-input-method-overlay 'after-string
-                 (format "[%s] " current-input-method-title))))
-
-(defun λαω-minibuffer-input-method-indicator-deactivate ()
-  "Hide input method indicator in minibuffer."
-  (when (minibufferp)
-    (overlay-put λαω-minibuffer-input-method-overlay 'after-string nil)))
-
-(defun λαω-crm-prompt-indicator (args)
-  "Prompt indicator for `completing-read-multiple'.
-
-Indicator displays the `crm-separator'.
-
-For example, the prompt will display \"[CRM,]\" if the separator is a
-comma."
-  (cons (format "[CRM%s] %s"
-                (replace-regexp-in-string
-                 "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                 crm-separator)
-                (car args))
-        (cdr args)))
-
-(defun λαω-desktop-restore-display-line-numbers-mode ()
-  "Activate `display-line-numbers-mode' for the correct buffers.
-
-This solves a bug where duplicate `display-line-numbers-mode' in a saved
-buffer's desktop `desktop-create-buffer' minor modes entry cause line
-numbers to disappear and reappear multiple times."
-  (if (derived-mode-p 'prog-mode)
-      (display-line-numbers-mode)
-    (display-line-numbers-mode -1)))
-
 (defun λαω-remove-text-properties-in-region (region-start region-end)
     "Remove text properties in region."
     (interactive "r")
     (when (use-region-p)
       (save-excursion
       (set-text-properties region-start region-end nil))))
-
-(defun λαω-remove-kill-ring-text-properties ()
-    "Remove all text properties from `kill-ring' entries.
-
-This is useful for optimizing `kill-ring' history size when it is saved
-through `savehist-additional-variables', for example.
-
-See Info node `(elisp)Creating Strings'.
-
-Credit itsjeyd on the Emacs Stack Exchange:
-URL `https://emacs.stackexchange.com/a/4191'"
-    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
 
 (defun λαω-local-truncate-lines ()
   "Locally enable `truncate-lines'."
@@ -119,35 +52,6 @@ Disable all other themes beforehand."
       (mapc #'disable-theme non-λαω-themes))
     (message "Loading λαω theme...")
     (load-theme 'λαω t)))
-
-(defun λαω-reset-emacs ()
-  "Reset Emacs by deleting all generated package, cache, and user data."
-  (interactive)
-  (let ((dirs-to-delete (list package-user-dir
-                              λαω-emacs-var-directory
-                              (expand-file-name "eln-cache/"
-                                                user-emacs-directory)))
-        (files-to-delete (mapcar
-                          (lambda (file-name)
-                            (expand-file-name file-name user-emacs-directory))
-                          '("custom.el"
-                            "history"
-                            "recentf"
-                            "package-quickstart.el"
-                            "package-quickstart.elc"))))
-    (when (y-or-n-p "Delete all generated Emacs data?")
-      (message "Deleting generated files in `user-emacs-directory'...")
-      (mapc (lambda (file)
-                (when (file-exists-p file)
-                  (funcall #'delete-file file delete-by-moving-to-trash)))
-              files-to-delete)
-      (message
-       "Deleting generated directories and their files...")
-      (mapc (lambda (dir)
-                (when (file-exists-p (directory-file-name dir))
-                  (funcall #'delete-directory dir t delete-by-moving-to-trash)))
-              dirs-to-delete)
-      (message "Generated Emacs data was deleted successfully."))))
 
 (defun λαω-make-visit-file-function (file-name &optional doc function-suffix)
   "Create a function that visits FILE-NAME.
@@ -181,15 +85,56 @@ Concatenate \"λαω-\" with FILENAME and return its absolute file path
   (expand-file-name (concat "λαω-" filename) λαω-emacs-directory))
 
 ;; create functions to visit files and directories
+
 (λαω-make-visit-file-function 'λαω-emacs-directory)
+;; (defun λαω-visit-λαω-emacs-directory ()
+;;   "Visit λαω Emacs directory."
+;;   (interactive)
+;;   (find-file λαω-emacs-directory))
+
+(λαω-make-visit-file-function 'user-emacs-directory)
+;; (defun λαω-visit-user-emacs-directory ()
+;;   "Visit `user-emacs-directory'."
+;;   (interactive)
+;;   (find-file user-emacs-directory))
+
 (λαω-make-visit-file-function
  (convert-standard-filename "~") "Visit home directory." "home-directory")
-(λαω-make-visit-file-function 'user-emacs-directory)
+;; (defun λαω-visit-home-directory ()
+;;   "Visit home directory."
+;;   (interactive)
+;;   (find-file "~/"))
+
 (λαω-make-visit-file-function 'λαω-themes-directory)
+;; (defun λαω-visit-λαω-themes-directory ()
+;;   "Visit λαω themes directory."
+;;   (interactive)
+;;   (find-file λαω-themes-directory))
+
 (λαω-make-visit-file-function 'custom-file nil "emacs-custom-file")
+;; (defun λαω-visit-emacs-custom-file ()
+;;   "Visit Emacs `custom-file'."
+;;   (interactive)
+;;   (find-file custom-file))
+
 (λαω-make-visit-file-function 'early-init-file nil "emacs-early-init-file")
+;; (defun λαω-visit-emacs-early-init-file ()
+;;   "Visit Emacs `early-init-file'."
+;;   (interactive)
+;;   (find-file early-init-file))
+
 (λαω-make-visit-file-function 'user-init-file nil "emacs-user-init-file")
+;; (defun λαω-visit-emacs-user-init-file ()
+;;   "Visit Emacs `user-init-file'."
+;;   (interactive)
+;;   (find-file user-init-file))
+
 (λαω-make-visit-file-function "~/.bashrc" nil "bashrc-file")
+;; (defun λαω-visit-bashrc-file ()
+;;   "Visit \".bashrc\"."
+;;   (interactive)
+;;   (find-file "~/.bashrc"))
+
 ;; visit λαω files and directories
 (λαω-make-visit-file-function
  (expand-file-name "λαω.el" λαω-emacs-directory) nil "λαω-file")
@@ -279,6 +224,44 @@ to the next fourth (respecting ARG)."
            (recenter three-fourths))
           (t
            (recenter one-fourth)))))
+
+(defun λαω-query-replace-region ()
+  "Call `query-replace' starting with the region for matching.
+
+The region is first saved to the kill ring. Once `query-replace' is
+called, it is yanked to the minibuffer as input.
+
+Since the region is used for matching, when the mark is active in
+Transient Mark mode, `query-replace' will not operate on the region
+contents."
+  (interactive)
+  (when (use-region-p)
+    (kill-ring-save nil nil t)
+    (deactivate-mark)
+    ;; Move to REGION-START as to allow
+    (minibuffer-with-setup-hook
+        #'yank
+        (call-interactively
+         #'query-replace nil))))
+
+(defun λαω-query-replace-regexp-region ()
+  "Call `query-replace-regexp' starting with the region for matching.
+
+The region is first saved to the kill ring. Once `query-replace-regexp'
+is called, it is yanked to the minibuffer as input.
+
+Since the region is used as the initial regular expression,
+`query-replace-regexp' will not operate on its contents when the mark is
+active in Transient Mark mode."
+  (interactive)
+  (when (use-region-p)
+    (kill-ring-save nil nil t)
+    (deactivate-mark)
+    ;; Move to REGION-START as to allow
+    (minibuffer-with-setup-hook
+        #'yank
+        (call-interactively
+         #'query-replace-regexp nil))))
 
 (defun λαω-downcase-and-hyphenate-region (region-start region-end)
   "Downcase words in the region and concatenate them with hyphens.

@@ -33,14 +33,12 @@
 
 (use-package org
   :ensure nil
-  :init
   :config
   (λαω-make-visit-file-function 'org-directory)
   :bind (:map λαω-org-map
          ("a" . org-agenda)
          ("M-p" . org-metaup)
          ("M-n" . org-metadown))
-  :diminish org-indent-mode
   :custom
   (org-startup-indented t)
   (org-special-ctrl-a/e t)
@@ -61,22 +59,26 @@
   (org-html-doctype "html5")
   (org-html-head-include-default-style nil))
 
-(use-package org-noter)
+(use-package org-noter
+  :defer t)
 
 ;; `org-noter' modules
 (use-package org-noter-pdf
   :ensure nil
-  :after org-noter)
+  :after org-noter
+  :defer t)
 
 (use-package org-noter-nov
   :ensure nil
-  :after nov)
+  :after nov
+  :defer t)
 
 (use-package org-pdftools
   :hook (org-mode-hook . org-pdftools-setup-link))
 
 (use-package org-noter-pdftools
   :after org-noter
+  :defer t
   :config
   ;; Add a function to ensure precise note is inserted
   (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
@@ -108,11 +110,14 @@ With a prefix ARG, remove start location."
   (with-eval-after-load 'pdf-annot
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
-(use-package org-roam)
+(use-package org-roam
+  :defer t)
 
-(use-package org-ql)
+(use-package org-ql
+  :defer t)
 
-(use-package org-download)
+(use-package org-download
+  :defer t)
 
 (provide 'λαω-org)
 

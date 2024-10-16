@@ -55,38 +55,39 @@
 ;;; Code:
 
 (when init-file-debug
-  (setq use-package-verbose t
-        use-package-expand-minimally nil
-        use-package-compute-statistics t
-             debug-on-error t))
+  (setq use-package-verbose t)
+  (setq use-package-expand-minimally nil)
+  (setq use-package-compute-statistics t)
+  (setq debug-on-error t))
 
 ;;; package configurations
+;; `package'
 (require 'package)
+
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(keymap-set help-map "p" #'describe-package)
+
+;; `use-package'
 (require 'use-package)
+(require 'use-package-ensure)
 
-(use-package package
-  :ensure nil
-  :demand t
-  :init
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-  :bind ("C-h p" . describe-package))
+(setq use-package-always-ensure t)
+(setq use-package-hook-name-suffix nil)
 
-(use-package use-package
-  :ensure nil
-  :demand t
-  :custom
-  (use-package-always-ensure t)
-  (use-package-hook-name-suffix nil))
-
+;; `auto-compile'
 (use-package auto-compile
   :demand t
   :config
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode))
 
+(use-package benchmark-init
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
 ;;; λαω
 (add-to-list 'load-path (expand-file-name "λαω/" user-emacs-directory))
-(require 'λαω)
 (require 'λαω-functions)
 (require 'λαω-languages)
 (require 'λαω-keys)
@@ -113,6 +114,58 @@
     (make-empty-file custom-file t))
   (load custom-file)
 
+  ;; functions
+  (defun λαω-display-init-time-message ()
+  "Display an Emacs initialization time and garbage collections message."
+  (run-with-idle-timer
+   3.5 nil (lambda ()
+           (message "Emacs loaded in %s with %d garbage collections."
+                    (format "%.2f seconds"
+                            (float-time
+                             (time-subtract after-init-time before-init-time)))
+                    gcs-done))))
+
+  (defun λαω-remove-kill-ring-text-properties ()
+    "Remove all text properties from `kill-ring' entries.
+
+This is useful for optimizing `kill-ring' history size when it is saved
+through `savehist-additional-variables', for example.
+
+See Info node `(elisp)Creating Strings'.
+
+Credit itsjeyd on the Emacs Stack Exchange:
+URL `https://emacs.stackexchange.com/a/4191'"
+    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
+
+  (defun λαω-reset-emacs ()
+    "Reset Emacs by deleting all generated package, cache, and user data."
+    (interactive)
+    (let ((dirs-to-delete (list package-user-dir
+                                λαω-emacs-var-directory
+                                (expand-file-name "eln-cache/"
+                                                  user-emacs-directory)))
+          (files-to-delete (mapcar
+                            (lambda (file-name)
+                              (expand-file-name file-name user-emacs-directory))
+                            '("custom.el"
+                              "history"
+                              "recentf"
+                              "package-quickstart.el"
+                              "package-quickstart.elc"))))
+      (when (y-or-n-p "Delete all generated Emacs data?")
+        (message "Deleting generated files in `user-emacs-directory'...")
+        (mapc (lambda (file)
+                (when (file-exists-p file)
+                  (funcall #'delete-file file delete-by-moving-to-trash)))
+              files-to-delete)
+        (message
+         "Deleting generated directories and their files...")
+        (mapc (lambda (dir)
+                (when (file-exists-p (directory-file-name dir))
+                  (funcall #'delete-directory dir t delete-by-moving-to-trash)))
+              dirs-to-delete)
+        (message "Generated Emacs data was deleted successfully."))))
+
   ;; hooks
   ;; "-100" ensures `λαω-remove-kill-ring-text-properties' is the first
   ;; function in `kill-emacs-hook'
@@ -123,9 +176,6 @@
             #'λαω-minibuffer-input-method-indicator-deactivate)
   ;; default modes
   (setq-default indent-tabs-mode nil)
-
-  ;; aliases
-  (defalias 'elisp-mode 'emacs-lisp-mode)
 
   :hook
   (after-init-hook . λαω-display-init-time-message)
@@ -213,9 +263,6 @@
 (use-package no-littering
   :demand t
   :config
-  ;; explicitly set "etc" and "var" directories for good measure
-  (setq no-littering-etc-directory λαω-emacs-etc-directory)
-  (setq no-littering-var-directory λαω-emacs-var-directory)
   (no-littering-theme-backups))
 
 (use-package exec-path-from-shell
@@ -228,14 +275,17 @@
 ;;; early packages
 ;; put all minor modes on the mode line in one menu
 (use-package minions
+  :defer 0.5
   :commands (minions-mode glasses-mode)
-  :config (minions-mode 1))
+  :config (minions-mode 1)
+  :custom
+  (minions-mode-line-lighter "m+"))
 
 ;;; built-in packages
 ;; these packages should have :ensure explicitly set to nil in order
 ;; to prevent fetching them from repositories
 (use-package auth-source
-  :defer 1
+  :ensure nil
   :custom
   ;; add alternative port 23 for SSH
   ;; and add IMAP port 1143 and SMTP port 1025 for Proton Mail Bridge
@@ -247,16 +297,19 @@
 
 (use-package auth-source-pass
   :ensure nil
+  :defer 1
   :config
   (auth-source-pass-enable))
 
 (use-package autorevert
   :ensure nil
+  :defer 1
   :config
   (global-auto-revert-mode))
 
 (use-package bookmark
   :ensure nil
+  :defer t
   :custom
   (bookmark-menu-confirm-deletion t)
   (bookmark-bmenu-file-column 40)
@@ -270,8 +323,22 @@
 
 (use-package crm
   :ensure nil
-  :defer 3
+  :defer 1
   :commands (completing-read-multiple)
+  :init
+  (defun λαω-crm-prompt-indicator (args)
+  "Prompt indicator for `completing-read-multiple'.
+
+Indicator displays the `crm-separator'.
+
+For example, the prompt will display \"[CRM,]\" if the separator is a
+comma."
+  (cons (format "[CRM%s] %s"
+                (replace-regexp-in-string
+                 "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                 crm-separator)
+                (car args))
+        (cdr args)))
   :config
   (advice-add #'completing-read-multiple
               :filter-args #'λαω-crm-prompt-indicator))
@@ -280,12 +347,22 @@
 ;; ignoring it
 (use-package delsel
   :ensure nil
+  :defer 1
   :config
   (delete-selection-mode))
 
 ;; (use-package desktop
 ;;   :ensure nil
 ;;   :defer nil
+;; (defun λαω-desktop-restore-display-line-numbers-mode ()
+;;   "Activate `display-line-numbers-mode' for the correct buffers.
+
+;; This solves a bug where duplicate `display-line-numbers-mode' in a saved
+;; buffer's desktop `desktop-create-buffer' minor modes entry cause line
+;; numbers to disappear and reappear multiple times."
+;;   (if (derived-mode-p 'prog-mode)
+;;       (display-line-numbers-mode)
+;;     (display-line-numbers-mode -1)))
 ;;   :config
 ;;   ;; prevent bug where line numbers disappear/reappear multiple times
 ;;   ;; on desktop restore
@@ -387,7 +464,7 @@
 
 (use-package gnus
   :ensure nil
-  :defer 3
+  :defer 1
   :hook (gnus-group-mode-hook . gnus-topic-mode)
   :custom
   (gnus-select-method '(nnimap "proton"
@@ -408,7 +485,7 @@
 (use-package gnus-group
   :ensure nil
   :after gnus
-  :defer 3
+  :defer 1
   :config
   (add-to-list 'gnus-topic-alist '(("proton"
                                     "nnimap+proton:Inbox"
@@ -472,6 +549,197 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   (isearch-repeat-on-direction-change t)
   (isearch-lazy-count t))
 
+(use-package lisp-mode
+  :ensure nil
+  :init
+  (defun λαω-calculate-lisp-indent (&optional parse-start)
+    "Add better indentation for quoted and backquoted lists.
+
+Credit to Aquaactress on StackExchange:
+
+URL https://emacs.stackexchange.com/a/52789
+
+A.K.A. ouroborolisp on Reddit:
+
+URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of_quoted_lists/"
+    ;; This line because `calculate-lisp-indent-last-sexp` was defined with
+    ;; `defvar` with it's value ommited, marking it special and only defining it
+    ;; locally. So if you don't have this, you'll get a void variable error.
+    (defvar calculate-lisp-indent-last-sexp)
+    (save-excursion
+      (beginning-of-line)
+      (let ((indent-point (point))
+            state
+            ;; setting this to a number inhibits calling hook
+            (desired-indent nil)
+            (retry t)
+            calculate-lisp-indent-last-sexp containing-sexp)
+        (cond ((or (markerp parse-start) (integerp parse-start))
+               (goto-char parse-start))
+              ((null parse-start) (beginning-of-defun))
+              (t (setq state parse-start)))
+        (unless state
+          ;; Find outermost containing sexp
+          (while (< (point) indent-point)
+            (setq state (parse-partial-sexp (point) indent-point 0))))
+        ;; Find innermost containing sexp
+        (while (and retry
+                    state
+                    (> (elt state 0) 0))
+          (setq retry nil)
+          (setq calculate-lisp-indent-last-sexp (elt state 2))
+          (setq containing-sexp (elt state 1))
+          ;; Position following last unclosed open.
+          (goto-char (1+ containing-sexp))
+          ;; Is there a complete sexp since then?
+          (if (and calculate-lisp-indent-last-sexp
+                   (> calculate-lisp-indent-last-sexp (point)))
+              ;; Yes, but is there a containing sexp after that?
+              (let ((peek (parse-partial-sexp calculate-lisp-indent-last-sexp
+                                              indent-point 0)))
+                (if (setq retry (car (cdr peek))) (setq state peek)))))
+        (if retry
+            nil
+          ;; Innermost containing sexp found
+          (goto-char (1+ containing-sexp))
+          (if (not calculate-lisp-indent-last-sexp)
+              ;; indent-point immediately follows open paren.
+              ;; Don't call hook.
+              (setq desired-indent (current-column))
+            ;; Find the start of first element of containing sexp.
+            (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
+            (cond ((looking-at "\\s(")
+                   ;; First element of containing sexp is a list.
+                   ;; Indent under that list.
+                   )
+                  ((> (save-excursion (forward-line 1) (point))
+                      calculate-lisp-indent-last-sexp)
+                   ;; This is the first line to start within the containing sexp.
+                   ;; It's almost certainly a function call.
+                   (if (or
+                        ;; Containing sexp has nothing before this line
+                        ;; except the first element. Indent under that element.
+                        (= (point) calculate-lisp-indent-last-sexp)
+
+                        ;; First sexp after `containing-sexp' is a keyword. This
+                        ;; condition is more debatable. It's so that I can have
+                        ;; unquoted plists in macros. It assumes that you won't
+                        ;; make a function whose name is a keyword.
+                        ;; (when-let (char-after (char-after (1+ containing-sexp)))
+                        ;;   (char-equal char-after ?:))
+
+                        ;; Check for quotes or backquotes around.
+                        (let* ((positions (elt state 9))
+                               (last (car (last positions)))
+                               (rest (reverse (butlast positions)))
+                               (any-quoted-p nil)
+                               (point nil))
+                          (or
+                           (when-let (char (char-before last))
+                             (or (char-equal char ?')
+                                 (char-equal char ?`)))
+                           (progn
+                             (while (and rest (not any-quoted-p))
+                               (setq point (pop rest))
+                               (setq any-quoted-p
+                                     (or
+                                      (when-let (char (char-before point))
+                                        (or (char-equal char ?')
+                                            (char-equal char ?`)))
+                                      (save-excursion
+                                        (goto-char (1+ point))
+                                        (looking-at-p
+                                         "\\(?:back\\)?quote[\t\n\f\s]+(")))))
+                             any-quoted-p))))
+                       ;; Containing sexp has nothing before this line
+                       ;; except the first element.  Indent under that element.
+                       nil
+                     ;; Skip the first element, find start of second (the first
+                     ;; argument of the function call) and indent under.
+                     (progn (forward-sexp 1)
+                            (parse-partial-sexp (point)
+                                                calculate-lisp-indent-last-sexp
+                                                0 t)))
+                   (backward-prefix-chars))
+                  (t
+                   ;; Indent beneath first sexp on same line as
+                   ;; `calculate-lisp-indent-last-sexp'.  Again, it's
+                   ;; almost certainly a function call.
+                   (goto-char calculate-lisp-indent-last-sexp)
+                   (beginning-of-line)
+                   (parse-partial-sexp (point) calculate-lisp-indent-last-sexp
+                                       0 t)
+                   (backward-prefix-chars)))))
+        ;; Point is at the point to indent under unless we are inside a string.
+        ;; Call indentation hook except when overridden by lisp-indent-offset
+        ;; or if the desired indentation has already been computed.
+        (let ((normal-indent (current-column)))
+          (cond ((elt state 3)
+                 ;; Inside a string, don't change indentation.
+                 nil)
+                ((and (integerp lisp-indent-offset) containing-sexp)
+                 ;; Indent by constant offset
+                 (goto-char containing-sexp)
+                 (+ (current-column) lisp-indent-offset))
+                ;; in this case calculate-lisp-indent-last-sexp is not nil
+                (calculate-lisp-indent-last-sexp
+                 (or
+                  ;; try to align the parameters of a known function
+                  (and lisp-indent-function
+                       (not retry)
+                       (funcall lisp-indent-function indent-point state))
+                  ;; If the function has no special alignment
+                  ;; or it does not apply to this argument,
+                  ;; try to align a constant-symbol under the last
+                  ;; preceding constant symbol, if there is such one of
+                  ;; the last 2 preceding symbols, in the previous
+                  ;; uncommented line.
+                  (and (save-excursion
+                         (goto-char indent-point)
+                         (skip-chars-forward " \t")
+                         (looking-at ":"))
+                       ;; The last sexp may not be at the indentation
+                       ;; where it begins, so find that one, instead.
+                       (save-excursion
+                         (goto-char calculate-lisp-indent-last-sexp)
+                         ;; Handle prefix characters and whitespace
+                         ;; following an open paren.  (Bug#1012)
+                         (backward-prefix-chars)
+                         (while (not (or (looking-back "^[ \t]*\\|([ \t]+"
+                                                       (line-beginning-position))
+                                         (and containing-sexp
+                                              (>= (1+ containing-sexp) (point)))))
+                           (forward-sexp -1)
+                           (backward-prefix-chars))
+                         (setq calculate-lisp-indent-last-sexp (point)))
+                       (> calculate-lisp-indent-last-sexp
+                          (save-excursion
+                            (goto-char (1+ containing-sexp))
+                            (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
+                            (point)))
+                       (let ((parse-sexp-ignore-comments t)
+                             indent)
+                         (goto-char calculate-lisp-indent-last-sexp)
+                         (or (and (looking-at ":")
+                                  (setq indent (current-column)))
+                             (and (< (line-beginning-position)
+                                     (prog2 (backward-sexp) (point)))
+                                  (looking-at ":")
+                                  (setq indent (current-column))))
+                         indent))
+                  ;; another symbols or constants not preceded by a constant
+                  ;; as defined above.
+                  normal-indent))
+                ;; in this case calculate-lisp-indent-last-sexp is nil
+                (desired-indent)
+                (t
+                 normal-indent))))))
+
+  (defalias 'elisp-mode 'emacs-lisp-mode)
+
+  :config
+  (advice-add #'calculate-lisp-indent :override #'λαω-calculate-lisp-indent))
+
 (use-package mb-depth
   :ensure nil
   :defer 2
@@ -481,6 +749,27 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
 (use-package minibuffer
   :ensure nil
   :commands minibuffer-mode
+  :init
+  ;; Show input method in minibuffer.
+  ;;
+  ;; Credit to Akito Mikami.
+  ;; See: https://a64.work/posts/2023-01-14-emacs-input-method-minibuffer-indicator.html
+  (defvar-local λαω-minibuffer-input-method-overlay nil
+    "Overlay showing the active input method.")
+
+  (defun λαω-minibuffer-input-method-indicator-activate ()
+    "Show input method indicator in minibuffer."
+    (when (minibufferp)
+      (unless λαω-minibuffer-input-method-overlay
+        (setq λαω-minibuffer-input-method-overlay
+              (make-overlay (point-min) (point-min) nil nil t)))
+      (overlay-put λαω-minibuffer-input-method-overlay 'after-string
+                   (format "[%s] " current-input-method-title))))
+
+  (defun λαω-minibuffer-input-method-indicator-deactivate ()
+    "Hide input method indicator in minibuffer."
+    (when (minibufferp)
+      (overlay-put λαω-minibuffer-input-method-overlay 'after-string nil)))
   :custom
   ;; useful for `corfu'
   (completion-cycle-threshold 2
@@ -585,6 +874,7 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
 
 (use-package treesit
   :ensure nil
+  :defer 1
   :init
   (defcustom λαω-treesit-language-grammars-directory
     "Directory for tree-sitter language grammars."
@@ -700,6 +990,7 @@ them in `λαω-treesit-language-grammars-directory'."
 
 (use-package whitespace
   :ensure nil
+  :defer 1
   :config
   (global-whitespace-mode)
   :custom
@@ -728,7 +1019,7 @@ them in `λαω-treesit-language-grammars-directory'."
 
 ;;; third-party packages
 (use-package pass
-  :defer 0.5)
+  :defer 1)
 
 (use-package undo-fu-session
   :hook
@@ -736,6 +1027,7 @@ them in `λαω-treesit-language-grammars-directory'."
   (prog-mode-hook . undo-fu-session-mode))
 
 (use-package avy
+  :defer 0.5
   ;; default is `electric-newline-and-maybe-indent'
   :bind (("C-j" . avy-goto-char-timer)))
 
@@ -765,6 +1057,7 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package vterm
   :defer nil
+  :commands (vterm vterm-other-window)
   :config
   (keymap-unset vterm-mode-map "C-l" t)
   :bind (:map λαω-cli-map
@@ -773,7 +1066,8 @@ This function adds the `expreg--sentence' expansion function to
          ("C-q" . vterm-send-next-key))
   :custom
   (vterm-max-scrollback 12000)
-  (vterm-timer-delay 0.01))
+  (vterm-timer-delay 0.01)
+  (vterm-always-compile-module t))
 
 (use-package orderless
   :init
@@ -883,14 +1177,14 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package consult-dir
   :after consult
-  :init
   :bind (("C-x C-d" . consult-dir)
          :map minibuffer-local-completion-map
          ("C-x C-d" . consult-dir)
          ("C-x C-j" . consult-dir-jump-file)))
 
 (use-package vertico
-  :init
+  :defer 0.5
+  :config
   (vertico-mode)
   :custom
   (vertico-cycle t) ; enable cycling for `vertico-next/previous'
@@ -934,6 +1228,7 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package corfu-terminal
   :if (display-graphic-p)
+  :defer 1
   :after corfu
   :config
   (corfu-terminal-mode))
@@ -999,7 +1294,6 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package magit-todos
   :after magit
-  :defer 2
   :config
   (magit-todos-mode))
 
@@ -1013,10 +1307,13 @@ This function adds the `expreg--sentence' expansion function to
   (global-diff-hl-mode)
   ;; (diff-hl-margin-mode)
   (diff-hl-flydiff-mode)
+  (global-diff-hl-show-hunk-mouse-mode)
   :hook
   (magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
   (magit-post-refresh-hook . diff-hl-magit-post-refresh)
   (dired-mode-hook . diff-hl-dired-mode)
+  :bind (:map λαω-git-map
+         ("d" . diff-hl-show-hunk))
   :custom
   (diff-hl-update-async t)
   (diff-hl-side 'right))
@@ -1050,8 +1347,6 @@ This function adds the `expreg--sentence' expansion function to
   :bind ([remap goto-line] . goto-line-preview))
 
 (use-package indent-bars
-  :config
-  (require 'indent-bars-ts)
   :hook (prog-mode-hook . indent-bars-mode)
   :custom
   (indent-bars-color '(highlight
@@ -1078,6 +1373,10 @@ This function adds the `expreg--sentence' expansion function to
                                 if_statement
                                 with_statement
                                 while_statement))))
+
+(use-package indent-bars-ts
+  :ensure nil ; provided by `indent-bars'
+  :requires indent-bars)
 
 (use-package colorful-mode
   :hook
@@ -1207,5 +1506,9 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package sicp
   :defer 3)
+
+(use-package tex
+  :defer t
+  :ensure auctex)
 
 ;;; init.el ends here

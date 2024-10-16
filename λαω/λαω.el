@@ -41,31 +41,31 @@
   :prefix "λαω-"
   :group 'local)
 
-(defcustom λαω-emacs-directory (expand-file-name "λαω/" user-emacs-directory)
-  "λαω directory in `user-emacs-directory'."
-  :type 'directory)
-
-(defcustom λαω-emacs-etc-directory (expand-file-name
+(defvar λαω-emacs-etc-directory (expand-file-name
                                      "etc/" user-emacs-directory)
-  "\"etc\" directory containing miscellaneous Emacs configurations."
-  :type 'directory)
+  "\"etc\" directory containing miscellaneous Emacs configurations.")
 
-(defcustom λαω-emacs-var-directory (expand-file-name
+(defvar λαω-emacs-var-directory (expand-file-name
                                      "var/" user-emacs-directory)
   "\"var\" directory holding Emacs compiled files and package data.
 
 This directory contains Emacs Lisp packages, natively-compiled *.eln
-files, and package data."
-  :type 'directory)
+files, and package data.")
 
-(defcustom λαω-treesit-language-grammars-directory (expand-file-name
+(defvar λαω-emacs-directory (expand-file-name "λαω/" user-emacs-directory)
+  "λαω directory in `user-emacs-directory'.")
+
+(defvar λαω-themes-directory (expand-file-name
+                                 "themes/" λαω-emacs-directory)
+  "λαω themes directory.")
+
+(defvar λαω-treesit-language-grammars-directory (expand-file-name
                                                     "tree-sitter/"
                                                     λαω-emacs-var-directory)
   "The directory where tree-sitter language grammars are installed.
 
 This directory can be passed to `treesit-install-language-grammar' as an
-optional argument."
-  :type 'directory)
+optional argument.")
 
 (provide 'λαω)
 ;;; λαω.el ends here
