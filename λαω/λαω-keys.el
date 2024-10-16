@@ -109,6 +109,7 @@
 (defvar-keymap λαω-emacs-map
   :doc "Keymap for Emacs."
   :name "emacs"
+  "c" #'customize-group
   "r" #'restart-emacs)
 (keymap-global-set "C-c e" (cons "λαω-emacs" λαω-emacs-map))
 (keymap-set λαω-map "e" (cons "emacs" λαω-emacs-map))
@@ -131,6 +132,10 @@
 (defvar-keymap λαω-text-map
   :doc "Keymap for text."
   :name "text"
+  "r" #'query-replace
+  "C-r" #'query-replace-regexp
+  "M-r" #'λαω-query-replace-region
+  "C-M-r" #'λαω-query-replace-regexp-region
   "-" #'text-scale-decrease
   "=" #'text-scale-increase)
 (keymap-global-set "C-c t" (cons "λαω-text" λαω-text-map))
