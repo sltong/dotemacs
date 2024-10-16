@@ -61,6 +61,8 @@
        (bg-diff-hl-change "#363418") (fg-diff-hl-change "#7b7744")
        (bg-diff-hl-insert "#263924") (fg-diff-hl-insert "#5c8059")
        (bg-diff-hl-delete "#472a26") (fg-diff-hl-delete "#9a655d")
+
+       (bg-avy-lead-face "#363418")
        )
 
   (custom-theme-set-faces
@@ -171,11 +173,13 @@
                                             :weight bold))))
 
    ;;; package faces
-   `(avy-goto-char-timer-face ((,class (:background ,hl))))
-   `(avy-lead-face ((,class (:background ,hl-1/2 :foreground ,magenta :weight bold))))
-   `(avy-lead-face-0 ((,class (:background ,hl-1/2 :foreground ,teal :weight bold))))
-   `(avy-lead-face-1 ((,class (:background ,hl-1/2 :foreground ,yellow :weight bold))))
-   `(avy-lead-face-2 ((,class (:background ,hl-1/2 :foreground ,blue :weight bold))))
+   `(avy-goto-char-timer-face ((,class (:background ,bg-avy-lead-face
+                                        :foreground ,fg
+                                        :weight bold))))
+   `(avy-lead-face ((,class (:inherit (avy-goto-char-timer-face) :foreground ,green :weight bold))))
+   `(avy-lead-face-0 ((,class (:inherit (avy-goto-char-timer-face) :foreground ,magenta :weight bold))))
+   `(avy-lead-face-1 ((,class (:inherit (avy-goto-char-timer-face) :foreground ,orange :weight bold))))
+   `(avy-lead-face-2 ((,class (:inherit (avy-goto-char-timer-face) :foreground ,teal :weight bold))))
 
    `(corfu-default ((,class (:background ,hl-1/2))))
    `(corfu-bar ((,class (:background ,violet))))
