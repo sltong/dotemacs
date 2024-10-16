@@ -101,4 +101,6 @@ Restore the following:
 
 (add-hook 'emacs-startup-hook #'λαω-emacs-startup-hook-function)
 
+(provide 'early-init)
+
 ;;; early-init.el ends here
