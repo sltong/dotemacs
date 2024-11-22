@@ -40,7 +40,6 @@
          ("M-p" . org-metaup)
          ("M-n" . org-metadown))
   :custom
-  (org-startup-indented t)
   (org-special-ctrl-a/e t)
   (org-edit-src-content-indentation 0)
   (org-hide-leading-stars t)
@@ -60,6 +59,7 @@
   (org-todo-keywords '((sequence "TODO(t)" "MAYBE(m)" "DOING(d)" "POSTPONED(p)"
                         "|" "DONE(f)" "CANCELLED(x)"))))
 
+
 (use-package ox
   :ensure nil
   :defer t
@@ -67,6 +67,31 @@
   ;; exporting
   (org-export-creator-string "Emacs (Org Mode)")
   (org-export-headline-levels 6))
+
+(use-package org-noter
+  :defer t
+  :config
+  ;; `org-noter' modules
+  (require 'org-noter-pdf)
+  (require 'org-noter-nov))
+
+(use-package org-pdftools
+  :after (org-noter pdf-tools)
+  :hook (org-mode-hook . org-pdftools-setup-link))
+
+(use-package org-noter-pdftools
+  :after (org-noter org-pdftools)
+  :config
+  ;; Add a function to ensure precise note is inserted
+  (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+                                                   (not org-noter-insert-note-no-questions)
+                                                 org-noter-insert-note-no-questions))
+           (org-pdftools-use-isearch-link t)
+           (org-pdftools-use-freepointer-annot t))
+       (org-noter-insert-note (org-noter--get-precise-info))))))
 
 (use-package ox-html
   :ensure nil

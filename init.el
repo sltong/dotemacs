@@ -1559,4 +1559,26 @@ This function adds the `expreg--sentence' expansion function to
 (use-package htmlize
   :defer t)
 
+(use-package citar
+  :defer 1
+  :hook
+  (LaTeX-mode . citar-capf-setup)
+  (org-mode . citar-capf-setup)
+  :custom
+  (citar-library-paths '("~/dump/library/"))
+  (citar-bibliography "~/dump/library/bibliography.bib"))
+
+(use-package citar-embark
+  :after citar embark
+  :config (citar-embark-mode))
+
+(use-package elfeed
+  :defer t)
+
+(use-package elfeed-tube
+  :after elfeed
+  :defer t
+  :config
+  (elfeed-tube-setup))
+
 ;;; init.el ends here

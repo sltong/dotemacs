@@ -54,6 +54,8 @@ can be set to nil during initialization to speed it up.")
 (setq package-user-dir (convert-standard-filename
                         (expand-file-name "var/elpa/" user-emacs-directory)))
 
+;; (setq package-enable-at-startup nil)
+
 ;; load the newest version of a file irrespective of its extension
 (setq load-prefer-newer t)
 
