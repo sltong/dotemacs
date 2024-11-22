@@ -51,9 +51,6 @@ can be set to nil during initialization to speed it up.")
    (convert-standard-filename
     (expand-file-name  "var/eln-cache/" user-emacs-directory))))
 
-;; suppress native compilation warnings
-(setq native-comp-async-report-warnings-errors 'silent)
-
 (setq package-user-dir (convert-standard-filename
                         (expand-file-name "var/elpa/" user-emacs-directory)))
 
@@ -62,6 +59,8 @@ can be set to nil during initialization to speed it up.")
 
 ;; temporarily hide warnings
 (setq warning-minimum-level :error)
+;; suppress native compilation warnings
+(setq native-comp-async-report-warnings-errors 'silent)
 
 ;; Don't try to preserve a frame's number of columns and don't round
 ;; frame sizes when resizing. These should optimize for the case when
@@ -73,14 +72,16 @@ can be set to nil during initialization to speed it up.")
 (setq initial-frame-alist '((fullscreen             . maximized)
                             (horizontal-scroll-bars . nil)
                             (vertical-scroll-bars   . nil)
+                            (menu-bar-lines         . 0)
                             (tool-bar-lines         . 0)))
 
 (setq default-frame-alist '((fullscreen             . maximized)
                             (horizontal-scroll-bars . nil)
                             (vertical-scroll-bars   . nil)
+                            (menu-bar-lines         . 0)
                             (tool-bar-lines         . 0)))
 
-(setq tooltip-mode nil)
+(tooltip-mode -1)
 
 (setq inhibit-startup-screen t)
 
@@ -97,9 +98,12 @@ Restore the following:
   (setq gc-cons-threshold (* 1024 1024 16)) ; 16MiB
   (setq gc-cons-percentage 0.1)
   (setq warning-minimum-level :warning)
-  (setq file-name-handler-alist file-name-handler-alist-pre-init))
+  (setq file-name-handler-alist file-name-handler-alist-pre-init)
+  (load custom-file))
 
 (add-hook 'emacs-startup-hook #'λαω-emacs-startup-hook-function)
+
+(add-to-list 'load-path (expand-file-name "λαω/" user-emacs-directory))
 
 (provide 'early-init)
 

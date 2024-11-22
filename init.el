@@ -60,11 +60,23 @@
   (setq use-package-compute-statistics t)
   (setq debug-on-error t))
 
+;; λαω
+(require 'λαω)
+(require 'λαω-functions)
+(require 'λαω-keys)
+(require 'λαω-languages)
+(require 'λαω-themes)
+(use-package mode-line-bell-pulse
+  :ensure nil
+  :defer 1
+  :config (mode-line-bell-pulse-mode))
+
 ;;; package configurations
 ;; `package'
 (require 'package)
 
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+
 (keymap-set help-map "p" #'describe-package)
 
 ;; `use-package'
@@ -82,28 +94,14 @@
   (auto-compile-on-save-mode))
 
 (use-package benchmark-init
-  :config
-  ;; To disable collection of benchmark data after init is done.
-  (add-hook 'after-init-hook 'benchmark-init/deactivate))
-
-;;; λαω
-(add-to-list 'load-path (expand-file-name "λαω/" user-emacs-directory))
-(require 'λαω-functions)
-(require 'λαω-languages)
-(require 'λαω-keys)
-(require 'λαω-themes)
-(require 'λαω-org)
-;;(require 'λαω-mode-line-bell)
-;; (use-package λαω-mode-line-bell
-;;   :ensure nil
-;;   :config (λαω-mode-line-bell-mode))
-(use-package mode-line-bell-pulse
-  :ensure nil
-  :config (mode-line-bell-pulse-mode))
+  :demand t)
+;; To disable collection of benchmark data after init is done.
+(add-hook 'after-init-hook #'benchmark-init/deactivate)
 
 ;;; Emacs initialization and (built-in package) customizations
 (use-package emacs
   :demand t
+  :ensure nil
   :init
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (if (file-exists-p custom-file)
@@ -112,7 +110,6 @@
      "`custom.el' does not exist. Creating it..."
      custom-file)
     (make-empty-file custom-file t))
-  (load custom-file)
 
   ;; functions
   (defun λαω-display-init-time-message ()
@@ -176,9 +173,12 @@ URL `https://emacs.stackexchange.com/a/4191'"
             #'λαω-minibuffer-input-method-indicator-deactivate)
   ;; default modes
   (setq-default indent-tabs-mode nil)
+  :config
+  (column-number-mode)
 
   :hook
   (after-init-hook . λαω-display-init-time-message)
+  ;; Visual-Line mode
   (help-mode-hook . visual-line-mode)
   (org-mode-hook . visual-line-mode)
   (markdown-mode-hook . visual-line-mode)
@@ -186,7 +186,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
   :custom
   (set-language-environment "UTF-8")
   ;; simple
-  (column-number-mode t)
   (inhibit-default-init t "Don't load `default.el'.")
   (selection-coding-system 'utf-8)
   (auto-save-timeout 4)
@@ -262,6 +261,9 @@ URL `https://emacs.stackexchange.com/a/4191'"
 ;; directories or file paths for redundancy.
 (use-package no-littering
   :demand t
+  :init
+  (setq no-littering-etc-directory λαω-emacs-etc-directory)
+  (setq no-littering-var-directory λαω-emacs-var-directory)
   :config
   (no-littering-theme-backups))
 
@@ -270,12 +272,14 @@ URL `https://emacs.stackexchange.com/a/4191'"
           (daemonp))
   :demand t
   :config
+  ;; (dolist (var '("SSH_AUTH_SOCK"))
+  ;;   (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
 ;;; early packages
 ;; put all minor modes on the mode line in one menu
 (use-package minions
-  :defer 0.5
+  :defer 0.25
   :commands (minions-mode glasses-mode)
   :config (minions-mode 1)
   :custom
@@ -286,6 +290,7 @@ URL `https://emacs.stackexchange.com/a/4191'"
 ;; to prevent fetching them from repositories
 (use-package auth-source
   :ensure nil
+  :defer 0.2
   :custom
   ;; add alternative port 23 for SSH
   ;; and add IMAP port 1143 and SMTP port 1025 for Proton Mail Bridge
@@ -297,13 +302,13 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
 (use-package auth-source-pass
   :ensure nil
-  :defer 1
+  :defer 0.75
   :config
   (auth-source-pass-enable))
 
 (use-package autorevert
   :ensure nil
-  :defer 1
+  :defer 1.5
   :config
   (global-auto-revert-mode))
 
@@ -323,7 +328,7 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
 (use-package crm
   :ensure nil
-  :defer 1
+  :defer 2
   :commands (completing-read-multiple)
   :init
   (defun λαω-crm-prompt-indicator (args)
@@ -347,7 +352,7 @@ comma."
 ;; ignoring it
 (use-package delsel
   :ensure nil
-  :defer 1
+  :defer 1.25
   :config
   (delete-selection-mode))
 
@@ -422,7 +427,7 @@ comma."
 
 (use-package eldoc
   :ensure nil
-  :defer 1)
+  :defer 2)
 
 (use-package elec-pair
   :ensure nil
@@ -450,7 +455,8 @@ comma."
   (kept-old-versions 0)
   (kept-new-versions 8)
   (confirm-kill-emacs 'y-or-n-p)
-  (require-final-newline t))
+  (require-final-newline t)
+  (view-read-only t))
 
 (use-package finder
   :ensure nil
@@ -464,40 +470,23 @@ comma."
 
 (use-package gnus
   :ensure nil
-  :defer 1
-  :hook (gnus-group-mode-hook . gnus-topic-mode)
+  :defer t
   :custom
-  (gnus-select-method '(nnimap "proton"
-                               (nnimap-address "127.0.0.1")
-                               (nnimap-server-port 1143)
-                               (nnimap-stream starttls)
-                               (nnimap-inbox "Inbox")
-                               (nnimap-split-methods default)
-                               (nnimap-record-commands t)))
-  (gnus-secondary-select-methods '((nntp "news.usenetserver.com")))
+  (gnus-secondary-select-methods '((nntp "news.usenetserver.com")
+                                   (nnimap "proton"
+                                    (nnimap-address "127.0.0.1")
+                                    (nnimap-server-port 1143)
+                                    (nnimap-stream starttls)
+                                    (nnimap-inbox "Inbox")
+                                    (nnimap-split-methods default)
+                                    (nnimap-record-commands t))))
   (gnus-use-cache t)
   (gnus-asynchronous t)
   (gnus-use-header-prefetch t)
   (gnus-verbose 10)
   (gnus-save-killed-list nil)
-  (gnus-inhibit-startup-message t))
-
-(use-package gnus-group
-  :ensure nil
-  :after gnus
-  :defer 1
-  :config
-  (add-to-list 'gnus-topic-alist '(("proton"
-                                    "nnimap+proton:Inbox"
-                                    "nnimap+proton:Drafts"
-                                    "nnimap+proton:Sent"
-                                    "nnimap+proton:Starred"
-                                    "nnimap+proton:Spam"
-                                    "nnimap+proton:Trash")))
-  :custom
-  (gnus-topic-topology '(("Gnus" visible)
-                         (("misc" visible))
-                         (("Proton" visible nil nil)))))
+  (gnus-inhibit-startup-message t)
+  (gnus-directory (expand-file-name "gnus/" λαω-emacs-var-directory)))
 
 (use-package help-fns
   :ensure nil
@@ -511,6 +500,7 @@ comma."
   (hs-isearch-open t "Open both code and comment blocks when doing `isearch'."))
 
 (use-package hl-line
+  :ensure nil
   :init
   (defun λαω-disable-hl-line-mode-temporarily (func &rest args)
     "Temporarily disable `global-hl-line-mode' when calling FUNC.
@@ -548,6 +538,12 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   :custom
   (isearch-repeat-on-direction-change t)
   (isearch-lazy-count t))
+
+(use-package css-mode
+  :ensure nil
+  :defer t
+  :custom
+  (css-indent-offset 2))
 
 (use-package lisp-mode
   :ensure nil
@@ -734,10 +730,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
                 (desired-indent)
                 (t
                  normal-indent))))))
-
   (defalias 'elisp-mode 'emacs-lisp-mode)
-
-  :config
   (advice-add #'calculate-lisp-indent :override #'λαω-calculate-lisp-indent))
 
 (use-package mb-depth
@@ -783,7 +776,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package password-cache
   :ensure nil
-  :defer 1
+  :defer 1.5
   :custom
   (password-cache-expiry (* 60 5))) ; 5 minutes
 
@@ -816,7 +809,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package repeat
   :ensure nil
-  :defer 1
+  :defer 1.25
   :config
   (repeat-mode)
   :custom
@@ -828,7 +821,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package savehist
   :ensure nil
-  :defer 1
+  :defer 0.75
   :config
   (savehist-mode)
   :custom
@@ -839,7 +832,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package saveplace
   :ensure nil
-  :defer 1
+  :defer 2
   :config
   (save-place-mode))
 
@@ -864,7 +857,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package tramp
   :ensure nil
-  :defer 1
+  :defer 0.5
   :custom
   (tramp-default-method "ssh")
   (tramp-backup-directory-alist backup-directory-alist)
@@ -872,9 +865,12 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
   (tramp-connection-properties '((nil "remote-shell" "/usr/bin/bash")))
   (tramp-encoding-shell "/usr/bin/bash"))
 
+(use-package transient
+  :defer t)
+
 (use-package treesit
   :ensure nil
-  :defer 1
+  :defer 2
   :init
   (defcustom λαω-treesit-language-grammars-directory
     "Directory for tree-sitter language grammars."
@@ -900,28 +896,27 @@ them in `λαω-treesit-language-grammars-directory'."
   :config
   (add-to-list 'treesit-extra-load-path
                λαω-treesit-language-grammars-directory)
-  :custom
-  (treesit-language-source-alist
-   '((css "https://github.com/tree-sitter/tree-sitter-css" "v0.23.0")
-     (elixir "https://github.com/elixir-lang/tree-sitter-elixir" "v0.3.1")
-     (heex
-      "https://github.com/phoenixframework/tree-sitter-heex")
-     (html "https://github.com/tree-sitter/tree-sitter-html" "v0.23.0")
-     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.0")
-     (json "https://github.com/tree-sitter/tree-sitter-json" "v0.23.0")
-     (python "https://github.com/tree-sitter/tree-sitter-python" "v0.23.2")
-     ;; (markdown
-     ;;  "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
-     ;;  "v0.3.2"
-     ;;  "tree-sitter-markdown/src")
-     ;; (markdown-inline
-     ;;  "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
-     ;;  "v0.3.2"
-     ;;  "tree-sitter-markdown-inline/src"))
-     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.0" "tsx/src")
-     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.0" "typescript/src")
-     (xml "https://github.com/tree-sitter-grammars/tree-sitter-xml" "v0.6.4" "xml/src")
-     (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml"))))
+  (setq treesit-language-source-alist
+        '((css "https://github.com/tree-sitter/tree-sitter-css" "v0.23.0")
+          (elixir "https://github.com/elixir-lang/tree-sitter-elixir" "v0.3.1")
+          (heex
+           "https://github.com/phoenixframework/tree-sitter-heex")
+          (html "https://github.com/tree-sitter/tree-sitter-html" "v0.23.0")
+          (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.0")
+          (json "https://github.com/tree-sitter/tree-sitter-json" "v0.23.0")
+          (python "https://github.com/tree-sitter/tree-sitter-python" "v0.23.2")
+          ;; (markdown
+          ;;  "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+          ;;  "v0.3.2"
+          ;;  "tree-sitter-markdown/src")
+          ;; (markdown-inline
+          ;;  "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+          ;;  "v0.3.2"
+          ;;  "tree-sitter-markdown-inline/src"))
+          (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.0" "tsx/src")
+          (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.0" "typescript/src")
+          (xml "https://github.com/tree-sitter-grammars/tree-sitter-xml" "v0.6.4" "xml/src")
+          (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml"))))
 
   ;; *-ts-mode setup
   (use-package elixir-ts-mode
@@ -1026,10 +1021,16 @@ them in `λαω-treesit-language-grammars-directory'."
   (text-mode-hook . undo-fu-session-mode)
   (prog-mode-hook . undo-fu-session-mode))
 
+(use-package whole-line-or-region
+  :defer 0.25
+  :config
+  (whole-line-or-region-global-mode))
+
 (use-package avy
   :defer 0.5
   ;; default is `electric-newline-and-maybe-indent'
-  :bind (("C-j" . avy-goto-char-timer)))
+  :bind (("C-j" . avy-goto-char-timer))
+  )
 
 (use-package expreg
   :config
@@ -1041,8 +1042,8 @@ This function adds the `expreg--sentence' expansion function to
     (add-to-list 'expreg-functions 'expreg--sentence))
 
   :hook (text-mode-hook . λαω-expreg-expand-sentences)
-  :bind (("C->" . expreg-expand)
-         ("C-<" . expreg-contract)))
+  :bind (("C-=" . expreg-expand)
+         ("C-M-=" . expreg-contract)))
 
 (use-package ace-window
   :bind (("M-o" . ace-window))
@@ -1056,7 +1057,7 @@ This function adds the `expreg--sentence' expansion function to
          ("t" . eat)))
 
 (use-package vterm
-  :defer nil
+  :defer t
   :commands (vterm vterm-other-window)
   :config
   (keymap-unset vterm-mode-map "C-l" t)
@@ -1070,6 +1071,7 @@ This function adds the `expreg--sentence' expansion function to
   (vterm-always-compile-module t))
 
 (use-package orderless
+  :defer 0.5
   :init
   ;; efficient prefix filtering for inputs shorter than 4 characters
   (defun orderless-fast-dispatch (word index total)
@@ -1228,13 +1230,13 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package corfu-terminal
   :if (display-graphic-p)
-  :defer 1
+  :defer 2
   :after corfu
   :config
   (corfu-terminal-mode))
 
 (use-package cape
-  :defer 1
+  :defer 0.8
   :config
   ;; Add to the global default value of
   ;; `completion-at-point-functions' which is used by
@@ -1284,6 +1286,7 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package magit
   :commands (magit-auto-revert-mode magit-mode magit-wip-mode)
+  :defer 1
   :config
   (add-to-list 'magit-no-confirm 'safe-with-wip)
   (magit-wip-mode)
@@ -1313,7 +1316,7 @@ This function adds the `expreg--sentence' expansion function to
   (magit-post-refresh-hook . diff-hl-magit-post-refresh)
   (dired-mode-hook . diff-hl-dired-mode)
   :bind (:map λαω-git-map
-         ("d" . diff-hl-show-hunk))
+         ("h" . diff-hl-show-hunk))
   :custom
   (diff-hl-update-async t)
   (diff-hl-side 'right))
@@ -1394,51 +1397,31 @@ This function adds the `expreg--sentence' expansion function to
 (use-package sly
   :mode ("\\.lisp\\'" . sly-mode))
 
-(use-package image-roll
-  :vc (:url "https://github.com/aikrahguzar/image-roll.el")
-  :defer t)
-
-(use-package qpdf.el
-  :vc (:url "https://github.com/orgtre/qpdf.el")
-  :after pdf-tools
-  :defer t
-  :commands qpdf)
-
 (use-package pdf-tools
   :vc (:url "https://github.com/aikrahguzar/pdf-tools"
-       :branch "upstream-pdf-roll"
+       :branch "child-frame-preview"
        :lisp-dir "lisp/")
-  :commands (pdf-view-mode pdf-view-roll-minor-mode)
   :defer 2
-  :init
-  (defun λαω-fix-pdf-selection ()
-    "Replace pdf with one where selection shows transparently."
-    (interactive)
-    (unless (equal (file-name-extension (buffer-file-name)) "pdf")
-      (error "Buffer should visit a pdf file"))
-    (unless (equal major-mode 'pdf-view-mode)
-      (pdf-view-mode))
-    ;; save file in QDF-mode
-    (qpdf-run (list
-               (concat "--infile="
-                       (buffer-file-name))
-               "--qdf --object-streams=disable"
-               "--replace-input"))
-    ;; do replacements
-    (text-mode)
-    (read-only-mode -1)
-    (while (re-search-forward "3 Tr" nil t)
-      (replace-match "7 Tr" nil nil))
-    (save-buffer)
-    (pdf-view-mode))
+  :commands (pdf-view-mode pdf-view-roll-minor-mode)
   :config
   (pdf-loader-install)
   (add-hook 'pdf-view-mode-hook #'pdf-view-roll-minor-mode)
   :custom
   (pdf-cache-image-limit 128)
-  (pdf-cache-prefetch-delay 0.25)
+  (pdf-cache-prefetch-delay 0.1)
   (pdf-view-resize-factor 1.1)
   (pdf-view-max-image-width 1080))
+
+(use-package djvu
+  :defer t)
+
+(use-package nov
+  :mode ("\\.epub\\'" . nov-mode)
+  :hook (nov-mode-hook . visual-line-mode)
+  :custom
+  (nov-text-width t))
+
+(require 'λαω-org)
 
 (use-package saveplace-pdf-view
   :after pdf-tools
@@ -1460,7 +1443,7 @@ This function adds the `expreg--sentence' expansion function to
   (gptel-post-stream-hook . gptel-auto-scroll)
   (gptel-post-response-functions-hook . gptel-end-of-response)
   :custom
-  (gptel-model "gpt-4o-mini"))
+  (gptel-model 'gpt-4o-mini))
 
 (use-package unfill
   :defer t)
@@ -1471,12 +1454,6 @@ This function adds the `expreg--sentence' expansion function to
 (use-package literate-calc-mode
   :defer t)
 
-(use-package nov
-  :mode ("\\.epub\\'" . nov-mode)
-  :hook (nov-mode-hook . visual-line-mode)
-  :custom
-  (nov-text-width t))
-
 (use-package iedit
   :bind (:map λαω-text-map
               ("i" . iedit-mode)))
@@ -1484,9 +1461,9 @@ This function adds the `expreg--sentence' expansion function to
 (use-package lorem-ipsum
   :defer t)
 
-(use-package blimpy
-  :vc (:url "https://github.com/progfolio/blimpy")
-  :defer t)
+;; (use-package blimpy
+;;   :vc (:url "https://github.com/progfolio/blimpy")
+;;   :defer t)
 
 (use-package visual-fill-column
   :hook ((Info-mode-hook . visual-fill-column-mode)
@@ -1508,7 +1485,78 @@ This function adds the `expreg--sentence' expansion function to
   :defer 3)
 
 (use-package tex
+  :ensure auctex
   :defer t
-  :ensure auctex)
+  :config
+  (setq-default TeX-master nil)
+  :hook
+  ((LaTeX-mode-hook . visual-line-mode)
+   (LaTeX-mode-hook . flymake-mode)
+   (LaTeX-mode-hook . LaTeX-math-mode))
+  :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-view-program-selection '(((output-dvi has-no-display-manager) "dvi2tty")
+                               ((output-dvi style-pstricks) "dvips and gv")
+                               (output-dvi "xdvi")
+                               (output-pdf "Okular")
+                               (output-html "xdg-open"))))
+
+(use-package activities
+  :init
+  (defvar-keymap λαω-activities-map
+    :doc "Keymap for Activities."
+    :name "activities")
+  (keymap-global-set "C-c a" (cons "λαω-activities" λαω-activities-map))
+  (keymap-set λαω-map "a" (cons "activites" λαω-activities-map))
+  :config
+  (activities-mode)
+  (activities-tabs-mode)
+  ;; Prevent `edebug' default bindings from interfering.
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+  :bind
+  (:map λαω-activities-map
+   ("=" . activities-new)
+   ("d" . activities-define)
+   ("a" . activities-resume)
+   ("s" . activities-suspend)
+   ("k" . activities-kill)
+   ("f" . tab-next)
+   ("b" . tab-previous)
+   ("M-f" . tab-bar-move-tab)
+   ("M-b" . tab-bar-move-tab-backward)
+   ("RET" . activities-switch)
+   ;; ("b" . activities-switch-buffer)
+   ("g" . activities-revert)
+   ("l" . activities-list)))
+
+(use-package citar
+  :defer 1
+  :hook
+  (LaTeX-mode . citar-capf-setup)
+  (org-mode . citar-capf-setup)
+  :custom
+  (citar-library-paths '("~/dump/library/"))
+  (citar-bibliography "~/dump/library/bibliography.bib"))
+
+(use-package citar-embark
+  :after citar embark
+  :config (citar-embark-mode))
+
+(use-package edraw
+  :vc (:url "https://github.com/misohena/el-easydraw")
+  :defer t)
+
+(use-package elfeed
+  :defer t)
+
+(use-package elfeed-tube
+  :after elfeed
+  :defer t
+  :config
+  (elfeed-tube-setup))
+
+(use-package htmlize
+  :defer t)
 
 ;;; init.el ends here

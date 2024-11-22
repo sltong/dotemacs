@@ -30,16 +30,24 @@
 
 (require 'λαω)
 
+(defvar λαω-themes-directory (expand-file-name
+                                 "themes/" λαω-emacs-directory)
+  "λαω themes directory.")
+
+(add-to-list 'custom-theme-load-path λαω-themes-directory)
+
 ;; fonts
 (defun λαω-set-default-fonts ()
   "Set default fonts."
   (interactive)
   (progn
     (when (member "Iosevka Law" (font-family-list))
-      (add-to-list 'initial-frame-alist
-                   '(font . "Iosevka Law-14"))
-      (add-to-list 'default-frame-alist
-                   '(font . "Iosevka Law-14"))
+      (custom-set-faces
+       '(default ((t (:family "Iosevka Law")))))
+      ;; (add-to-list 'initial-frame-alist
+      ;;              '(font . "Iosevka Law-14"))
+      ;; (add-to-list 'default-frame-alist
+      ;;              '(font . "Iosevka Law-14"))
       (custom-set-faces
        '(fixed-pitch ((t (:family "Iosevka Law"))))))
     (when (member "IBM Plex Sans" (font-family-list))
@@ -67,10 +75,8 @@ runs for the initial, created frame."
 
 (add-hook 'server-before-make-frame-hook #'λαω-set-emacs-server-frame-fonts)
 
-(setopt custom-theme-directory
+(setq custom-theme-directory
         (expand-file-name "themes/" λαω-emacs-directory))
-
-(add-to-list 'custom-theme-load-path λαω-themes-directory)
 
 (load-theme 'λαω t)
 

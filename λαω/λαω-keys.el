@@ -88,7 +88,8 @@
   "l"     '("λαω"       . λαω-visit-λαω-file)
   "f"     '("functions" . λαω-visit-λαω-functions-file)
   "k"     '("keys"      . λαω-visit-λαω-keys-file)
-  "o"     '("org"       . λαω-visit-λαω-org-file))
+  "o"     '("org"       . λαω-visit-λαω-org-file)
+  "t"     '("themes"       . λαω-visit-λαω-themes-file))
 (keymap-set λαω-files-map "l" (cons "λαω" λαω-files-λαω-map))
 
 (defvar-keymap λαω-files-emacs-map
@@ -197,6 +198,16 @@
   ;; resizing
   "-" #'text-scale-decrease
   "=" #'text-scale-increase)
+
+(defvar-keymap λαω-tab-repeat-map
+  :doc "Keymap for tabs."
+  :name "tab-repeat"
+  :repeat t
+  ;; resizing
+  "f" #'tab-next
+  "b" #'tab-previous
+  "M-f" #'tab-bar-move-tab
+  "M-b" #'tab-bar-move-tab-backward)
 
 (provide 'λαω-keys)
 ;;; λαω-keys.el ends here

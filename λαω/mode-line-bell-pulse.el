@@ -121,18 +121,20 @@ Concatenate this list with its reverse."
          (mode-line-box-line-width (plist-get (face-attribute 'mode-line :box)
                                               :line-width))
          face-remap-cookies)
-    (mode-line-bell-pulse--create-color-sequence
-     'mode-line-bell-pulse-highlight)
-    (dolist (color mode-line-bell-pulse-color-sequence)
-      (push (face-remap-add-relative
-             'mode-line-active
-             `(:background ,color
-               :box (:line-width ,mode-line-box-line-width
-                     :color ,color)))
-            face-remap-cookies)
-      (sit-for time-step))
-    (dolist (cookie face-remap-cookies)
-      (face-remap-remove-relative cookie))))
+    (unwind-protect
+        (progn
+          (mode-line-bell-pulse--create-color-sequence
+           'mode-line-bell-pulse-highlight)
+          (dolist (color mode-line-bell-pulse-color-sequence)
+            (push (face-remap-add-relative
+                   'mode-line-active
+                   `(:background ,color
+                     :box (:line-width ,mode-line-box-line-width
+                           :color ,color)))
+                  face-remap-cookies)
+            (sit-for time-step)))
+      (dolist (cookie face-remap-cookies)
+        (face-remap-remove-relative cookie)))))
 
 ;;;###autoload
 (define-minor-mode mode-line-bell-pulse-mode

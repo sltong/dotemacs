@@ -47,71 +47,77 @@
   (org-src-tab-acts-natively t)
   (org-display-custom-times t)
   (org-timestamp-custom-formats
-   '("<%Y-%m-%d (%a.)>" . "<%Y-%m-%d %H:%M:%S (%a.)>"))
+   '("<%Y-%m-%d (%a.)>" . "<%a. %Y-%m-%d %H:%M:%S>"))
+  ;; archive
+  (org-archive-location (concat
+                         (expand-file-name "archives/" org-directory)
+                         "%s.archive::"))
   ;; agenda
   (org-agenda-files (expand-file-name "agendas.org" org-directory))
   ;; babel
   (org-confirm-babel-evaluate nil)
   ;; todo
   (org-todo-keywords '((sequence "TODO(t)" "MAYBE(m)" "DOING(d)" "POSTPONED(p)"
-                                 "|" "DONE(f)" "CANCELLED(x)")))
-  ;; exporting
-  (org-html-doctype "html5")
-  (org-html-head-include-default-style nil))
+                        "|" "DONE(f)" "CANCELLED(x)"))))
 
-(use-package org-noter
-  :defer t)
-
-;; `org-noter' modules
-(use-package org-noter-pdf
+(use-package ox
   :ensure nil
-  :after org-noter
-  :defer t)
-
-(use-package org-noter-nov
-  :ensure nil
-  :after nov
-  :defer t)
-
-(use-package org-pdftools
-  :hook (org-mode-hook . org-pdftools-setup-link))
-
-(use-package org-noter-pdftools
-  :after org-noter
   :defer t
-  :config
-  ;; Add a function to ensure precise note is inserted
-  (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
-    (interactive "P")
-    (org-noter--with-valid-session
-     (let ((org-noter-insert-note-no-questions (if toggle-no-questions
-                                                   (not org-noter-insert-note-no-questions)
-                                                 org-noter-insert-note-no-questions))
-           (org-pdftools-use-isearch-link t)
-           (org-pdftools-use-freepointer-annot t))
-       (org-noter-insert-note (org-noter--get-precise-info)))))
+  :custom
+  ;; exporting
+  (org-export-creator-string "Emacs (Org Mode)")
+  (org-export-headline-levels 6))
 
-  ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
-  (defun org-noter-set-start-location (&optional arg)
-    "When opening a session with this document, go to the current location.
-With a prefix ARG, remove start location."
-    (interactive "P")
-    (org-noter--with-valid-session
-     (let ((inhibit-read-only t)
-           (ast (org-noter--parse-root))
-           (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
-       (with-current-buffer (org-noter--session-notes-buffer session)
-         (org-with-wide-buffer
-          (goto-char (org-element-property :begin ast))
-          (if arg
-              (org-entry-delete nil org-noter-property-note-location)
-            (org-entry-put nil org-noter-property-note-location
-                           (org-noter--pretty-print-location location))))))))
-  (with-eval-after-load 'pdf-annot
-    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+(use-package ox-html
+  :ensure nil
+  :defer t
+  :custom
+  ;; HTML
+  (org-html-doctype "html5")
+  (org-html-html5-fancy t)
+  (org-html-head-include-default-style nil)
+  (org-html-postamble t)
+  (org-html-postamble-format '(("en" "<span>- %d</span>")))
+  (org-html-self-link-headlines t)
+  (org-html-htmlize-output-type 'css))
+
+(use-package ox-publish
+  :ensure nil
+  :defer t
+  :custom
+  ;; publishing
+  (org-publish-project-alist `(("blog"
+                                :base-directory "~/projects/blog/"
+                                :publishing-directory "~/projects/blog/export/"
+                                :publishing-function org-html-publish-to-html
+                                :section-numbers nil
+                                :with-toc nil
+                                :html-head ,(concat
+                                             "<link rel=\"stylesheet\" href=\"./static/style.css\" type=\"text/css\"/>\n"
+                                             "<link rel=\"stylesheet\" href=\"./static/emacs-style.css\" type=\"text/css\"/>")
+                                :html-preamble t)
+                               ("blog-static"
+                                :base-directory "~/projects/blog/static/"
+                                :base-extension "jpg\\|gif\\|png\\|webp\\|css"
+                                :publishing-directory "~/projects/blog/export/static/"
+                                :publishing-function org-publish-attachment
+                                :recursive t)
+                               ("blog-website"
+                                :components ("blog" "blog-static")))))
 
 (use-package org-roam
   :defer t)
+
+(use-package org-noter
+  :defer 2
+  :config
+  ;; `org-noter' modules
+  (require 'org-noter-djvu)
+  (require 'org-noter-nov)
+  (require 'org-noter-org-roam)
+  (require 'org-noter-pdf)
+  :custom
+  (org-noter-notes-search-path (list org-directory)))
 
 (use-package org-ql
   :defer t)
