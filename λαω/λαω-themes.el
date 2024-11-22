@@ -43,16 +43,19 @@
   (progn
     (when (member "Iosevka Law" (font-family-list))
       (custom-set-faces
-       '(default ((t (:family "Iosevka Law")))))
+       '(default ((t (:family "Iosevka Law"
+                      :height 120)))))
       ;; (add-to-list 'initial-frame-alist
       ;;              '(font . "Iosevka Law-14"))
       ;; (add-to-list 'default-frame-alist
       ;;              '(font . "Iosevka Law-14"))
       (custom-set-faces
-       '(fixed-pitch ((t (:family "Iosevka Law"))))))
+       '(fixed-pitch ((t (:family "Iosevka Law"
+                          :height 120))))))
     (when (member "IBM Plex Sans" (font-family-list))
       (custom-set-faces
-       '(variable-pitch ((t (:family "IBM Plex Sans"))))
+       '(variable-pitch ((t (:family "IBM Plex Sans"
+                             :height 120))))
        '(variable-pitch-text ((t (:inherit (variable-pitch)
                                            :height 1.05))))))))
 
