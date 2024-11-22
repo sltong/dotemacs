@@ -30,6 +30,12 @@
 
 (require 'λαω)
 
+(defvar λαω-themes-directory (expand-file-name
+                                 "themes/" λαω-emacs-directory)
+  "λαω themes directory.")
+
+(add-to-list 'custom-theme-load-path λαω-themes-directory)
+
 ;; fonts
 (defun λαω-set-default-fonts ()
   "Set default fonts."
@@ -67,10 +73,8 @@ runs for the initial, created frame."
 
 (add-hook 'server-before-make-frame-hook #'λαω-set-emacs-server-frame-fonts)
 
-(setopt custom-theme-directory
+(setq custom-theme-directory
         (expand-file-name "themes/" λαω-emacs-directory))
-
-(add-to-list 'custom-theme-load-path λαω-themes-directory)
 
 (load-theme 'λαω t)
 

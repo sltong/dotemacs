@@ -40,14 +40,17 @@
          ("M-p" . org-metaup)
          ("M-n" . org-metadown))
   :custom
-  (org-startup-indented t)
   (org-special-ctrl-a/e t)
   (org-edit-src-content-indentation 0)
   (org-hide-leading-stars t)
   (org-src-tab-acts-natively t)
   (org-display-custom-times t)
   (org-timestamp-custom-formats
-   '("<%Y-%m-%d (%a.)>" . "<%Y-%m-%d %H:%M:%S (%a.)>"))
+   '("<%Y-%m-%d (%a.)>" . "<%a. %Y-%m-%d %H:%M:%S>"))
+  ;; archive
+  (org-archive-location (concat
+                         (expand-file-name "archives/" org-directory)
+                         "%s.archive::"))
   ;; agenda
   (org-agenda-files (expand-file-name "agendas.org" org-directory))
   ;; babel
@@ -60,25 +63,18 @@
   (org-html-head-include-default-style nil))
 
 (use-package org-noter
-  :defer t)
-
-;; `org-noter' modules
-(use-package org-noter-pdf
-  :ensure nil
-  :after org-noter
-  :defer t)
-
-(use-package org-noter-nov
-  :ensure nil
-  :after nov
-  :defer t)
+  :defer t
+  :config
+  ;; `org-noter' modules
+  (require 'org-noter-pdf)
+  (require 'org-noter-nov))
 
 (use-package org-pdftools
+  :after (org-noter pdf-tools)
   :hook (org-mode-hook . org-pdftools-setup-link))
 
 (use-package org-noter-pdftools
-  :after org-noter
-  :defer t
+  :after (org-noter org-pdftools)
   :config
   ;; Add a function to ensure precise note is inserted
   (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)

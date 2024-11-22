@@ -60,11 +60,17 @@
   (setq use-package-compute-statistics t)
   (setq debug-on-error t))
 
+;; pre-packages λαω
+(add-to-list 'load-path (expand-file-name "λαω/" user-emacs-directory))
+(require 'λαω)
+(require 'λαω-functions)
+(require 'λαω-keys)
+
 ;;; package configurations
 ;; `package'
-(require 'package)
+;; (require 'package)
 
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+;; (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (keymap-set help-map "p" #'describe-package)
 
 ;; `use-package'
@@ -74,36 +80,81 @@
 (setq use-package-always-ensure t)
 (setq use-package-hook-name-suffix nil)
 
+;; Elpaca
+(defvar elpaca-installer-version 0.7)
+(defvar elpaca-directory (expand-file-name "elpaca/" λαω-emacs-var-directory))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                              :ref nil :depth 1
+                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (when (< emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                 ,@(when-let ((depth (plist-get order :depth)))
+                                                     (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                 ,(plist-get order :repo) ,repo))))
+                 ((zerop (call-process "git" nil buffer t "checkout"
+                                       (or (plist-get order :ref) "--"))))
+                 (emacs (concat invocation-directory invocation-name))
+                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                 ((require 'elpaca))
+                 ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  (unless (require 'elpaca-autoloads nil t)
+    (require 'elpaca)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (load "./elpaca-autoloads")))
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
+
+;; Install use-package support
+(elpaca elpaca-use-package
+  ;; Enable use-package :ensure support for Elpaca.
+  (elpaca-use-package-mode))
+
+;; `after-init-hook' and `emacs-startup-hook' functions need to be added to
+;; `elpaca-after-init-hook' instead
+(add-hook 'elpaca-after-init-hook #'λαω-emacs-startup-hook-function)
+
 ;; `auto-compile'
 (use-package auto-compile
+  :ensure (:wait t)
   :demand t
   :config
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode))
 
 (use-package benchmark-init
-  :config
-  ;; To disable collection of benchmark data after init is done.
-  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+  :ensure (:wait t)
+  :demand t)
+;; To disable collection of benchmark data after init is done.
+(add-hook 'elpaca-after-init-hook #'benchmark-init/deactivate)
 
 ;;; λαω
-(add-to-list 'load-path (expand-file-name "λαω/" user-emacs-directory))
-(require 'λαω-functions)
 (require 'λαω-languages)
-(require 'λαω-keys)
 (require 'λαω-themes)
-(require 'λαω-org)
-;;(require 'λαω-mode-line-bell)
-;; (use-package λαω-mode-line-bell
-;;   :ensure nil
-;;   :config (λαω-mode-line-bell-mode))
 (use-package mode-line-bell-pulse
   :ensure nil
+  :defer 1
   :config (mode-line-bell-pulse-mode))
 
 ;;; Emacs initialization and (built-in package) customizations
 (use-package emacs
   :demand t
+  :ensure nil
   :init
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (if (file-exists-p custom-file)
@@ -112,7 +163,6 @@
      "`custom.el' does not exist. Creating it..."
      custom-file)
     (make-empty-file custom-file t))
-  (load custom-file)
 
   ;; functions
   (defun λαω-display-init-time-message ()
@@ -122,7 +172,7 @@
            (message "Emacs loaded in %s with %d garbage collections."
                     (format "%.2f seconds"
                             (float-time
-                             (time-subtract after-init-time before-init-time)))
+                             (time-subtract elpaca-after-init-time before-init-time)))
                     gcs-done))))
 
   (defun λαω-remove-kill-ring-text-properties ()
@@ -176,9 +226,12 @@ URL `https://emacs.stackexchange.com/a/4191'"
             #'λαω-minibuffer-input-method-indicator-deactivate)
   ;; default modes
   (setq-default indent-tabs-mode nil)
+  :config
+  (column-number-mode)
 
   :hook
-  (after-init-hook . λαω-display-init-time-message)
+  (elpaca-after-init-hook . λαω-display-init-time-message)
+  ;; Visual-Line mode
   (help-mode-hook . visual-line-mode)
   (org-mode-hook . visual-line-mode)
   (markdown-mode-hook . visual-line-mode)
@@ -186,7 +239,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
   :custom
   (set-language-environment "UTF-8")
   ;; simple
-  (column-number-mode t)
   (inhibit-default-init t "Don't load `default.el'.")
   (selection-coding-system 'utf-8)
   (auto-save-timeout 4)
@@ -261,7 +313,11 @@ URL `https://emacs.stackexchange.com/a/4191'"
 ;; later packages still explicitly set their modes' respective
 ;; directories or file paths for redundancy.
 (use-package no-littering
+  :ensure (:wait t)
   :demand t
+  :init
+  (setq no-littering-etc-directory λαω-emacs-etc-directory)
+  (setq no-littering-var-directory λαω-emacs-var-directory)
   :config
   (no-littering-theme-backups))
 
@@ -270,12 +326,14 @@ URL `https://emacs.stackexchange.com/a/4191'"
           (daemonp))
   :demand t
   :config
+  ;; (dolist (var '("SSH_AUTH_SOCK"))
+  ;;   (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
 ;;; early packages
 ;; put all minor modes on the mode line in one menu
 (use-package minions
-  :defer 0.5
+  :defer 0.25
   :commands (minions-mode glasses-mode)
   :config (minions-mode 1)
   :custom
@@ -297,13 +355,13 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
 (use-package auth-source-pass
   :ensure nil
-  :defer 1
+  :defer 0.75
   :config
   (auth-source-pass-enable))
 
 (use-package autorevert
   :ensure nil
-  :defer 1
+  :defer 1.5
   :config
   (global-auto-revert-mode))
 
@@ -323,7 +381,7 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
 (use-package crm
   :ensure nil
-  :defer 1
+  :defer 2
   :commands (completing-read-multiple)
   :init
   (defun λαω-crm-prompt-indicator (args)
@@ -347,7 +405,7 @@ comma."
 ;; ignoring it
 (use-package delsel
   :ensure nil
-  :defer 1
+  :defer 1.25
   :config
   (delete-selection-mode))
 
@@ -422,7 +480,7 @@ comma."
 
 (use-package eldoc
   :ensure nil
-  :defer 1)
+  :defer 2)
 
 (use-package elec-pair
   :ensure nil
@@ -450,7 +508,8 @@ comma."
   (kept-old-versions 0)
   (kept-new-versions 8)
   (confirm-kill-emacs 'y-or-n-p)
-  (require-final-newline t))
+  (require-final-newline t)
+  (view-read-only t))
 
 (use-package finder
   :ensure nil
@@ -464,40 +523,25 @@ comma."
 
 (use-package gnus
   :ensure nil
-  :defer 1
-  :hook (gnus-group-mode-hook . gnus-topic-mode)
+  :defer t
+  :config
+  (require 'nnimap)
   :custom
-  (gnus-select-method '(nnimap "proton"
-                               (nnimap-address "127.0.0.1")
-                               (nnimap-server-port 1143)
-                               (nnimap-stream starttls)
-                               (nnimap-inbox "Inbox")
-                               (nnimap-split-methods default)
-                               (nnimap-record-commands t)))
-  (gnus-secondary-select-methods '((nntp "news.usenetserver.com")))
+  (gnus-secondary-select-methods '((nntp "news.usenetserver.com")
+                                   (nnimap "proton"
+                                    (nnimap-address "127.0.0.1")
+                                    (nnimap-server-port 1143)
+                                    (nnimap-stream starttls)
+                                    (nnimap-inbox "Inbox")
+                                    (nnimap-split-methods default)
+                                    (nnimap-record-commands t))))
   (gnus-use-cache t)
   (gnus-asynchronous t)
   (gnus-use-header-prefetch t)
   (gnus-verbose 10)
   (gnus-save-killed-list nil)
-  (gnus-inhibit-startup-message t))
-
-(use-package gnus-group
-  :ensure nil
-  :after gnus
-  :defer 1
-  :config
-  (add-to-list 'gnus-topic-alist '(("proton"
-                                    "nnimap+proton:Inbox"
-                                    "nnimap+proton:Drafts"
-                                    "nnimap+proton:Sent"
-                                    "nnimap+proton:Starred"
-                                    "nnimap+proton:Spam"
-                                    "nnimap+proton:Trash")))
-  :custom
-  (gnus-topic-topology '(("Gnus" visible)
-                         (("misc" visible))
-                         (("Proton" visible nil nil)))))
+  (gnus-inhibit-startup-message t)
+  (gnus-directory (expand-file-name "gnus/" λαω-emacs-var-directory)))
 
 (use-package help-fns
   :ensure nil
@@ -511,6 +555,7 @@ comma."
   (hs-isearch-open t "Open both code and comment blocks when doing `isearch'."))
 
 (use-package hl-line
+  :ensure nil
   :init
   (defun λαω-disable-hl-line-mode-temporarily (func &rest args)
     "Temporarily disable `global-hl-line-mode' when calling FUNC.
@@ -783,7 +828,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package password-cache
   :ensure nil
-  :defer 1
+  :defer 1.5
   :custom
   (password-cache-expiry (* 60 5))) ; 5 minutes
 
@@ -816,7 +861,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package repeat
   :ensure nil
-  :defer 1
+  :defer 1.25
   :config
   (repeat-mode)
   :custom
@@ -828,7 +873,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package savehist
   :ensure nil
-  :defer 1
+  :defer 0.75
   :config
   (savehist-mode)
   :custom
@@ -839,7 +884,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package saveplace
   :ensure nil
-  :defer 1
+  :defer 2
   :config
   (save-place-mode))
 
@@ -864,7 +909,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package tramp
   :ensure nil
-  :defer 1
+  :demand t
   :custom
   (tramp-default-method "ssh")
   (tramp-backup-directory-alist backup-directory-alist)
@@ -872,9 +917,12 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
   (tramp-connection-properties '((nil "remote-shell" "/usr/bin/bash")))
   (tramp-encoding-shell "/usr/bin/bash"))
 
+(use-package transient
+  :defer t)
+
 (use-package treesit
   :ensure nil
-  :defer 1
+  :defer 2
   :init
   (defcustom λαω-treesit-language-grammars-directory
     "Directory for tree-sitter language grammars."
@@ -1026,10 +1074,16 @@ them in `λαω-treesit-language-grammars-directory'."
   (text-mode-hook . undo-fu-session-mode)
   (prog-mode-hook . undo-fu-session-mode))
 
+(use-package whole-line-or-region
+  :defer 0.25
+  :config
+  (whole-line-or-region-global-mode))
+
 (use-package avy
   :defer 0.5
   ;; default is `electric-newline-and-maybe-indent'
-  :bind (("C-j" . avy-goto-char-timer)))
+  :bind (("C-j" . avy-goto-char-timer))
+  )
 
 (use-package expreg
   :config
@@ -1041,8 +1095,8 @@ This function adds the `expreg--sentence' expansion function to
     (add-to-list 'expreg-functions 'expreg--sentence))
 
   :hook (text-mode-hook . λαω-expreg-expand-sentences)
-  :bind (("C->" . expreg-expand)
-         ("C-<" . expreg-contract)))
+  :bind (("C-=" . expreg-expand)
+         ("C-M-=" . expreg-contract)))
 
 (use-package ace-window
   :bind (("M-o" . ace-window))
@@ -1056,7 +1110,7 @@ This function adds the `expreg--sentence' expansion function to
          ("t" . eat)))
 
 (use-package vterm
-  :defer nil
+  :defer t
   :commands (vterm vterm-other-window)
   :config
   (keymap-unset vterm-mode-map "C-l" t)
@@ -1070,6 +1124,7 @@ This function adds the `expreg--sentence' expansion function to
   (vterm-always-compile-module t))
 
 (use-package orderless
+  :defer 0.5
   :init
   ;; efficient prefix filtering for inputs shorter than 4 characters
   (defun orderless-fast-dispatch (word index total)
@@ -1228,13 +1283,13 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package corfu-terminal
   :if (display-graphic-p)
-  :defer 1
+  :defer 2
   :after corfu
   :config
   (corfu-terminal-mode))
 
 (use-package cape
-  :defer 1
+  :defer 0.8
   :config
   ;; Add to the global default value of
   ;; `completion-at-point-functions' which is used by
@@ -1313,7 +1368,7 @@ This function adds the `expreg--sentence' expansion function to
   (magit-post-refresh-hook . diff-hl-magit-post-refresh)
   (dired-mode-hook . diff-hl-dired-mode)
   :bind (:map λαω-git-map
-         ("d" . diff-hl-show-hunk))
+         ("h" . diff-hl-show-hunk))
   :custom
   (diff-hl-update-async t)
   (diff-hl-side 'right))
@@ -1395,19 +1450,17 @@ This function adds the `expreg--sentence' expansion function to
   :mode ("\\.lisp\\'" . sly-mode))
 
 (use-package image-roll
-  :vc (:url "https://github.com/aikrahguzar/image-roll.el")
+  :ensure (:host github :repo "aikrahguzar/image-roll.el")
+  ;; :vc (:url "https://github.com/aikrahguzar/image-roll.el")
   :defer t)
 
-(use-package qpdf.el
-  :vc (:url "https://github.com/orgtre/qpdf.el")
-  :after pdf-tools
-  :defer t
-  :commands qpdf)
-
 (use-package pdf-tools
-  :vc (:url "https://github.com/aikrahguzar/pdf-tools"
-       :branch "upstream-pdf-roll"
-       :lisp-dir "lisp/")
+  :ensure (:host github :repo "aikrahguzar/pdf-tools"
+           :branch "upstream-pdf-roll"
+           :files (:defaults "lisp/*"))
+  ;; :vc (:url "https://github.com/aikrahguzar/pdf-tools"
+  ;;      :branch "upstream-pdf-roll"
+  ;;      :lisp-dir "lisp/")
   :commands (pdf-view-mode pdf-view-roll-minor-mode)
   :defer 2
   :init
@@ -1440,6 +1493,15 @@ This function adds the `expreg--sentence' expansion function to
   (pdf-view-resize-factor 1.1)
   (pdf-view-max-image-width 1080))
 
+(use-package qpdf.el
+  :ensure (:host github :repo "orgtre/qpdf.el")
+  ;; :vc (:url "https://github.com/orgtre/qpdf.el")
+  :after pdf-tools
+  :commands qpdf
+  :defer t)
+
+(require 'λαω-org)
+
 (use-package saveplace-pdf-view
   :after pdf-tools
   :defer t)
@@ -1460,7 +1522,7 @@ This function adds the `expreg--sentence' expansion function to
   (gptel-post-stream-hook . gptel-auto-scroll)
   (gptel-post-response-functions-hook . gptel-end-of-response)
   :custom
-  (gptel-model "gpt-4o-mini"))
+  (gptel-model 'gpt-4o-mini))
 
 (use-package unfill
   :defer t)
@@ -1484,9 +1546,9 @@ This function adds the `expreg--sentence' expansion function to
 (use-package lorem-ipsum
   :defer t)
 
-(use-package blimpy
-  :vc (:url "https://github.com/progfolio/blimpy")
-  :defer t)
+;; (use-package blimpy
+;;   :vc (:url "https://github.com/progfolio/blimpy")
+;;   :defer t)
 
 (use-package visual-fill-column
   :hook ((Info-mode-hook . visual-fill-column-mode)
@@ -1508,7 +1570,79 @@ This function adds the `expreg--sentence' expansion function to
   :defer 3)
 
 (use-package tex
+  :ensure (auctex :repo "https://git.savannah.gnu.org/git/auctex.git" :branch "main"
+        :pre-build (("make" "elpa"))
+        :build (:not elpaca--compile-info) ;; Make will take care of this step
+        :files ("*.el" "doc/*.info*" "etc" "images" "latex" "style")
+        :version (lambda (_) (require 'tex-site) AUCTeX-version))
+  :defer 1
+  :config
+  (setq-default TeX-master nil)
+  :hook
+  ((LaTeX-mode-hook . visual-line-mode)
+   (LaTeX-mode-hook . flymake-mode)
+   (LaTeX-mode-hook . LaTeX-math-mode))
+  :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-view-program-selection '(((output-dvi has-no-display-manager) "dvi2tty")
+                               ((output-dvi style-pstricks) "dvips and gv")
+                               (output-dvi "xdvi")
+                               (output-pdf "Okular")
+                               (output-html "xdg-open"))))
+
+(use-package activities
+  :init
+  (defvar-keymap λαω-activities-map
+    :doc "Keymap for Activities."
+    :name "activities")
+  (keymap-global-set "C-c a" (cons "λαω-activities" λαω-activities-map))
+  (keymap-set λαω-map "a" (cons "activites" λαω-activities-map))
+  :config
+  (activities-mode)
+  (activities-tabs-mode)
+  ;; Prevent `edebug' default bindings from interfering.
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+  :bind
+  (:map λαω-activities-map
+   ("=" . activities-new)
+   ("d" . activities-define)
+   ("a" . activities-resume)
+   ("s" . activities-suspend)
+   ("k" . activities-kill)
+   ("f" . tab-next)
+   ("b" . tab-previous)
+   ("M-f" . tab-bar-move-tab)
+   ("M-b" . tab-bar-move-tab-backward)
+   ("RET" . activities-switch)
+   ;; ("b" . activities-switch-buffer)
+   ("g" . activities-revert)
+   ("l" . activities-list)))
+
+(use-package citar
+  :defer 1
+  :hook
+  (LaTeX-mode . citar-capf-setup)
+  (org-mode . citar-capf-setup)
+  :custom
+  (citar-library-paths '("~/dump/library/"))
+  (citar-bibliography "~/dump/library/bibliography.bib"))
+
+(use-package citar-embark
+  :after citar embark
+  :config (citar-embark-mode))
+
+(use-package edraw
+  :ensure (:host github :repo "misohena/el-easydraw")
+  :defer t)
+
+(use-package elfeed
+  :defer t)
+
+(use-package elfeed-tube
+  :after elfeed
   :defer t
-  :ensure auctex)
+  :config
+  (elfeed-tube-setup))
 
 ;;; init.el ends here

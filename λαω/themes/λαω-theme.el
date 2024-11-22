@@ -67,6 +67,8 @@
 
   (custom-theme-set-faces
    'λαω
+   `(elisp-shorthand-font-lock-face ((,class (:foreground ,orange :weight bold))))
+
    `(λαω-mode-line-bell-warning ((,class (:background ,bg-min-yellow))))
 
    `(default ((,class (:background ,bg :foreground ,fg))))
@@ -168,11 +170,25 @@
    `(reb-match-1 ((,class (:inherit (match) :foreground ,teal))))
    `(reb-match-2 ((,class (:inherit (match) :foreground ,blue))))
    `(reb-match-3 ((,class (:inherit (match) :foreground ,violet))))
+
    `(show-paren-match ((,class (:background ,hl
                                             :foreground ,yellow-bright
                                             :weight bold))))
+   `(show-paren-mismatch ((,class (:background ,bg-min-red
+                                   :foreground ,pink
+                                   :weight bold))))
+
+   ;; tabs
+   `(tab-bar ((,class (:background ,hl-1/4))))
+   `(tab-bar-tab ((,class (:background ,hl
+                           :box (:line-width (1 . 1)
+                                 :style flat-button
+                                 :color ,hl)))))
+   `(tab-bar-tab-inactive ((,class (:inherit (shadow) :slant italic))))
 
    ;;; package faces
+   `(activities-tabs ((,class (:foreground ,green))))
+
    `(avy-goto-char-timer-face ((,class (:background ,bg-avy-lead-face
                                         :foreground ,fg
                                         :weight bold))))
@@ -181,16 +197,23 @@
    `(avy-lead-face-1 ((,class (:inherit (avy-goto-char-timer-face) :foreground ,orange :weight bold))))
    `(avy-lead-face-2 ((,class (:inherit (avy-goto-char-timer-face) :foreground ,teal :weight bold))))
 
-   `(corfu-default ((,class (:background ,hl-1/2))))
-   `(corfu-bar ((,class (:background ,violet))))
-   `(corfu-border ((,class (:background ,hl-3/4))))
-   `(corfu-current ((,class (:background ,hl :foreground ,green :weight bold))))
+   `(bookmark-face ((,class (:foreground ,yellow))))
+
+   `(corfu-default ((,class (:inherit (default) :background ,hl-1/2))))
+   `(corfu-bar ((,class (:inherit (default) :background ,violet))))
+   `(corfu-border ((,class (:inherit (default) :background ,hl-3/4))))
+   `(corfu-current ((,class (:inherit (default)
+                             :background ,hl
+                             :foreground ,green
+                             :weight bold))))
 
    `(custom-button ((,class (:background ,bg-theme :foreground ,fg :box (:line-width 2 :style flat-button)))))
    `(custom-button-mouse ((,class (:inherit (custom-button)))))
    `(custom-button-pressed ((,class (:inherit (custom-button) :background ,bg-theme-darker :foreground ,comment))))
 
-   `(dired-async-failures ((,class (:foreground ,red)))p)
+   `(dired-flagged ((,class (:foreground ,red :weight bold))))
+   `(dired-perm-write ((,class (:foreground ,orange))))
+   `(dired-async-failures ((,class (:foreground ,red))))
    `(dired-async-message ((,class (:foreground ,violet))))
    `(dired-async-mode-message ((,class (:foreground ,violet))))
 
@@ -279,6 +302,7 @@
    `(orderless-match-face-2 ((,class (:foreground ,teal :weight bold))))
    `(orderless-match-face-3 ((,class (:foreground ,violet :weight bold))))
 
+   `(org-date ((,class (:foreground ,magenta :slant italic))))
    `(org-block-begin-line ((,class (:inherit (shadow)
                                              :background ,hl-1/4
                                              :extend t
@@ -286,6 +310,7 @@
    `(org-block ((,class (:background ,hl-1/2))))
    `(org-block-end-line ((,class (:inherit (org-block-begin-line)))))
    `(org-code ((,class (:foreground ,teal))))
+   `(org-drawer ((,class (:inherit (shadow)))))
    `(org-footnote ((,class (:inherit (font-lock-comment-face)))))
    `(org-todo ((,class (:foreground ,yellow :weight bold))))
    `(org-done ((,class (:foreground ,green :weight bold :slant italic))))

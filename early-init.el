@@ -54,8 +54,11 @@ can be set to nil during initialization to speed it up.")
 ;; suppress native compilation warnings
 (setq native-comp-async-report-warnings-errors 'silent)
 
-(setq package-user-dir (convert-standard-filename
-                        (expand-file-name "var/elpa/" user-emacs-directory)))
+;; disable in lieu of Elpaca
+(setq package-enable-at-startup nil)
+
+;; (setq package-user-dir (convert-standard-filename
+;;                         (expand-file-name "var/elpa/" user-emacs-directory)))
 
 ;; load the newest version of a file irrespective of its extension
 (setq load-prefer-newer t)
@@ -97,9 +100,8 @@ Restore the following:
   (setq gc-cons-threshold (* 1024 1024 16)) ; 16MiB
   (setq gc-cons-percentage 0.1)
   (setq warning-minimum-level :warning)
-  (setq file-name-handler-alist file-name-handler-alist-pre-init))
-
-(add-hook 'emacs-startup-hook #'λαω-emacs-startup-hook-function)
+  (setq file-name-handler-alist file-name-handler-alist-pre-init)
+  (load custom-file))
 
 (provide 'early-init)
 

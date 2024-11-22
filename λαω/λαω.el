@@ -55,10 +55,6 @@ files, and package data.")
 (defvar λαω-emacs-directory (expand-file-name "λαω/" user-emacs-directory)
   "λαω directory in `user-emacs-directory'.")
 
-(defvar λαω-themes-directory (expand-file-name
-                                 "themes/" λαω-emacs-directory)
-  "λαω themes directory.")
-
 (defvar λαω-treesit-language-grammars-directory (expand-file-name
                                                     "tree-sitter/"
                                                     λαω-emacs-var-directory)
