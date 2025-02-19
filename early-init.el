@@ -59,11 +59,6 @@ can be set to nil during initialization to speed it up.")
 ;; load the newest version of a file irrespective of its extension
 (setq load-prefer-newer t)
 
-;; temporarily hide warnings
-(setq warning-minimum-level :error)
-;; suppress native compilation warnings
-(setq native-comp-async-report-warnings-errors 'silent)
-
 ;; Don't try to preserve a frame's number of columns and don't round
 ;; frame sizes when resizing. These should optimize for the case when
 ;; the frame font size is different from the system's.
@@ -86,6 +81,15 @@ can be set to nil during initialization to speed it up.")
 (tooltip-mode -1)
 
 (setq inhibit-startup-screen t)
+
+(set-language-environment "UTF-8")
+;; unset `set-language-environment', which sets `default-input-method'
+(setq default-input-method nil)
+
+;; temporarily hide warnings
+(setq warning-minimum-level :error)
+;; suppress native compilation warnings
+(setq native-comp-async-report-warnings-errors 'silent)
 
 (defun λαω-emacs-startup-hook-function ()
   "`emacs-startup-hook' hook function.
