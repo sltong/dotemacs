@@ -36,28 +36,40 @@
 
 (add-to-list 'custom-theme-load-path λαω-themes-directory)
 
-;; fonts
-(defun λαω-set-default-fonts ()
-  "Set default fonts."
+
+;; faces and fonts
+(defvar λαω-hostname-face-heights '(("lamb" . 120)
+                                    ("macross" . 160))
+  "Alist of default face heights by hostname.
+
+The hostname does not include a top-level domain.")
+
+(defun λαω-hostname-face-height ()
+  "Default face height for system hostname."
+  (interactive)
+  (if-let* ((hostname-face-height
+             (cdr (assoc (car (split-string system-name "\\."))
+                         λαω-hostname-face-heights))))
+      hostname-face-height
+    120))
+
+(defun λαω-set-default-faces ()
+  "Set default faces."
   (interactive)
   (progn
     (when (member "Iosevka Law" (font-family-list))
       (custom-set-faces
-       '(default ((t (:family "Iosevka Law"
-                      :height 120)))))
-      ;; (add-to-list 'initial-frame-alist
-      ;;              '(font . "Iosevka Law-14"))
-      ;; (add-to-list 'default-frame-alist
-      ;;              '(font . "Iosevka Law-14"))
+       `(default
+         ((t (:family "Iosevka Law" :height ,(λαω-hostname-face-height))))))
       (custom-set-faces
-       '(fixed-pitch ((t (:family "Iosevka Law"
-                          :height 120))))))
+       `(fixed-pitch
+         ((t (:family "Iosevka Law" :height ,(λαω-hostname-face-height)))))))
     (when (member "IBM Plex Sans" (font-family-list))
       (custom-set-faces
        '(variable-pitch ((t (:family "IBM Plex Sans"
                              :height 120))))
        '(variable-pitch-text ((t (:inherit (variable-pitch)
-                                           :height 1.05))))))))
+                                  :height 1.05))))))))
 
 (defun λαω-set-emacs-server-frame-fonts ()
   "Set fonts when running Emacs as a server/daemon.
@@ -65,7 +77,7 @@
 Remove this function from `server-before-make-frame-hook' so it only
 runs for the initial, created frame."
   (message "Setting default ")
-  (λαω-set-default-fonts)
+  (λαω-set-default-faces)
   (remove-hook 'server-after-make-frame-hook
                #'λαω-set-emacs-server-frame-fonts))
 
@@ -74,7 +86,7 @@ runs for the initial, created frame."
 
 ;; Set fonts for non-daemon
 (when (not (daemonp))
-  (λαω-set-default-fonts))
+  (λαω-set-default-faces))
 
 (add-hook 'server-before-make-frame-hook #'λαω-set-emacs-server-frame-fonts)
 
