@@ -254,7 +254,10 @@ URL `https://emacs.stackexchange.com/a/4191'"
   (tab-always-indent 'complete)
   ;; don't set a limit on printed expression evaluations
   (eval-expression-print-level nil)
-  (eval-expression-print-length nil))
+  (eval-expression-print-length nil)
+  ;; macOS modifier keys
+  (mac-option-modifier 'super)
+  (mac-command-modifier 'meta))
 
 ;; load immediately, as soon as possible
 ;; later packages still explicitly set their modes' respective
@@ -275,6 +278,9 @@ URL `https://emacs.stackexchange.com/a/4191'"
   ;; (dolist (var '("SSH_AUTH_SOCK"))
   ;;   (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
+
+;; OS
+
 
 ;;; early packages
 ;; put all minor modes on the mode line in one menu
@@ -897,14 +903,14 @@ them in `λαω-treesit-language-grammars-directory'."
   (add-to-list 'treesit-extra-load-path
                λαω-treesit-language-grammars-directory)
   (setq treesit-language-source-alist
-        '((css "https://github.com/tree-sitter/tree-sitter-css" "v0.23.0")
-          (elixir "https://github.com/elixir-lang/tree-sitter-elixir" "v0.3.1")
+        '((css "https://github.com/tree-sitter/tree-sitter-css" "v0.23.2")
+          (elixir "https://github.com/elixir-lang/tree-sitter-elixir" "v0.3.4")
           (heex
-           "https://github.com/phoenixframework/tree-sitter-heex")
-          (html "https://github.com/tree-sitter/tree-sitter-html" "v0.23.0")
-          (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.0")
-          (json "https://github.com/tree-sitter/tree-sitter-json" "v0.23.0")
-          (python "https://github.com/tree-sitter/tree-sitter-python" "v0.23.2")
+           "https://github.com/phoenixframework/tree-sitter-heex" "v0.8.0")
+          (html "https://github.com/tree-sitter/tree-sitter-html" "v0.23.2")
+          (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1")
+          (json "https://github.com/tree-sitter/tree-sitter-json" "v0.24.8")
+          (python "https://github.com/tree-sitter/tree-sitter-python" "v0.23.6")
           ;; (markdown
           ;;  "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
           ;;  "v0.3.2"
@@ -913,10 +919,10 @@ them in `λαω-treesit-language-grammars-directory'."
           ;;  "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
           ;;  "v0.3.2"
           ;;  "tree-sitter-markdown-inline/src"))
-          (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.0" "tsx/src")
-          (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.0" "typescript/src")
-          (xml "https://github.com/tree-sitter-grammars/tree-sitter-xml" "v0.6.4" "xml/src")
-          (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml"))))
+          (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "tsx/src")
+          (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "typescript/src")
+          (xml "https://github.com/tree-sitter-grammars/tree-sitter-xml" "v0.7.0" "xml/src")
+          (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml" "v0.7.0"))))
 
   ;; *-ts-mode setup
   (use-package elixir-ts-mode
