@@ -103,6 +103,7 @@
   :demand t
   :ensure nil
   :init
+  ;; custom file
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (if (file-exists-p custom-file)
       (load custom-file)
@@ -130,7 +131,7 @@ through `savehist-additional-variables', for example.
 
 See Info node `(elisp)Creating Strings'.
 
-Credit itsjeyd on the Emacs Stack Exchange:
+Credit to itsjeyd on the Emacs Stack Exchange:
 URL `https://emacs.stackexchange.com/a/4191'"
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
 
@@ -1407,6 +1408,7 @@ This function adds the `expreg--sentence' expansion function to
   :vc (:url "https://github.com/aikrahguzar/pdf-tools"
        :branch "child-frame-preview"
        :lisp-dir "lisp/")
+  :if (display-graphic-p)
   :defer 2
   :commands (pdf-view-mode pdf-view-roll-minor-mode)
   :config
@@ -1419,9 +1421,11 @@ This function adds the `expreg--sentence' expansion function to
   (pdf-view-max-image-width 1080))
 
 (use-package djvu
+  :if (display-graphic-p)
   :defer t)
 
 (use-package nov
+  :if (display-graphic-p)
   :mode ("\\.epub\\'" . nov-mode)
   :hook (nov-mode-hook . visual-line-mode)
   :custom
@@ -1431,6 +1435,7 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package saveplace-pdf-view
   :after pdf-tools
+  :if (display-graphic-p)
   :defer t)
 
 (use-package spacious-padding
