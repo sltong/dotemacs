@@ -66,10 +66,6 @@
 (require 'λαω-keys)
 (require 'λαω-languages)
 (require 'λαω-themes)
-(use-package mode-line-bell-pulse
-  :ensure nil
-  :defer 1
-  :config (mode-line-bell-pulse-mode))
 
 ;;; package configurations
 ;; `package'
@@ -291,6 +287,11 @@ URL `https://emacs.stackexchange.com/a/4191'"
   :config (minions-mode 1)
   :custom
   (minions-mode-line-lighter "m+"))
+
+(use-package bell-pulse
+  :ensure nil
+  :defer 1
+  :config (bell-pulse-mode))
 
 ;;; built-in packages
 ;; these packages should have :ensure explicitly set to nil in order
