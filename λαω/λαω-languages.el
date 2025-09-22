@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2024 λαω
 
-;; Author: λαω <lambda.alpha.omega@proton.me>
-;; Maintainer: λαω <lambda.alpha.omega@proton.me>
+;; Author: Lao Tong <lao.s.t@pm.me>
+;; Maintainer: Lao Tong <lao.s.t@pm.me>
 ;; Keywords: local
 
 ;; This file is not part of GNU Emacs.

@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2024 λαω
 
-;; Author: λαω <lambda.alpha.omega@proton.me>
-;; Maintainer: λαω <lambda.alpha.omega@proton.me>
+;; Author: Lao Tong <lao.s.t@pm.me>
+;; Maintainer: Lao Tong <lao.s.t@pm.me>
 ;; Keywords: local
 
 ;; This file is not part of GNU Emacs.
@@ -49,9 +49,22 @@
 ;; `suspend-frame'
 (keymap-global-unset "C-z")
 (keymap-global-unset "C-x C-z")
+;; trackpad text zooming
+(keymap-global-unset "<pinch>")
 
+(keymap-global-set "s-b" #'switch-to-buffer)
 (keymap-global-set "C-x C-k" #'kill-current-buffer)
 (keymap-global-set "M-<RET>" #'electric-newline-and-maybe-indent)
+(keymap-global-set "C-h F" #'describe-face)
+(keymap-global-set "s-r" #'λαω-query-replace-region)
+;; text resizing with trackpad
+;; (keymap-global-set "<pinch>" #'ignore)
+
+;;; hyper key bindings
+;; save
+(keymap-global-set "H-s H-s" #'save-buffer)
+(keymap-global-set "H-b" #'previous-buffer)
+(keymap-global-set "H-f" #'next-buffer)
 
 ;;; keymaps
 (defvar-keymap λαω-map
@@ -103,7 +116,8 @@
 (defvar-keymap λαω-files-cli-map
   :doc "Keymap for command-line interface configurations."
   :name "cli-files"
-  "b" '("bashrc" . λαω-visit-bashrc-file))
+  "b" '("bashrc" . λαω-visit-bashrc-file)
+  "z" '("zshrc" . λαω-visit-zshrc-file))
 (keymap-set λαω-files-map "c" (cons "cli" λαω-files-cli-map))
 
 ;;; Keymaps for Emacs and its structures
@@ -112,24 +126,29 @@
   :name "emacs"
   "c" #'customize-group
   "r" #'restart-emacs)
-(keymap-global-set "C-c e" (cons "λαω-emacs" λαω-emacs-map))
 (keymap-set λαω-map "e" (cons "emacs" λαω-emacs-map))
 
 (defvar-keymap λαω-buffer-map
   :doc "Keymap for Emacs buffers."
   :name "buffer"
   "s" #'scratch-buffer
-  "m" '("messages" . λαω-visit-message-log-buffer))
-(keymap-global-set "C-c b" (cons "λαω-buffer" λαω-buffer-map))
+  "m" '("messages" . λαω-visit-message-log-buffer)
+  "n" #'switch-to-next-buffer
+  "p" #'switch-to-prev-buffer)
 (keymap-set λαω-map "b" (cons "buffer" λαω-buffer-map))
 
-;; windows
+;; (defvar-keymap λαω-tab-keymap
+;;   :doc "Keymap for Emacs buffers."
+;;   :name "tab"
+;;   "m" '("messages" . λαω-visit-message-log-tab))
+;; (keymap-set λαω-map "t" (cons "tab" λαω-tab-map))
+
 (defvar-keymap λαω-window-map
   :doc "Keymap for Emacs windows."
   :name "window")
-(keymap-global-set "C-c w" (cons "λαω-window" λαω-window-map))
 (keymap-set λαω-map "w" (cons "window" λαω-window-map))
 
+;;; Keymaps for text manipulation
 (defvar-keymap λαω-text-map
   :doc "Keymap for text."
   :name "text"
@@ -139,7 +158,6 @@
   "C-M-r" #'λαω-query-replace-regexp-region
   "-" #'text-scale-decrease
   "=" #'text-scale-increase)
-(keymap-global-set "C-c t" (cons "λαω-text" λαω-text-map))
 (keymap-set λαω-map "t" (cons "text" λαω-text-map))
 
 (defvar-keymap λαω-text-completion-map
@@ -151,43 +169,44 @@
 ;;   :doc "Keymap for software development and programming."
 ;;   :name "software-dev")
 
-;; (keymap-global-set "C-c d" (cons "λαω-dev" λαω-dev-map))
 ;; (keymap-set λαω-map "d" (cons "cli" λαω-dev-map))
 
 (defvar-keymap λαω-cli-map
   :doc "Keymap for command-line interfaces."
   :name "cli")
-(keymap-global-set "C-c c" (cons "λαω-cli" λαω-cli-map))
 (keymap-set λαω-map "c" (cons "cli" λαω-cli-map))
 
 (defvar-keymap λαω-git-map
   :doc "Keymap for git-related commands."
   :name "git")
-(keymap-global-set "C-c g" (cons "λαω-git" λαω-git-map))
 (keymap-set λαω-map "g" (cons "git" λαω-git-map))
 
 (defvar-keymap λαω-org-map
   :doc "Keymap for Org Mode."
   :name "org")
-(keymap-global-set "C-c o" (cons "λαω-org" λαω-org-map))
 (keymap-set λαω-map "o" (cons "org" λαω-org-map))
 
 ;;; repeat keymaps
+(defvar-keymap λαω-buffer-switch-repeat-map
+  :doc "Keymap for repeatable buffer switching commands."
+  :name "buffer-switch-repeat"
+  :repeat t
+  "n" #'switch-to-next-buffer
+  "p" #'switch-to-prev-buffer)
+
 (defvar-keymap λαω-window-resize-repeat-map
-  :doc "Keymap for repeatable `window' resizing commands."
+  :doc "Keymap for repeatable window resizing commands."
   :name "window-resize-repeat"
   :repeat t
-  ;; resizing
   "-" #'shrink-window-horizontally
   "=" #'enlarge-window-horizontally
   "_" #'shrink-window
   "+" #'enlarge-window)
 
 (defvar-keymap λαω-window-recenter-repeat-map
-  :doc "Keymap for repeatable `window' recentering commands."
+  :doc "Keymap for repeatable window recentering commands."
   :name "window-recenter-repeat"
   :repeat t
-  ;; scrolling
   "C-l" #'λαω-recenter-fourths
   "l" #'λαω-recenter-fourths)
 
@@ -195,7 +214,6 @@
   :doc "Keymap for text manipulation and management."
   :name "text-repeat"
   :repeat t
-  ;; resizing
   "-" #'text-scale-decrease
   "=" #'text-scale-increase)
 
@@ -203,7 +221,6 @@
   :doc "Keymap for tabs."
   :name "tab-repeat"
   :repeat t
-  ;; resizing
   "f" #'tab-next
   "b" #'tab-previous
   "M-f" #'tab-bar-move-tab

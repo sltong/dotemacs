@@ -1,9 +1,9 @@
 ;;; init.el --- Emacs user initialization file -*- coding: utf-8; lexical-binding: t; no-byte-compile: t; -*-
 
-;; Copyright (C) 2024 λαω
+;; Copyright (C) 2025 λαω
 
-;; Author: λαω <lambda.alpha.omega@proton.me>
-;; Maintainer: λαω <lambda.alpha.omega@proton.me>
+;; Author: Lao Tong <lao.s.t@pm.me>
+;; Maintainer: Lao Tong <lao.s.t@pm.me>
 ;; Keywords: local
 
 ;; This file is not part of GNU Emacs.
@@ -35,9 +35,9 @@
 ;; before he pwns me. I will...
 
 ;; My init file and I know that what counts in editors is not the
-;; start-up times, the backing by a tech corporation, nor the ricing
-;; and anime catgirl theme backgrounds. We know that it is the edits
-;; we make. We will edit...
+;; start-up times, the backing by a tech corporation, nor ricing with
+;; anime catgirl theme backgrounds. We know that it is the edits we
+;; make. We will edit...
 
 ;; My init file is human, even as I am human, because it is my
 ;; life. Thus, I will learn it as a brother. I will learn its
@@ -52,6 +52,14 @@
 ;; So be it, until victory is Richard Stallman's and there is no
 ;; enemy, but peace!
 
+;; If I have made a decent init file, it is by standing on the shoulders
+;; of giants:
+;; - Sacha Chua (https://www.sachachua.com/dotemacs/index.html)
+;; - Protesilaos Stavrou (https://protesilaos.com/emacs/dotemacs)
+;; - Steve Purcell (https://github.com/purcell/emacs.d)
+;; - System Crafters - https://github.com/SystemCrafters/crafted-emacs
+;; - Rahul Juliato - https://github.com/LionyxML/lemacs/
+
 ;;; Code:
 
 (when init-file-debug
@@ -59,13 +67,6 @@
   (setq use-package-expand-minimally nil)
   (setq use-package-compute-statistics t)
   (setq debug-on-error t))
-
-;; λαω
-(require 'λαω)
-(require 'λαω-functions)
-(require 'λαω-keys)
-(require 'λαω-languages)
-(require 'λαω-themes)
 
 ;;; package configurations
 ;; `package'
@@ -81,6 +82,7 @@
 
 (setq use-package-always-ensure t)
 (setq use-package-hook-name-suffix nil)
+(setq use-package-vc-prefer-newest t)
 
 ;; `auto-compile'
 (use-package auto-compile
@@ -94,7 +96,7 @@
 ;; To disable collection of benchmark data after init is done.
 (add-hook 'after-init-hook #'benchmark-init/deactivate)
 
-;;; Emacs initialization and (built-in package) customizations
+;;; Emacs initialization and customizations
 (use-package emacs
   :demand t
   :ensure nil
@@ -110,14 +112,12 @@
 
   ;; functions
   (defun λαω-display-init-time-message ()
-  "Display an Emacs initialization time and garbage collections message."
-  (run-with-idle-timer
-   3.5 nil (lambda ()
-           (message "Emacs loaded in %s with %d garbage collections."
-                    (format "%.2f seconds"
-                            (float-time
-                             (time-subtract after-init-time before-init-time)))
-                    gcs-done))))
+    "Display an Emacs initialization time and garbage collections message."
+    (run-with-idle-timer
+     3.5 nil (lambda ()
+               (message "Emacs loaded in %s with %d garbage collections."
+                        (emacs-init-time "%.2f seconds")
+                        gcs-done))))
 
   (defun λαω-remove-kill-ring-text-properties ()
     "Remove all text properties from `kill-ring' entries.
@@ -163,7 +163,7 @@ URL `https://emacs.stackexchange.com/a/4191'"
   ;; hooks
   ;; "-100" ensures `λαω-remove-kill-ring-text-properties' is the first
   ;; function in `kill-emacs-hook'
-  (add-hook 'kill-emacs-hook 'λαω-remove-kill-ring-text-properties -100)
+  (add-hook 'kill-emacs-hook #'λαω-remove-kill-ring-text-properties -100)
   (add-hook 'input-method-activate-hook
             #'λαω-minibuffer-input-method-indicator-activate)
   (add-hook 'input-method-deactivate-hook
@@ -172,7 +172,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
   (setq-default indent-tabs-mode nil)
   :config
   (column-number-mode)
-
   :hook
   (after-init-hook . λαω-display-init-time-message)
   ;; Visual-Line mode
@@ -188,7 +187,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
   (auto-save-timeout 4)
   (auto-save-interval 65)
   (kill-ring-max 512)
-  (large-file-warning-threshold (* 1024 1024 128)) ; 128 MiB
   ;; undo
   (undo-limit (* 1024 1024 1) "Increase max undo information to 1MiB.")
   ;; last-ditch outer limit for single undo commands
@@ -213,13 +211,13 @@ URL `https://emacs.stackexchange.com/a/4191'"
   ;;                     (:propertize
   ;;                      (""
   ;;                       "%o"
-  ;;                       display (min-width (2.0))))
+  ;;                       display (min-width (6.0))))
   ;;                     " "
   ;;                     (:propertize
   ;;                      ("%l"
   ;;                       ":"
   ;;                       "%c"
-  ;;                       display (min-width (10.0))))
+  ;;                       display (min-width (30.0))))
   ;;                     mode-line-end-spaces))
   (enable-recursive-minibuffers t)
   (truncate-lines t)
@@ -234,6 +232,7 @@ URL `https://emacs.stackexchange.com/a/4191'"
   (use-dialog-box nil "Disable pop-up dialog boxes when questioned.")
   (initial-scratch-message nil)
   ;; (visible-bell t) ; replace audible bell with visual one
+  (ring-bell-function 'ignore)
   (scroll-preserve-screen-position t)
   (scroll-conservatively 0)
   (message-log-max 10000
@@ -254,12 +253,24 @@ URL `https://emacs.stackexchange.com/a/4191'"
   (eval-expression-print-length nil)
   ;; macOS modifier keys
   (mac-option-modifier 'super)
-  (mac-command-modifier 'meta))
+  (mac-command-modifier 'meta)
+  (mac-function-modifier 'hyper))
 
-;; load immediately, as soon as possible
-;; later packages still explicitly set their modes' respective
-;; directories or file paths for redundancy.
+;;; OS-specific configurations
+(when (eq system-type 'darwin)
+  (setq insert-directory-program "gls"))
+
+;;; early packages to load as soon as possible
+(require 'λαω-themes)
+
+(use-package gcmh
+  :vc (:url "https://gitlab.com/koral/gcmh")
+  :demand t
+  :config
+  (gcmh-mode 1))
+
 (use-package no-littering
+  :vc (:url "https://github.com/emacscollective/no-littering" :branch "main")
   :demand t
   :init
   (setq no-littering-etc-directory λαω-emacs-etc-directory)
@@ -276,22 +287,18 @@ URL `https://emacs.stackexchange.com/a/4191'"
   ;;   (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
-;; OS
-
-
-;;; early packages
 ;; put all minor modes on the mode line in one menu
 (use-package minions
   :defer 0.25
   :commands (minions-mode glasses-mode)
-  :config (minions-mode 1)
   :custom
-  (minions-mode-line-lighter "m+"))
+  (minions-mode-line-lighter "+")
+  :hook (after-init-hook . minions-mode))
 
 (use-package bell-pulse
   :ensure nil
   :defer 1
-  :config (bell-pulse-mode))
+  :hook (after-init-hook . bell-pulse-mode))
 
 ;;; built-in packages
 ;; these packages should have :ensure explicitly set to nil in order
@@ -317,8 +324,7 @@ URL `https://emacs.stackexchange.com/a/4191'"
 (use-package autorevert
   :ensure nil
   :defer 1.5
-  :config
-  (global-auto-revert-mode))
+  :hook (after-init-hook . global-auto-revert-mode))
 
 (use-package bookmark
   :ensure nil
@@ -333,6 +339,18 @@ URL `https://emacs.stackexchange.com/a/4191'"
   :defer 3
   :custom
   (c-basic-offset 4))
+
+(use-package completion-preview
+  :disabled
+  :ensure nil
+  :defer 0.5
+  :config
+  (global-completion-preview-mode)
+  :bind (:map completion-preview-active-mode-map
+         ("M-p" . completion-preview-prev-candidate)
+         ("M-n" . completion-preview-next-candidate))
+  :custom
+  (completion-preview-idle-delay 0.2))
 
 (use-package crm
   :ensure nil
@@ -406,13 +424,15 @@ comma."
 
 (use-package dired
   :ensure nil
+  :defer 0.5
   :bind (:map dired-mode-map
          ("b" . dired-up-directory)
          ("+" . dired-create-empty-file)
          ("M-+" . dired-create-directory))
   :custom
   (dired-listing-switches "-ahl")
-  (dired-auto-revert-buffer t))
+  (dired-auto-revert-buffer t)
+  (dired-movement-style 'bounded))
 
 (use-package display-fill-column-indicator
   :ensure nil
@@ -426,12 +446,30 @@ comma."
   (display-line-numbers-grow-only t)
   (display-line-numbers-width 3))
 
+(use-package find-func
+  :ensure nil
+  :config
+  (when (equal (λαω-hostname) "macross")
+    (setq find-function-C-source-directory
+        (expand-file-name "~/development/git/emacs/src/"))))
+
 (use-package eglot
   :ensure nil
   :hook
+  (eglot-managed-mode-hook . eglot-inlay-hints-mode)
   (elixir-ts-mode-hook . eglot-ensure)
   (heex-ts-mode-hook . eglot-ensure)
-  (python-ts-mode-hook . eglot-ensure))
+  (python-ts-mode-hook . eglot-ensure)
+  ;; :config
+  ;; (setf (alist-get '(elixir-mode elixir-ts-mode heex-ts-mode)
+  ;;                  eglot-server-programs
+  ;;                  nil nil #'equal)
+  ;;       (if (and (fboundp 'w32-shell-dos-semantics)
+  ;;                (w32-shell-dos-semantics))
+  ;;           '("expert_windows_arm4")
+  ;;         (eglot-alternatives
+  ;;          '("expert_darwin_arm64" "start_lexical.sh")))))
+  )
 
 (use-package eldoc
   :ensure nil
@@ -444,27 +482,64 @@ comma."
 (use-package eshell
   :ensure nil
   :config
+  (defun λαω-cat-with-syntax-highlight (filename)
+    "Like cat(1) but with syntax highlighting.
+
+Credit to Andy Stewart. See:
+URL https://github.com/manateelazycat/aweshell"
+    (let ((existing-buffer (get-file-buffer filename))
+          (buffer (find-file-noselect filename)))
+      (eshell-print
+       (with-current-buffer buffer
+         (if (fboundp 'font-lock-ensure)
+             (font-lock-ensure)
+           (with-no-warnings
+             (font-lock-fontify-buffer)))
+         (let ((contents (buffer-string)))
+           (remove-text-properties 0 (length contents) '(read-only nil) contents)
+           contents)))
+      (unless existing-buffer
+        (kill-buffer buffer))
+      nil))
+
+  (advice-add 'eshell/cat :override #'λαω-cat-with-syntax-highlight)
+
   (add-to-list 'eshell-modules-list 'eshell-tramp t)
   :bind (:map λαω-cli-map
          ("e" . eshell))
   :custom
+  (eshell-banner-message "")
   (eshell-buffer-maximum-lines 8192)
-  ;; fix glitch where prompt gets partially hidden underneath modeline
+  (eshell-hist-ignoredups t)
+  (eshell-cmpl-ignore-case t)
   (eshell-scroll-to-bottom-on-input t)
-  (eshell-scroll-to-bottom-on-output t)
-  (eshell-scroll-show-maximum-output nil))
+  (eshell-scroll-to-bottom-on-output t))
+
+(use-package face-remap
+  :ensure nil
+  :defer 2
+  :config
+  (when (equal (λαω-hostname) "macross")
+    (setq text-scale-mode-step 1.05)
+    (setq text-scale-mode-amount 0.25)))
 
 (use-package files
   :ensure nil
   :custom
-  (backup-by-copying t) ; don't break hard or symbolic links
-  (version-control t) ; always use numerically versioned backups
-  (delete-old-versions t)
-  (kept-old-versions 0)
-  (kept-new-versions 8)
+  (backup-by-copying t "Don't break hard or symbolic links.")
   (confirm-kill-emacs 'y-or-n-p)
+  (delete-old-versions t)
+  (kept-new-versions 8)
+  (kept-old-versions 0)
+  (large-file-warning-threshold (* 1024 1024 128)) ; 128 MiB)
   (require-final-newline t)
+  (version-control t "Always use numerically versioned backups.")
   (view-read-only t))
+
+(use-package find-dired
+  :ensure nil
+  :custom
+  (find-ls-option '("-exec ls -ldh {} +" . "-adhl")))
 
 (use-package finder
   :ensure nil
@@ -498,17 +573,18 @@ comma."
 
 (use-package help-fns
   :ensure nil
-  :bind (("C-h M" . describe-keymap)))
+  :bind ("C-h M" . describe-keymap))
 
 (use-package hideshow
   :ensure nil
   :hook (prog-mode-hook . hs-minor-mode)
   :bind ("C-<tab>" . hs-toggle-hiding)
   :custom
-  (hs-isearch-open t "Open both code and comment blocks when doing `isearch'."))
+  (hs-isearch-open t "Open code and comment blocks when doing `isearch'."))
 
 (use-package hl-line
   :ensure nil
+  :defer 0.5
   :init
   (defun λαω-disable-hl-line-mode-temporarily (func &rest args)
     "Temporarily disable `global-hl-line-mode' when calling FUNC.
@@ -529,6 +605,14 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
 
 (use-package ibuffer
   :ensure nil
+  :config
+  ;; credit to CSRaghunandan
+  ;; https://www.reddit.com/r/emacs/comments/f4n6y2/comment/fhtq2rx/
+  (define-ibuffer-column size-h
+    (:name "size" :inline t)
+    (file-size-human-readable (buffer-size)))
+  :hook (ibuffer-mode-hook . (lambda ()
+                               (ibuffer-switch-to-saved-filter-groups "default")))
   :bind (("C-x C-b" . ibuffer)
          :map λαω-buffer-map
          ("b" . ibuffer))
@@ -536,16 +620,36 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
   (ibuffer-formats '((mark modified read-only " "
                       (name 26 26 :left :elide) " "
                       (filename 26 26 :left :elide) " "
-                      (size 8 -1 :right) " ")
+                      (size-h 8 -1 :right) " ")
                      (mark modified read-only " "
                       (name 26 -1 :left :elide) " "
-                      filename-and-process))))
+                      filename-and-process)))
+  (ibuffer-saved-filter-groups
+   '(("default"
+      ("emacs" (or
+                (name . "^\\*scratch\\*$")
+                (name . "^\\*Messages\\*$")
+                (name . "^\\*Warnings\\*$")
+                (name . "^\\*Shell Command Output\\*$")
+                (name . "^\\*Async-native-compile-log\\*$")))
+      ("dired" (mode . dired-mode))
+      ("CLI" (or
+              (mode . term-mode)
+              (mode . shell-mode)
+              (mode . eshell-mode)
+              (mode . vterm-mode)))
+      ("help" (or
+               (name . "^\\*Help\\*$")
+               (name . "^\\*info\\*$")
+               (name . "^\\*helpful"))))))
+  (ibuffer-show-empty-filter-groups nil))
 
 (use-package isearch
   :ensure nil
   :custom
   (isearch-repeat-on-direction-change t)
-  (isearch-lazy-count t))
+  (isearch-lazy-count t)
+  (lazy-count-prefix-format "(%s/%s) "))
 
 (use-package css-mode
   :ensure nil
@@ -772,9 +876,27 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
     (when (minibufferp)
       (overlay-put λαω-minibuffer-input-method-overlay 'after-string nil)))
   :custom
-  ;; useful for `corfu'
   (completion-cycle-threshold 2
    "Cycle through completion candidates if there's only two."))
+
+(use-package project
+  :ensure nil
+  :init
+  (defun λαω-project-vterm ()
+  "Start `vterm' in the current project's root directory.
+If a buffer already exists for running `vterm' in the project's root,
+switch to it.  Otherwise, create a new `vterm' buffer.
+With \\[universal-argument] prefix arg, create a new `vterm' buffer even
+if one already exists."
+  (interactive)
+  (defvar vterm-buffer-name)
+  (let* ((default-directory (project-root (project-current t)))
+         (vterm-buffer-name (project-prefixed-buffer-name "vterm"))
+         (vterm-buffer (get-buffer vterm-buffer-name)))
+    (if (and vterm-buffer (not current-prefix-arg))
+        (pop-to-buffer vterm-buffer (bound-and-true-p display-comint-buffer-action))
+      (vterm t))))
+  :bind ("C-x p v" . λαω-project-vterm))
 
 (use-package paren
   :ensure nil
@@ -786,7 +908,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
   :ensure nil
   :defer 1.5
   :custom
-  (password-cache-expiry (* 60 5))) ; 5 minutes
+  (password-cache-expiry (* 60 15))) ; 15 minutes
 
 (use-package pixel-scroll
   :ensure nil
@@ -807,8 +929,6 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
   :defer 1
   :config
   (recentf-mode)
-  (add-to-list 'recentf-exclude
-               (recentf-expand-file-name λαω-emacs-var-directory))
   :bind (("C-c f r" . recentf)
          :map λαω-files-map
          ("r" . recentf))
@@ -817,7 +937,6 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package repeat
   :ensure nil
-  :defer 1.25
   :config
   (repeat-mode)
   :custom
@@ -850,6 +969,10 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
   :custom
   (shr-use-colors nil))
 
+(use-package tab-line
+  :custom
+  (tab-line-tabs-buffer-group-function 'tab-line-tabs-buffer-group-by-project))
+
 (use-package time
   :disabled
   :ensure nil
@@ -865,13 +988,13 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package tramp
   :ensure nil
-  :defer 0.5
+  :defer 1
+  :config
+  (add-to-list 'tramp-remote-path "/run/current-system/profile/bin")
+  (add-to-list 'tramp-remote-path "/run/current-system/profile/sbin")
   :custom
   (tramp-default-method "ssh")
-  (tramp-backup-directory-alist backup-directory-alist)
-  ;; set default shell to bash
-  (tramp-connection-properties '((nil "remote-shell" "/usr/bin/bash")))
-  (tramp-encoding-shell "/usr/bin/bash"))
+  (tramp-backup-directory-alist backup-directory-alist))
 
 (use-package transient
   :defer t)
@@ -912,6 +1035,7 @@ them in `λαω-treesit-language-grammars-directory'."
           (html "https://github.com/tree-sitter/tree-sitter-html" "v0.23.2")
           (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1")
           (json "https://github.com/tree-sitter/tree-sitter-json" "v0.24.8")
+          (lua "https://github.com/tree-sitter-grammars/tree-sitter-lua" "v0.2.0")
           (python "https://github.com/tree-sitter/tree-sitter-python" "v0.23.6")
           ;; (markdown
           ;;  "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
@@ -943,6 +1067,10 @@ them in `λαω-treesit-language-grammars-directory'."
     :ensure nil
     :mode "\\.json\\'")
 
+  (use-package lua-ts-mode
+    :ensure nil
+    :mode "\\.lua\\'")
+
   (use-package typescript-ts-mode
     :ensure nil
     :mode "\\.ts[x]?\\'")
@@ -951,14 +1079,21 @@ them in `λαω-treesit-language-grammars-directory'."
     :ensure nil
     :mode "\\.y[a]?ml\\'")
 
-  ;; major mode remapping
-  (add-to-list 'major-mode-remap-alist '(js-json-mode . json-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-
 (use-package vc-hooks
   :ensure nil
   :custom
   (vc-make-backup-files t))
+
+(use-package uniquify
+  :ensure nil
+  :custom
+  (uniquify-buffer-name-style 'forward)
+  (uniquify-strip-common-suffix t)
+  (uniquify-after-kill-buffer-p t))
+
+(use-package webjump
+  :ensure nil
+  :defer t)
 
 (use-package window
   :ensure nil
@@ -966,7 +1101,8 @@ them in `λαω-treesit-language-grammars-directory'."
   ;; See:
   ;; https://www.masteringemacs.org/article/demystifying-emacs-window-manager
   (switch-to-buffer-obey-display-actions t
-   "Treat manual buffer switching the same as programmatic switching."))
+   "Treat manual buffer switching the same as programmatic switching.")
+  (scroll-error-top-bottom t))
 
 (use-package winner
   :ensure nil
@@ -1031,14 +1167,12 @@ them in `λαω-treesit-language-grammars-directory'."
 
 (use-package whole-line-or-region
   :defer 0.25
-  :config
-  (whole-line-or-region-global-mode))
+  :hook (after-init-hook . whole-line-or-region-global-mode))
 
 (use-package avy
   :defer 0.5
   ;; default is `electric-newline-and-maybe-indent'
-  :bind (("C-j" . avy-goto-char-timer))
-  )
+  :bind (("C-j" . avy-goto-char-timer)))
 
 (use-package expreg
   :config
@@ -1067,8 +1201,13 @@ This function adds the `expreg--sentence' expansion function to
 (use-package vterm
   :defer t
   :commands (vterm vterm-other-window)
+  :init
+  (defun λαω-disable-truncate-lines-locally ()
+    "Locally set `truncate-lines' to nil."
+    (setq-local truncate-lines nil))
   :config
   (keymap-unset vterm-mode-map "C-l" t)
+  :hook (vterm-mode-hook . λαω-disable-truncate-lines-locally)
   :bind (:map λαω-cli-map
          ("v" . vterm)
          :map vterm-mode-map
@@ -1194,8 +1333,7 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package vertico
   :defer 0.5
-  :config
-  (vertico-mode)
+  :hook (after-init-hook . vertico-mode)
   :custom
   (vertico-cycle t) ; enable cycling for `vertico-next/previous'
   (vertico-count 7)
@@ -1207,15 +1345,18 @@ This function adds the `expreg--sentence' expansion function to
     "Locally disable `corfu-mode' automatic completion."
     (setq-local corfu-auto nil)
     (corfu-mode))
-  (global-corfu-mode)
+  :config
   (keymap-unset corfu-map "<RET>")
   (define-key corfu-map [remap next-line] nil)
   (define-key corfu-map [remap previous-line] nil)
+  :hook
+  (eshell-mode-hook . λαω-disable-corfu-auto-locally)
+  (text-mode-hook . λαω-disable-corfu-auto-locally)
+  (after-ini-hook . global-corfu-mode)
   ;; corfu extensions
-  (corfu-echo-mode)
-  (corfu-history-mode)
-  (corfu-popupinfo-mode)
-  :hook (eshell-mode-hook . λαω-disable-corfu-auto-locally)
+  (after-ini-hook . corfu-echo-mode)
+  (after-ini-hook . corfu-history-mode)
+  (after-ini-hook . corfu-popupinfo-mode)
   :bind (:map corfu-map
          ("M-n" . corfu-next)
          ("M-p" . corfu-previous)
@@ -1293,44 +1434,90 @@ This function adds the `expreg--sentence' expansion function to
   (embark-collect-mode-hook . consult-preview-at-point-mode))
 
 (use-package magit
-  :commands (magit-auto-revert-mode magit-mode magit-wip-mode)
   :defer 1
   :config
   (add-to-list 'magit-no-confirm 'safe-with-wip)
-  (magit-wip-mode)
+  :hook (after-init-hook .magit-wip-mode)
   :bind (:map λαω-git-map
          ("d" . magit-dispatch)
          ("f" . magit-file-dispatch)
-         ("g" . magit-status)))
+         ("g" . magit-status))
+  :custom
+  (magit-save-repository-buffers nil))
 
 (use-package magit-todos
   :after magit
-  :config
-  (magit-todos-mode))
+  :hook
+  (after-init-hook . magit-todos-mode))
 
 (use-package git-timemachine
   :bind (:map λαω-git-map
-         ("t" . git-timemachine)))
+              ("t" . git-timemachine)))
+
+(use-package ibuffer-vc
+  :after ibuffer
+  :defer t
+  :config
+  (defun λαω-set-ibuffer-vc-set-filter-groups ()
+    (ibuffer-vc-set-filter-groups-by-vc-root)
+    (unless (eq ibuffer-sorting-mode 'alphabetic)
+      (ibuffer-do-sort-by-alphabetic)))
+  :hook (ibuffer-hook . #'λαω-set-ibuffer-vc-set-filter-groups))
 
 (use-package diff-hl
   :defer 1
-  :config
-  (global-diff-hl-mode)
-  ;; (diff-hl-margin-mode)
-  (diff-hl-flydiff-mode)
-  (global-diff-hl-show-hunk-mouse-mode)
   :hook
+  (after-init-hook . global-diff-hl-mode)
+  ;; (diff-hl-margin-mode)
+  (after-init-hook . diff-hl-flydiff-mode)
+  (after-init-hook . global-diff-hl-show-hunk-mouse-mode)
   (magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
   (magit-post-refresh-hook . diff-hl-magit-post-refresh)
   (dired-mode-hook . diff-hl-dired-mode)
   :bind (:map λαω-git-map
          ("h" . diff-hl-show-hunk))
   :custom
-  (diff-hl-update-async t)
+  ;; `diff-hl-update-async' causes issues with killing buffers
+  ;; see:
+  ;; https://github.com/doomemacs/doomemacs/commit/ded3f5ec834942044b5caae6ca220270660b466b
+  ;; (diff-hl-update-async t)
   (diff-hl-side 'right))
 
+(use-package dape
+  :vc (:url "https://github.com/emacscollective/no-littering")
+  :defer t
+  ;; By default dape shares the same keybinding prefix as `gud'
+  ;; If you do not want to use any prefix, set it to nil.
+  ;; :bind-keymap (setq dape-key-prefix "\C-x\C-a")
+  :hook
+  (kill-emacs-hook . dape-breakpoint-save)
+  (after-init-hook . dape-breakpoint-global-mode)
+  ;; (after-init-hook . dape-breakpoint-load)
+
+  :config
+  ;; Turn on global bindings for setting breakpoints with mouse
+
+
+  ;; Info buffers to the right
+  ;; (setq dape-buffer-window-arrangement 'right)
+
+  ;; Info buffers like gud (gdb-mi)
+  ;; (setq dape-buffer-window-arrangement 'gud)
+  ;; (setq dape-info-hide-mode-line nil)
+
+  ;; Pulse source line (performance hit)
+  (add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
+
+  ;; Showing inlay hints
+  (setq dape-inlay-hints t)
+
+  ;; Save buffers on startup, useful for interpreted languages
+  (add-hook 'dape-start-hook (lambda () (save-some-buffers t t)))
+
+  ;; Kill compile buffer on build success
+  (add-hook 'dape-compile-hook 'kill-buffer))
+
 (use-package yasnippet
-  :disabled
   :config
   (yas-reload-all)
   (yas-minor-mode)
@@ -1339,13 +1526,14 @@ This function adds the `expreg--sentence' expansion function to
          ("y" . yas-insert-snippet)))
 
 (use-package yasnippet-snippets
-  :disabled
   :after yasnippet)
 
 (use-package whitespace-cleanup-mode
   :defer 2
-  :config
-  (global-whitespace-cleanup-mode))
+  :hook
+  (after-init-hook . global-whitespace-cleanup-mode)
+  :custom
+  (whitespace-cleanup-mode-preserve-point t))
 
 (use-package ialign
   :bind (:map λαω-text-map
@@ -1358,14 +1546,26 @@ This function adds the `expreg--sentence' expansion function to
   :bind ([remap goto-line] . goto-line-preview))
 
 (use-package indent-bars
+  :config
+  ;; provided by `indent-bars'
+  (use-package indent-bars-ts
+    :requires indent-bars
+    :ensure nil
+    :custom
+    (indent-bars-treesit-ignore-blank-lines-types '("module"))
+    (indent-bars-treesit-scope '((function_definition
+                                  class_definition
+                                  for_statement
+                                  if_statement
+                                  with_statement
+                                  while_statement))))
   :hook (prog-mode-hook . indent-bars-mode)
   :custom
   (indent-bars-color '(highlight
                        :face-bg t
                        :blend 0.5))
   (indent-bars-highlight-current-depth '(:pattern "."
-                                         :blend 0.75))
-  (indent-bars-pattern " . .")
+                                         :blend 0.9))
   (indent-bars-width-frac 0.25)
   ;; For centering while taking into account `indent-bars-width-frac',
   ;; subtract half of its value from half of total possible offset:
@@ -1375,19 +1575,11 @@ This function adds the `expreg--sentence' expansion function to
   (indent-bars-display-on-blank-lines nil)
   (indent-bars-no-descend-lists nil)
   (indent-bars-color-by-depth nil)
-  ;; treesit support
-  (indent-bars-treesit-support t)
-  (indent-bars-treesit-ignore-blank-lines-types '("module"))
-  (indent-bars-treesit-scope '((function_definition
-                                class_definition
-                                for_statement
-                                if_statement
-                                with_statement
-                                while_statement))))
+  (indent-bars-prefer-character t)
+  (indent-bars-treesit-support t))
 
-(use-package indent-bars-ts
-  :ensure nil ; provided by `indent-bars'
-  :requires indent-bars)
+(use-package ct
+  :defer t)
 
 (use-package colorful-mode
   :hook
@@ -1406,15 +1598,12 @@ This function adds the `expreg--sentence' expansion function to
   :mode ("\\.lisp\\'" . sly-mode))
 
 (use-package pdf-tools
-  :vc (:url "https://github.com/aikrahguzar/pdf-tools"
-       :branch "child-frame-preview"
-       :lisp-dir "lisp/")
+  :disabled
   :if (display-graphic-p)
   :defer 2
-  :commands (pdf-view-mode pdf-view-roll-minor-mode)
+  :commands (pdf-view-mode)
   :config
   (pdf-loader-install)
-  (add-hook 'pdf-view-mode-hook #'pdf-view-roll-minor-mode)
   :custom
   (pdf-cache-image-limit 128)
   (pdf-cache-prefetch-delay 0.1)
@@ -1435,13 +1624,12 @@ This function adds the `expreg--sentence' expansion function to
 (require 'λαω-org)
 
 (use-package saveplace-pdf-view
-  :after pdf-tools
   :if (display-graphic-p)
+  :after pdf-tools
   :defer t)
 
 (use-package spacious-padding
-  :config
-  (spacious-padding-mode)
+  :hook (after-init-hook . spacious-padding-mode)
   :custom
   (spacious-padding-widths
    '(:internal-border-width 16
@@ -1468,7 +1656,7 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package iedit
   :bind (:map λαω-text-map
-              ("i" . iedit-mode)))
+         ("i" . iedit-mode)))
 
 (use-package lorem-ipsum
   :defer t)
@@ -1486,15 +1674,12 @@ This function adds the `expreg--sentence' expansion function to
   :custom
   (visual-fill-column-center-text t))
 
-(use-package dap-mode
-  :defer t)
-
 ;; (use-package move-text
 ;;   :bind (("M-n" . move-text-down)
 ;;          ("M-p" . move-text-up)))
 
 (use-package sicp
-  :defer 3)
+  :defer t)
 
 (use-package tex
   :ensure auctex
@@ -1526,21 +1711,20 @@ This function adds the `expreg--sentence' expansion function to
   (activities-tabs-mode)
   ;; Prevent `edebug' default bindings from interfering.
   (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-  :bind
-  (:map λαω-activities-map
-   ("=" . activities-new)
-   ("d" . activities-define)
-   ("a" . activities-resume)
-   ("s" . activities-suspend)
-   ("k" . activities-kill)
-   ("f" . tab-next)
-   ("b" . tab-previous)
-   ("M-f" . tab-bar-move-tab)
-   ("M-b" . tab-bar-move-tab-backward)
-   ("RET" . activities-switch)
-   ;; ("b" . activities-switch-buffer)
-   ("g" . activities-revert)
-   ("l" . activities-list)))
+  :bind (:map λαω-activities-map
+         ("=" . activities-new)
+         ("d" . activities-define)
+         ("a" . activities-resume)
+         ("s" . activities-suspend)
+         ("k" . activities-kill)
+         ("f" . tab-next)
+         ("b" . tab-previous)
+         ("M-f" . tab-bar-move-tab)
+         ("M-b" . tab-bar-move-tab-backward)
+         ("RET" . activities-switch)
+         ;; ("b" . activities-switch-buffer)
+         ("g" . activities-revert)
+         ("l" . activities-list)))
 
 (use-package citar
   :defer 1
@@ -1582,7 +1766,7 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package citar-embark
   :after citar embark
-  :config (citar-embark-mode))
+  :hook (after-init-hook . citar-embark-mode))
 
 (use-package elfeed
   :defer t)
@@ -1592,5 +1776,10 @@ This function adds the `expreg--sentence' expansion function to
   :defer t
   :config
   (elfeed-tube-setup))
+
+;; (use-package olivetti
+;;   :hook (org-mode-hook . olivetti-mode))
+
+;;(load-file "/Users/law/devel/git/emacspeak/lisp/emacspeak-setup.el")
 
 ;;; init.el ends here

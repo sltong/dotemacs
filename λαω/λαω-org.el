@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2024 λαω
 
-;; Author: λαω <lambda.alpha.omega@proton.me>
-;; Maintainer: λαω <lambda.alpha.omega@proton.me>
+;; Author: Lao Tong <lao.s.t@pm.me>
+;; Maintainer: Lao Tong <lao.s.t@pm.me>
 ;; Keywords: local
 
 ;; This file is not part of GNU Emacs.
@@ -41,7 +41,7 @@
          ("M-n" . org-metadown))
   :custom
   (org-special-ctrl-a/e t)
-  (org-edit-src-content-indentation 0)
+  (org-edit-src-content-indentation 2)
   (org-hide-leading-stars t)
   (org-src-tab-acts-natively t)
   (org-display-custom-times t)
@@ -58,7 +58,6 @@
   ;; todo
   (org-todo-keywords '((sequence "TODO(t)" "MAYBE(m)" "DOING(d)" "POSTPONED(p)"
                         "|" "DONE(f)" "CANCELLED(x)"))))
-
 
 (use-package ox
   :ensure nil
@@ -77,10 +76,12 @@
 
 (use-package org-pdftools
   :after (org-noter pdf-tools)
+  :defer t
   :hook (org-mode-hook . org-pdftools-setup-link))
 
 (use-package org-noter-pdftools
   :after (org-noter org-pdftools)
+  :defer t
   :config
   ;; Add a function to ensure precise note is inserted
   (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)

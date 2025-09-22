@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2024 λαω
 
-;; Author: λαω <lambda.alpha.omega@proton.me>
-;; Maintainer: λαω <lambda.alpha.omega@proton.me>
+;; Author: Lao Tong <lao.s.t@pm.me>
+;; Maintainer: Lao Tong <lao.s.t@pm.me>
 ;; Keywords: local
 
 ;; This file is not part of GNU Emacs.
@@ -31,15 +31,14 @@
 (require 'λαω)
 
 (defvar λαω-themes-directory (expand-file-name
-                                 "themes/" λαω-emacs-directory)
+                              "themes/" λαω-emacs-directory)
   "λαω themes directory.")
 
 (add-to-list 'custom-theme-load-path λαω-themes-directory)
 
-
 ;; faces and fonts
 (defvar λαω-hostname-face-heights '(("lamb" . 120)
-                                    ("macross" . 160))
+                                    ("macross" . 150))
   "Alist of default face heights by hostname.
 
 The hostname does not include a top-level domain.")
@@ -47,9 +46,9 @@ The hostname does not include a top-level domain.")
 (defun λαω-hostname-face-height ()
   "Default face height for system hostname."
   (interactive)
-  (if-let* ((hostname-face-height
-             (cdr (assoc (car (split-string system-name "\\."))
-                         λαω-hostname-face-heights))))
+  (if-let ((hostname-face-height
+            (cdr (assoc (car (split-string system-name "\\."))
+                        λαω-hostname-face-heights))))
       hostname-face-height
     120))
 
@@ -66,10 +65,10 @@ The hostname does not include a top-level domain.")
          ((t (:family "Iosevka Law" :height ,(λαω-hostname-face-height)))))))
     (when (member "IBM Plex Sans" (font-family-list))
       (custom-set-faces
-       '(variable-pitch ((t (:family "IBM Plex Sans"
-                             :height 120))))
-       '(variable-pitch-text ((t (:inherit (variable-pitch)
-                                  :height 1.05))))))))
+       `(variable-pitch ((t (:family "IBM Plex Sans"
+                             :height ,(λαω-hostname-face-height)))))
+       `(variable-pitch-text ((t (:inherit (variable-pitch)
+                                  :height ,(λαω-hostname-face-height)))))))))
 
 (defun λαω-set-emacs-server-frame-fonts ()
   "Set fonts when running Emacs as a server/daemon.

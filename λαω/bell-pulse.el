@@ -128,6 +128,8 @@ face is used instead.
                                                    :line-width ,box-line-width
                                                    :style ,box-style)))
                   face-remap-cookies)
+            (custom-set-faces `(vertical-border
+                                ((t (:background ,color)))))
             (sit-for time-step)))
       (dolist (cookie face-remap-cookies)
         (face-remap-remove-relative cookie)))))

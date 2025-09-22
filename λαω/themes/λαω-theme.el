@@ -1,4 +1,8 @@
 ;;; λαω-theme.el --- λαω theme -*- coding: utf-8; lexical-binding: t; -*-
+
+;; Local Variables:
+;; eval: (colorful-mode t)
+;; End:
 (deftheme λαω
   "λαω theme."
   :background-mode 'dark
@@ -62,8 +66,7 @@
        (bg-diff-hl-insert "#263924") (fg-diff-hl-insert "#5c8059")
        (bg-diff-hl-delete "#472a26") (fg-diff-hl-delete "#9a655d")
 
-       (bg-avy-lead-face "#363418")
-       )
+       (bg-avy-lead-face "#363418"))
 
   (custom-theme-set-faces
    'λαω
@@ -80,8 +83,8 @@
    `(region ((,class (:background ,hl :foreground ,fg))))
    `(shadow ((,class (:foreground ,grey))))
    `(secondary-selection ((,class (:background ,hl
-                                               :foreground ,green
-                                               :weight bold))))
+                                   :foreground ,green
+                                   :weight bold))))
 
    ;; whitespace
    `(trailing-whitespace ((,class (:background ,bg-min-red)))) ; wtf?
@@ -129,9 +132,9 @@
    `(font-lock-warning-face ((t (:inherit (warning)))))
 
    `(link ((,class (:foreground ,fg-link
-                                :underline (:color foreground-color
-                                                   :style line
-                                                   :position nil)))))
+                    :underline (:color foreground-color
+                                :style line
+                                :position nil)))))
    `(link-visited ((,class (:inherit (link) :foreground ,fg-link-visited))))
 
    `(button ((t (:inherit (link)))))

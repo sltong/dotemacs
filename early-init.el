@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2024 λαω
 
-;; Author: λαω <lambda.alpha.omega@proton.me>
-;; Maintainer: λαω <lambda.alpha.omega@proton.me>
+;; Author: Lao Tong <lao.s.t@pm.me>
+;; Maintainer: Lao Tong <lao.s.t@pm.me>
 ;; Keywords: local
 
 ;; This file is not part of GNU Emacs.
@@ -54,7 +54,7 @@ can be set to nil during initialization to speed it up.")
 (setq package-user-dir (convert-standard-filename
                         (expand-file-name "var/elpa/" user-emacs-directory)))
 
-;; (setq package-enable-at-startup nil)
+(setq package-enable-at-startup t)
 
 ;; load the newest version of a file irrespective of its extension
 (setq load-prefer-newer t)
@@ -110,6 +110,12 @@ Restore the following:
 (add-hook 'emacs-startup-hook #'λαω-emacs-startup-hook-function)
 
 (add-to-list 'load-path (expand-file-name "λαω/" user-emacs-directory))
+
+;; λαω
+(require 'λαω)
+(require 'λαω-functions)
+(require 'λαω-keys)
+(require 'λαω-languages)
 
 (provide 'early-init)
 

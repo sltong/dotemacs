@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2024 λαω
 
-;; Author: λαω <lambda.alpha.omega@proton.me>
-;; Maintainer: λαω <lambda.alpha.omega@proton.me>
+;; Author: Lao Tong <lao.s.t@pm.me>
+;; Maintainer: Lao Tong <lao.s.t@pm.me>
 ;; Keywords: local
 
 ;; This file is not part of GNU Emacs.
@@ -29,11 +29,9 @@
 
 ;;; Code:
 
-(require 'cl-lib)
-
 ;;; personal information
-(setopt user-full-name "λαω")
-(setopt user-mail-address "lambda.alpha.omega@proton.me")
+(setopt user-full-name "Lao Tong")
+(setopt user-mail-address "lao.s.t@pm.me")
 
 ;;; customizations
 (defgroup λαω nil

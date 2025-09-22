@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2024 λαω
 
-;; Author: λαω <lambda.alpha.omega@proton.me>
-;; Maintainer: λαω <lambda.alpha.omega@proton.me>
+;; Author: Lao Tong <lao.s.t@pm.me>
+;; Maintainer: Lao Tong <lao.s.t@pm.me>
 ;; Keywords: local
 
 ;; This file is not part of GNU Emacs.
@@ -29,6 +29,14 @@
 ;;; Code:
 
 (require 'λαω)
+
+(defun λαω-hostname (&optional print-message)
+  "The hostname of the system without its top-level domain."
+  (interactive "p")
+  (let ((hostname (car (split-string system-name "\\."))))
+    (if print-message
+        (message hostname)
+      hostname)))
 
 (defun λαω-remove-text-properties-in-region (region-start region-end)
     "Remove text properties in region."
@@ -85,55 +93,24 @@ Concatenate \"λαω-\" with FILENAME and return its absolute file path
   (expand-file-name (concat "λαω-" filename) λαω-emacs-directory))
 
 ;; create functions to visit files and directories
-
 (λαω-make-visit-file-function 'λαω-emacs-directory)
-;; (defun λαω-visit-λαω-emacs-directory ()
-;;   "Visit λαω Emacs directory."
-;;   (interactive)
-;;   (find-file λαω-emacs-directory))
 
 (λαω-make-visit-file-function 'user-emacs-directory)
-;; (defun λαω-visit-user-emacs-directory ()
-;;   "Visit `user-emacs-directory'."
-;;   (interactive)
-;;   (find-file user-emacs-directory))
 
 (λαω-make-visit-file-function
  (convert-standard-filename "~") "Visit home directory." "home-directory")
-;; (defun λαω-visit-home-directory ()
-;;   "Visit home directory."
-;;   (interactive)
-;;   (find-file "~/"))
 
 (λαω-make-visit-file-function 'λαω-themes-directory)
-;; (defun λαω-visit-λαω-themes-directory ()
-;;   "Visit λαω themes directory."
-;;   (interactive)
-;;   (find-file λαω-themes-directory))
 
 (λαω-make-visit-file-function 'custom-file nil "emacs-custom-file")
-;; (defun λαω-visit-emacs-custom-file ()
-;;   "Visit Emacs `custom-file'."
-;;   (interactive)
-;;   (find-file custom-file))
 
 (λαω-make-visit-file-function 'early-init-file nil "emacs-early-init-file")
-;; (defun λαω-visit-emacs-early-init-file ()
-;;   "Visit Emacs `early-init-file'."
-;;   (interactive)
-;;   (find-file early-init-file))
 
 (λαω-make-visit-file-function 'user-init-file nil "emacs-user-init-file")
-;; (defun λαω-visit-emacs-user-init-file ()
-;;   "Visit Emacs `user-init-file'."
-;;   (interactive)
-;;   (find-file user-init-file))
 
 (λαω-make-visit-file-function "~/.bashrc" nil "bashrc-file")
-;; (defun λαω-visit-bashrc-file ()
-;;   "Visit \".bashrc\"."
-;;   (interactive)
-;;   (find-file "~/.bashrc"))
+
+(λαω-make-visit-file-function "~/.zshrc" nil "zshrc-file")
 
 ;; visit λαω files and directories
 (λαω-make-visit-file-function
@@ -225,24 +202,25 @@ to the next fourth (respecting ARG)."
           (t
            (recenter one-fourth)))))
 
-(defun λαω-query-replace-region ()
-  "Call `query-replace' starting with the region for matching.
-
-The region is first saved to the kill ring. Once `query-replace' is
-called, it is yanked to the minibuffer as input.
-
-Since the region is used for matching, when the mark is active in
-Transient Mark mode, `query-replace' will not operate on the region
-contents."
-  (interactive)
-  (when (use-region-p)
-    (kill-ring-save nil nil t)
-    (deactivate-mark)
-    ;; Move to REGION-START as to allow
-    (minibuffer-with-setup-hook
-        #'yank
-        (call-interactively
-         #'query-replace nil))))
+(defun λαω-query-replace-region (from-string to-string
+                                 &optional delimited start end backward region-noncontiguous-p)
+  "Call `query-replace' starting with the region to be matched."
+  (interactive
+   (progn
+     (barf-if-buffer-read-only)
+     (let* ((from (if (use-region-p)
+                      (buffer-substring (region-beginning) (region-end))
+                    (query-replace-read-from "Query replace" nil)))
+            (to (if (consp from)
+                    (prog1 (cdr from) (setq from (car from)))
+                  (query-replace-read-to from "Query replace" nil))))
+       (list from to
+             (or (and current-prefix-arg (not (eq current-prefix-arg '-)))
+                 (and (plist-member (text-properties-at 0 from) 'isearch-regexp-function)
+                      (get-text-property 0 'isearch-regexp-function from)))
+             (and current-prefix-arg (eq current-prefix-arg '-))))))
+  (deactivate-mark)
+  (query-replace from-string to-string delimited start end backward region-noncontiguous-p))
 
 (defun λαω-query-replace-regexp-region ()
   "Call `query-replace-regexp' starting with the region for matching.
@@ -253,15 +231,21 @@ is called, it is yanked to the minibuffer as input.
 Since the region is used as the initial regular expression,
 `query-replace-regexp' will not operate on its contents when the mark is
 active in Transient Mark mode."
-  (interactive)
-  (when (use-region-p)
-    (kill-ring-save nil nil t)
-    (deactivate-mark)
-    ;; Move to REGION-START as to allow
-    (minibuffer-with-setup-hook
-        #'yank
-        (call-interactively
-         #'query-replace-regexp nil))))
+  (interactive
+   (progn
+     (barf-if-buffer-read-only)
+     (let* ((from (if (use-region-p)
+              (buffer-substring (region-beginning) (region-end))
+            (query-replace-read-from "Query replace" nil)))
+        (to (if (consp from) (prog1 (cdr from) (setq from (car from)))
+          (query-replace-read-to from "Query replace" nil))))
+       (list from to
+         (or (and current-prefix-arg (not (eq current-prefix-arg '-)))
+         (and (plist-member (text-properties-at 0 from) 'isearch-regexp-function)
+                      (get-text-property 0 'isearch-regexp-function from)))
+         (and current-prefix-arg (eq current-prefix-arg '-))))))
+  (deactivate-mark)
+  (query-replace-regexp from-string to-string delimited start end backward region-noncontiguous-p))
 
 (defun λαω-downcase-and-hyphenate-region (region-start region-end)
   "Downcase words in the region and concatenate them with hyphens.
