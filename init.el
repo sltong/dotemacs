@@ -1484,7 +1484,6 @@ This function adds the `expreg--sentence' expansion function to
   (diff-hl-side 'right))
 
 (use-package dape
-  :vc (:url "https://github.com/emacscollective/no-littering")
   :defer t
   ;; By default dape shares the same keybinding prefix as `gud'
   ;; If you do not want to use any prefix, set it to nil.
