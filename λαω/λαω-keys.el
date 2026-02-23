@@ -128,6 +128,12 @@
   "r" #'restart-emacs)
 (keymap-set λαω-map "e" (cons "emacs" λαω-emacs-map))
 
+(defvar-keymap λαω-emacs-packages-map
+  :doc "Keymap for Emacs packages."
+  :name "emacs-packages"
+  "u" '("use-package" . λαω-jump-to-package-use-package-declaration))
+(keymap-set λαω-emacs-map "p" (cons "packages" λαω-emacs-packages-map))
+
 (defvar-keymap λαω-buffer-map
   :doc "Keymap for Emacs buffers."
   :name "buffer"

@@ -59,13 +59,16 @@
   (org-todo-keywords '((sequence "TODO(t)" "MAYBE(m)" "DOING(d)" "POSTPONED(p)"
                         "|" "DONE(f)" "CANCELLED(x)"))))
 
-(use-package ox
-  :ensure nil
+(use-package org-transclusion
   :defer t
-  :custom
-  ;; exporting
-  (org-export-creator-string "Emacs (Org Mode)")
-  (org-export-headline-levels 6))
+  :after org
+  :bind ("<f12>" . org-transclusion-add))
+
+(use-package org-download
+  :defer t)
+
+(use-package org-super-agenda
+  :defer t)
 
 (use-package org-noter
   :defer t
@@ -74,25 +77,13 @@
   (require 'org-noter-pdf)
   (require 'org-noter-nov))
 
-(use-package org-pdftools
-  :after (org-noter pdf-tools)
+(use-package ox
+  :ensure nil
   :defer t
-  :hook (org-mode-hook . org-pdftools-setup-link))
-
-(use-package org-noter-pdftools
-  :after (org-noter org-pdftools)
-  :defer t
-  :config
-  ;; Add a function to ensure precise note is inserted
-  (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
-    (interactive "P")
-    (org-noter--with-valid-session
-     (let ((org-noter-insert-note-no-questions (if toggle-no-questions
-                                                   (not org-noter-insert-note-no-questions)
-                                                 org-noter-insert-note-no-questions))
-           (org-pdftools-use-isearch-link t)
-           (org-pdftools-use-freepointer-annot t))
-       (org-noter-insert-note (org-noter--get-precise-info))))))
+  :custom
+  ;; exporting
+  (org-export-creator-string "Emacs (Org Mode)")
+  (org-export-headline-levels 6))
 
 (use-package ox-html
   :ensure nil
@@ -148,8 +139,6 @@
 (use-package org-ql
   :defer t)
 
-(use-package org-download
-  :defer t)
 
 (provide 'λαω-org)
 

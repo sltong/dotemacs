@@ -258,7 +258,7 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
 ;;; OS-specific configurations
 (when (eq system-type 'darwin)
-  (setq insert-directory-program "gls"))
+  (setq insert-directory-program "gls")) ; ls for macOS
 
 ;;; early packages to load as soon as possible
 (require 'λαω-themes)
@@ -270,7 +270,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
   (gcmh-mode 1))
 
 (use-package no-littering
-  :vc (:url "https://github.com/emacscollective/no-littering" :branch "main")
   :demand t
   :init
   (setq no-littering-etc-directory λαω-emacs-etc-directory)
@@ -287,6 +286,131 @@ URL `https://emacs.stackexchange.com/a/4191'"
   ;;   (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
+(use-package catppuccin-theme
+  :defer nil
+  :config (load-theme 'catppuccin :no-confirm))
+
+;; (use-package modus-themes
+;;   :ensure nil
+;;   :init
+;;   (load-theme 'modus-vivendi t)
+;;   :custom
+;;   (modus-themes-italic-constructs t)
+;;   (modus-themes-bold-constructs t)
+;;   (modus-themes-mixed-fonts nil)
+;;   (modus-themes-prompts '(bold intense))
+;;   (modus-themes-common-palette-overrides
+;;    `((accent-0 "#89b4fa")
+;;      (accent-1 "#89dceb")
+;;      (bg-active bg-main)
+;;      (bg-added "#364144")
+;;      (bg-added-refine "#4A5457")
+;;      (bg-changed "#3e4b6c")
+;;      (bg-changed-refine "#515D7B")
+;;      (bg-completion "#45475a")
+;;      (bg-completion-match-0 "#1e1e2e")
+;;      (bg-completion-match-1 "#1e1e2e")
+;;      (bg-completion-match-2 "#1e1e2e")
+;;      (bg-completion-match-3 "#1e1e2e")
+;;      (bg-hl-line "#2a2b3d")
+;;      (bg-hover-secondary "#585b70")
+;;      (bg-line-number-active unspecified)
+;;      (bg-line-number-inactive "#1e1e2e")
+;;      (bg-main "#1e1e2e")
+;;      (bg-mark-delete "#443245")
+;;      (bg-mark-select "#3e4b6c")
+;;      (bg-mode-line-active "#181825")
+;;      (bg-mode-line-inactive "#181825")
+;;      (bg-prominent-err "#443245")
+;;      (bg-prompt unspecified)
+;;      (bg-prose-block-contents "#313244")
+;;      (bg-prose-block-delimiter bg-prose-block-contents)
+;;      (bg-region "#585b70")
+;;      (bg-removed "#443245")
+;;      (bg-removed-refine "#574658")
+;;      (bg-tab-bar      "#1e1e2e")
+;;      (bg-tab-current  bg-main)
+;;      (bg-tab-other    "#1e1e2e")
+;;      (border-mode-line-active nil)
+;;      (border-mode-line-inactive nil)
+;;      (builtin "#89b4fa")
+;;      (comment "#9399b2")
+;;      (constant  "#f38ba8")
+;;      (cursor  "#f5e0dc")
+;;      (date-weekday "#89b4fa")
+;;      (date-weekend "#fab387")
+;;      (docstring "#a6adc8")
+;;      (err     "#f38ba8")
+;;      (fg-active fg-main)
+;;      (fg-completion "#cdd6f4")
+;;      (fg-completion-match-0 "#89b4fa")
+;;      (fg-completion-match-1 "#f38ba8")
+;;      (fg-completion-match-2 "#a6e3a1")
+;;      (fg-completion-match-3 "#fab387")
+;;      (fg-heading-0 "#f38ba8")
+;;      (fg-heading-1 "#fab387")
+;;      (fg-heading-2 "#f9e2af")
+;;      (fg-heading-3 "#a6e3a1")
+;;      (fg-heading-4 "#74c7ec")
+;;      (fg-line-number-active "#b4befe")
+;;      (fg-line-number-inactive "#7f849c")
+;;      (fg-link  "#89b4fa")
+;;      (fg-main "#cdd6f4")
+;;      (fg-mark-delete "#f38ba8")
+;;      (fg-mark-select "#89b4fa")
+;;      (fg-mode-line-active "#bac2de")
+;;      (fg-mode-line-inactive "#585b70")
+;;      (fg-prominent-err "#f38ba8")
+;;      (fg-prompt "#cba6f7")
+;;      (fg-prose-block-delimiter "#9399b2")
+;;      (fg-prose-verbatim "#a6e3a1")
+;;      (fg-region "#cdd6f4")
+;;      (fnname    "#89b4fa")
+;;      (fringe "#1e1e2e")
+;;      (identifier "#cba6f7")
+;;      (info    "#94e2d5")
+;;      (keyword   "#cba6f7")
+;;      (keyword "#cba6f7")
+;;      (name "#89b4fa")
+;;      (number "#fab387")
+;;      (property "#89b4fa")
+;;      (string "#a6e3a1")
+;;      (type      "#f9e2af")
+;;      (variable  "#fab387")
+;;      (warning "#f9e2af")))
+;;   :config
+;;   (modus-themes-with-colors
+;;    (custom-set-faces
+;;     `(change-log-acknowledgment ((,c :foreground "#b4befe")))
+;;     `(change-log-date ((,c :foreground "#a6e3a1")))
+;;     `(change-log-name ((,c :foreground "#fab387")))
+;;     `(diff-context ((,c :foreground "#89b4fa")))
+;;     `(diff-file-header ((,c :foreground "#f5c2e7")))
+;;     `(diff-header ((,c :foreground "#89b4fa")))
+;;     `(diff-hunk-header ((,c :foreground "#fab387")))
+;;     `(gnus-button ((,c :foreground "#8aadf4")))
+;;     `(gnus-group-mail-3 ((,c :foreground "#8aadf4")))
+;;     `(gnus-group-mail-3-empty ((,c :foreground "#8aadf4")))
+;;     `(gnus-header-content ((,c :foreground "#7dc4e4")))
+;;     `(gnus-header-from ((,c :foreground "#cba6f7")))
+;;     `(gnus-header-name ((,c :foreground "#a6e3a1")))
+;;     `(gnus-header-subject ((,c :foreground "#8aadf4")))
+;;     `(log-view-message ((,c :foreground "#b4befe")))
+;;     `(match ((,c :background "#3e5768" :foreground "#cdd6f5")))
+;;     `(modus-themes-search-current ((,c :background "#f38ba8" :foreground "#11111b" ))) ;; :foreground "#cdd6f4" -- Catppuccin default, not that visible...
+;;     `(modus-themes-search-lazy ((,c :background "#3e5768" :foreground "#cdd6f5")))     ;; :foreground "#cdd6f4" :background "#94e2d5" -- Catppuccin default, not that visible...
+;;     `(newsticker-extra-face ((,c :foreground "#9399b2" :height 0.8 :slant italic)))
+;;     `(newsticker-feed-face ((,c :foreground "#f38ba8" :height 1.2 :weight bold)))
+;;     `(newsticker-treeview-face ((,c :foreground "#cdd6f4")))
+;;     `(newsticker-treeview-selection-face ((,c :background "#3e5768" :foreground "#cdd6f5")))
+;;     `(tab-bar ((,c :background "#1e1e2e" :foreground "#bac2de")))
+;;     `(tab-bar-tab ((,c :background "#1e1e2e")))
+;;     `(tab-bar-tab-group-current ((,c :background "#1e1e2e" :foreground "#bac2de")))
+;;     `(tab-bar-tab-group-inactive ((,c :background "#1e1e2e" :foreground "#9399b2"))))
+;;    `(tab-bar-tab-inactive ((,c :background "#1e1e2e" :foreground "#a6adc8")))
+;;    `(vc-dir-file ((,c :foreground "#89b4fa")))
+;;    `(vc-dir-header-value ((,c :foreground "#b4befe")))))
+
 ;; put all minor modes on the mode line in one menu
 (use-package minions
   :defer 0.25
@@ -295,10 +419,10 @@ URL `https://emacs.stackexchange.com/a/4191'"
   (minions-mode-line-lighter "+")
   :hook (after-init-hook . minions-mode))
 
-(use-package bell-pulse
+(use-package ring-bell-pulse
   :ensure nil
   :defer 1
-  :hook (after-init-hook . bell-pulse-mode))
+  :hook (after-init-hook . ring-bell-pulse-mode))
 
 ;;; built-in packages
 ;; these packages should have :ensure explicitly set to nil in order
@@ -440,11 +564,12 @@ comma."
 
 (use-package display-line-numbers
   :ensure nil
+  :hook (prog-mode-hook . display-line-numbers-mode)
   :bind (:map λαω-buffer-map
          ("l" . display-line-numbers-mode))
   :custom
   (display-line-numbers-grow-only t)
-  (display-line-numbers-width 3))
+  (display-line-numbers-width 2))
 
 (use-package find-func
   :ensure nil
@@ -617,10 +742,14 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
          :map λαω-buffer-map
          ("b" . ibuffer))
   :custom
-  (ibuffer-formats '((mark modified read-only " "
+  (ibuffer-formats '((mark modified read-only vc-status-mini " "
+                      (name 26 26 :left :elide) " "
+                      vc-relative-file)
+                     (mark modified read-only vc-status-mini " "
                       (name 26 26 :left :elide) " "
                       (filename 26 26 :left :elide) " "
-                      (size-h 8 -1 :right) " ")
+                      (size-h 8 -1 :right) " "
+                      vc-relative-file)
                      (mark modified read-only " "
                       (name 26 -1 :left :elide) " "
                       filename-and-process)))
@@ -902,7 +1031,8 @@ if one already exists."
   :ensure nil
   :hook (prog-mode-hook . show-paren-mode)
   :custom
-  (show-paren-delay 0))
+  (show-paren-delay 0)
+  (show-paren-context-when-offscreen t))
 
 (use-package password-cache
   :ensure nil
@@ -962,6 +1092,14 @@ if one already exists."
   :defer 2
   :config
   (save-place-mode))
+
+(use-package sh-script
+  :ensure nil
+  :defer 2
+  :config
+  ;; use tabs for shell scripts (for HEREDOC compatibility)
+  (add-hook 'sh-mode-hook #'indent-tabs-mode)
+  )
 
 (use-package shr
   :ensure nil
@@ -1172,7 +1310,9 @@ them in `λαω-treesit-language-grammars-directory'."
 (use-package avy
   :defer 0.5
   ;; default is `electric-newline-and-maybe-indent'
-  :bind (("C-j" . avy-goto-char-timer)))
+  :bind (("C-j" . avy-goto-char-timer))
+  :custom
+  (avy-timeout-seconds 0.45))
 
 (use-package expreg
   :config
@@ -1422,6 +1562,10 @@ This function adds the `expreg--sentence' expansion function to
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
                  (window-parameters (mode-line-format . none))))
+  ;; make `embark' compatible with `whole-line-or-region'
+  (push 'embark--mark-target
+      (alist-get 'whole-line-or-region-delete-region
+                 embark-around-action-hooks))
   :bind
   (("C-." . embark-act) ;; pick some comfortable binding
    ("C-;" . embark-dwim) ;; good alternative: M-.
@@ -1437,7 +1581,7 @@ This function adds the `expreg--sentence' expansion function to
   :defer 1
   :config
   (add-to-list 'magit-no-confirm 'safe-with-wip)
-  :hook (after-init-hook .magit-wip-mode)
+  :hook (after-init-hook . magit-wip-mode)
   :bind (:map λαω-git-map
          ("d" . magit-dispatch)
          ("f" . magit-file-dispatch)
@@ -1456,13 +1600,13 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package ibuffer-vc
   :after ibuffer
-  :defer t
-  :config
+  :init
   (defun λαω-set-ibuffer-vc-set-filter-groups ()
     (ibuffer-vc-set-filter-groups-by-vc-root)
     (unless (eq ibuffer-sorting-mode 'alphabetic)
       (ibuffer-do-sort-by-alphabetic)))
-  :hook (ibuffer-hook . #'λαω-set-ibuffer-vc-set-filter-groups))
+  :config
+  (add-hook 'ibuffer-mode-hook #'λαω-set-ibuffer-vc-set-filter-groups))
 
 (use-package diff-hl
   :defer 1
@@ -1631,7 +1775,7 @@ This function adds the `expreg--sentence' expansion function to
   :hook (after-init-hook . spacious-padding-mode)
   :custom
   (spacious-padding-widths
-   '(:internal-border-width 16
+   '(:internal-border-width 8
      :right-divider-width 8
      :header-line-width 3
      :mode-line-width 4)))
@@ -1700,6 +1844,9 @@ This function adds the `expreg--sentence' expansion function to
 
 (use-package activities
   :init
+  ;; Prevent `edebug' default bindings from interfering.
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+
   (defvar-keymap λαω-activities-map
     :doc "Keymap for Activities."
     :name "activities")
@@ -1708,8 +1855,6 @@ This function adds the `expreg--sentence' expansion function to
   :config
   (activities-mode)
   (activities-tabs-mode)
-  ;; Prevent `edebug' default bindings from interfering.
-  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
   :bind (:map λαω-activities-map
          ("=" . activities-new)
          ("d" . activities-define)
@@ -1775,6 +1920,23 @@ This function adds the `expreg--sentence' expansion function to
   :defer t
   :config
   (elfeed-tube-setup))
+
+(use-package emmet-mode
+  :defer t
+  :hook (elixir-mode . emmet-mode))
+
+(use-package calfw
+  :vc (:url "https://github.com/haji-ali/emacs-calfw.git")
+  :defer t)
+
+(use-package maccalfw
+  :vc (:url "https://github.com/haji-ali/maccalfw.git")
+  :commands maccalfw-open
+  :defer t)
+
+(use-package calfw-blocks
+  :vc (:url "https://github.com/haji-ali/calfw-blocks.git")
+  :defer t)
 
 ;; (use-package olivetti
 ;;   :hook (org-mode-hook . olivetti-mode))

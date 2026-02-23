@@ -268,5 +268,34 @@ Our word chain; it's broken.\", \"oh-no! our-word-chain; it's-broken.\"."
   (interactive)
   (switch-to-buffer-other-window (get-scratch-buffer-create)))
 
+(defun λαω-jump-to-package-use-package-declaration (package-name)
+  "Jump to the `use-package' declaration of PACKAGE-NAME in `user-init-file'."
+  (interactive
+   (let (packages)
+     ;; Collect package names from user-init-file
+     (with-temp-buffer
+       (insert-file-contents user-init-file)
+       (goto-char (point-min))
+       (while (re-search-forward "^(use-package\\s-+\\([^[:space:]()]+\\)" nil t)
+         (push (match-string 1) packages)))
+     (setq packages (delete-dups packages))
+     (setq packages (sort packages #'string<))
+     (list
+      (completing-read
+       "Package name: "         ; Prompt
+       packages                 ; Candidates
+       nil                      ; Predicate
+       nil                      ; Require match (allow typing new name)
+       nil                      ; Initial input
+       'jump-to-use-package-history)))) ; Minibuffer history
+  ;; Open the user's init file and search
+  (find-file user-init-file)
+  (goto-char (point-min))
+  (if (re-search-forward (format "^(use-package\\s-+%s\\b" (regexp-quote package-name)) nil t)
+      (progn
+        (beginning-of-line)
+        (message "Jumped to use-package declaration for %s" package-name))
+    (message "No use-package declaration found for %s" package-name)))
+
 (provide 'λαω-functions)
 ;;; λαω-functions.el ends here

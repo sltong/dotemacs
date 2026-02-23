@@ -1,8 +1,5 @@
 ;;; λαω-theme.el --- λαω theme -*- coding: utf-8; lexical-binding: t; -*-
 
-;; Local Variables:
-;; eval: (colorful-mode t)
-;; End:
 (deftheme λαω
   "λαω theme."
   :background-mode 'dark
@@ -12,7 +9,9 @@
        (bg "#15141c")
        (fg "#cdcbcf")
 
-       (theme-50  "#f5f3ff")
+       (theme-25  "#f5f3ff")
+       (theme-50  "#eeecf8")
+       (theme-75  "#e7e5f0")
        (theme-100 "#cfc2fe")
        (theme-200 "#a79bd4")
        (theme-300 "#8275ac")
@@ -27,6 +26,7 @@
        (bg-theme-darker "#27223b")
        (fg-theme "#d3caf5")
 
+       (hl-5/4 "#3d3956")
        (hl "#3a3653")
        (hl-3/4 "#312d48")
        (hl-1/2 "#242137")
@@ -66,7 +66,7 @@
        (bg-diff-hl-insert "#263924") (fg-diff-hl-insert "#5c8059")
        (bg-diff-hl-delete "#472a26") (fg-diff-hl-delete "#9a655d")
 
-       (bg-avy-lead-face "#363418"))
+       (bg-avy-lead-face "#222001"))
 
   (custom-theme-set-faces
    'λαω
@@ -80,7 +80,7 @@
    `(homoglyph ((,class (:foreground ,fg-theme))))
    `(minibuffer-prompt ((,class (:foreground ,fg-theme))))
    `(highlight ((,class (:background ,hl))))
-   `(region ((,class (:background ,hl :foreground ,fg))))
+   `(region ((,class (:background ,hl :foreground ,theme-25))))
    `(shadow ((,class (:foreground ,grey))))
    `(secondary-selection ((,class (:background ,hl
                                    :foreground ,green
@@ -90,7 +90,7 @@
    `(trailing-whitespace ((,class (:background ,bg-min-red)))) ; wtf?
    `(whitespace-trailing ((,class (:background ,bg-min-red)))) ; wtf?
    `(whitespace-empty ((,class (:background ,bg-min-yellow))))
-   `(whitespace-tab ((,class (:background ,bg-min-orange))))
+   `(whitespace-tab ((,class (:foreground ,bg-min-yellow))))
    `(whitespace-line ((,class (:background ,hl-1/2 :foreground ,yellow))))
    `(whitespace-missing-newline-at-eof ((,class (:background ,bg-min-yellow))))
    `(whitespace-space-before-tab ((,class (:background ,bg-min-yellow))))
@@ -193,12 +193,12 @@
    `(activities-tabs ((,class (:foreground ,green))))
 
    `(avy-goto-char-timer-face ((,class (:background ,bg-avy-lead-face
-                                        :foreground ,fg
+                                        :foreground ,green
                                         :weight bold))))
-   `(avy-lead-face ((,class (:inherit (avy-goto-char-timer-face) :foreground ,green :weight bold))))
-   `(avy-lead-face-0 ((,class (:inherit (avy-goto-char-timer-face) :foreground ,magenta :weight bold))))
+   `(avy-lead-face ((,class (:inherit (avy-goto-char-timer-face) :foreground ,magenta :weight bold))))
+   `(avy-lead-face-0 ((,class (:inherit (avy-goto-char-timer-face) :foreground ,teal :weight bold))))
    `(avy-lead-face-1 ((,class (:inherit (avy-goto-char-timer-face) :foreground ,orange :weight bold))))
-   `(avy-lead-face-2 ((,class (:inherit (avy-goto-char-timer-face) :foreground ,teal :weight bold))))
+   `(avy-lead-face-2 ((,class (:inherit (avy-goto-char-timer-face) :foreground ,blue :weight bold))))
 
    `(bookmark-face ((,class (:foreground ,yellow))))
 
@@ -326,6 +326,9 @@
    `(outline-6 ((,class (:foreground ,magenta))))
    ;; `(outline-7 ((,class (:foreground ,))))
    ;; `(outline-8 ((,class (:foreground ,))))
+
+   ;; sh-mode
+   `(sh-heredoc ((,class (:foreground ,yellow))))
 
    `(which-key-key-face ((,class (:inherit (font-lock-keyword-face)
                                            :weight bold))))
