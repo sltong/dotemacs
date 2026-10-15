@@ -46,7 +46,7 @@ The hostname does not include a top-level domain.")
 (defun λαω-hostname-face-height ()
   "Default face height for system hostname."
   (interactive)
-  (if-let ((hostname-face-height
+  (if-let* ((hostname-face-height
             (cdr (assoc (car (split-string system-name "\\."))
                         λαω-hostname-face-heights))))
       hostname-face-height

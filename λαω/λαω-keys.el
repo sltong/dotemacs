@@ -51,6 +51,9 @@
 (keymap-global-unset "C-x C-z")
 ;; trackpad text zooming
 (keymap-global-unset "<pinch>")
+;; unbind since it's a key shortcut for macOS and I don't really use the menu
+;; bar anyway
+(keymap-global-unset "M-`")
 
 (keymap-global-set "s-b" #'switch-to-buffer)
 (keymap-global-set "C-x C-k" #'kill-current-buffer)

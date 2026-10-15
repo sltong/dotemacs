@@ -202,25 +202,24 @@ to the next fourth (respecting ARG)."
           (t
            (recenter one-fourth)))))
 
-(defun λαω-query-replace-region (from-string to-string
-                                 &optional delimited start end backward region-noncontiguous-p)
-  "Call `query-replace' starting with the region to be matched."
-  (interactive
-   (progn
-     (barf-if-buffer-read-only)
-     (let* ((from (if (use-region-p)
-                      (buffer-substring (region-beginning) (region-end))
-                    (query-replace-read-from "Query replace" nil)))
-            (to (if (consp from)
-                    (prog1 (cdr from) (setq from (car from)))
-                  (query-replace-read-to from "Query replace" nil))))
-       (list from to
-             (or (and current-prefix-arg (not (eq current-prefix-arg '-)))
-                 (and (plist-member (text-properties-at 0 from) 'isearch-regexp-function)
-                      (get-text-property 0 'isearch-regexp-function from)))
-             (and current-prefix-arg (eq current-prefix-arg '-))))))
-  (deactivate-mark)
-  (query-replace from-string to-string delimited start end backward region-noncontiguous-p))
+(defun λαω-query-replace-region ()
+  "Like `query-replace', but if the region is active, use its contents
+as the search string. A negative prefix means search backward from the
+region's end instead of forward from its beginning."
+  (interactive)
+  (barf-if-buffer-read-only)
+  (if (use-region-p)
+      (let* ((backward (eq current-prefix-arg '-))
+             (from (buffer-substring-no-properties
+                    (region-beginning) (region-end)))
+             (to (query-replace-read-to
+                  from
+                  (concat "Query replace" (if backward " backward" ""))
+                  nil)))
+        (goto-char (if backward (region-end) (region-beginning)))
+        (deactivate-mark)
+        (query-replace from to nil nil nil backward))
+    (call-interactively #'query-replace)))
 
 (defun λαω-query-replace-regexp-region ()
   "Call `query-replace-regexp' starting with the region for matching.
@@ -296,6 +295,43 @@ Our word chain; it's broken.\", \"oh-no! our-word-chain; it's-broken.\"."
         (beginning-of-line)
         (message "Jumped to use-package declaration for %s" package-name))
     (message "No use-package declaration found for %s" package-name)))
+
+(defun λαω-current-unix-time-ms ()
+  "Return current Unix time in milliseconds as an integer."
+  (let ((time (current-time)))
+    (+ (* (nth 0 time) 65536000)
+       (* (nth 1 time) 1000)
+       (/ (nth 2 time) 1000))))
+
+(defun λαω-org-uuidv7 ()
+  "Generate a UUIDv7 string per RFC 9562 §5.7.
+Uses Emacs's built-in `random' which is not cryptographically secure."
+  (let* ((ts (λαω-current-unix-time-ms))
+         ;; 74 bits of randomness fits in two integers comfortably.
+         (r1 (random (ash 1 32))) ; rand_a (12 bits used) + part of rand_b
+         (r2 (random (ash 1 32)))
+         (r3 (random (ash 1 16)))
+         ;; Pack timestamp (48 bits) + version (4) + rand_a (12) = octets 0-7.
+         ;; High 32 bits of timestamp.
+         (ts-hi (ash ts -16))
+         (ts-lo (logand ts #xffff))
+         ;; Octets 6-7: version nibble (0x7) + 12 random bits.
+         (ver-randa (logior #x7000 (logand r1 #x0fff)))
+         ;; Octet 8: variant bits (0b10) + 6 random bits.
+         (var-randb-hi (logior #x80 (logand (ash r1 -12) #x3f)))
+         ;; Remaining 56 bits of rand_b: octet 9 + octets 10-15.
+         (randb-9 (logand (ash r1 -18) #xff))
+         (randb-1013 r2)
+         (randb-1415 r3))
+    (format "%08x-%04x-%04x-%02x%02x-%08x%04x"
+            ts-hi ts-lo ver-randa
+            var-randb-hi randb-9
+            randb-1013 randb-1415)))
+
+(defun λαω-vc-branch ()
+  "Return the branch name given by `vc-mode', if there is one."
+  (when (stringp vc-mode)
+    (substring vc-mode 5)))
 
 (provide 'λαω-functions)
 ;;; λαω-functions.el ends here

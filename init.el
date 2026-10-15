@@ -71,6 +71,9 @@
 ;;; package configurations
 ;; `package'
 (require 'package)
+(require 'package-vc)
+
+(setq package-vc-allow-build-commands t)
 
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
@@ -172,6 +175,9 @@ URL `https://emacs.stackexchange.com/a/4191'"
   (setq-default indent-tabs-mode nil)
   :config
   (column-number-mode)
+  ;; disable bidirectional text
+  (setq-default bidi-display-reordering 'left-to-right
+                bidi-paragraph-direction 'left-to-right)
   :hook
   (after-init-hook . λαω-display-init-time-message)
   ;; Visual-Line mode
@@ -181,12 +187,16 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
   :custom
   (set-language-environment "UTF-8")
-  ;; simple
+  (bidi-inhibit-bpa t "Inhibit bidirectional parentheses algorithm for faster redisplay.")
+  (redisplay-skip-fontification-on-input t "Skip fontification functions when typing.")
   (inhibit-default-init t "Don't load `default.el'.")
   (selection-coding-system 'utf-8)
+  (save-interprogram-paste-before-kill t "Save existing clipboard text into kill ring before replacing it.")
   (auto-save-timeout 4)
   (auto-save-interval 65)
   (kill-ring-max 512)
+  (kill-do-not-save-duplicates t)
+  (set-mark-command-repeat-pop t "Repeat popping of the mark ring.")
   ;; undo
   (undo-limit (* 1024 1024 1) "Increase max undo information to 1MiB.")
   ;; last-ditch outer limit for single undo commands
@@ -243,6 +253,7 @@ URL `https://emacs.stackexchange.com/a/4191'"
    "Make Emacs recognize single spaces as sentence-ending.")
   (delete-by-moving-to-trash t
    "Don't delete files, but move them to OS-specific trash can.")
+  (help-window-select t)
   ;; Emacs 30 and newer: disable Ispell completion function. As an
   ;; alternative, try `cape-dict'.
   (text-mode-ispell-word-completion nil)
@@ -264,7 +275,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
 (require 'λαω-themes)
 
 (use-package gcmh
-  :vc (:url "https://gitlab.com/koral/gcmh")
   :demand t
   :config
   (gcmh-mode 1))
@@ -286,134 +296,32 @@ URL `https://emacs.stackexchange.com/a/4191'"
   ;;   (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
-(use-package catppuccin-theme
-  :defer nil
-  :config (load-theme 'catppuccin :no-confirm))
+(use-package buffer-terminator
+  :custom
+  (buffer-terminator-verbose nil)
 
-;; (use-package modus-themes
-;;   :ensure nil
-;;   :init
-;;   (load-theme 'modus-vivendi t)
-;;   :custom
-;;   (modus-themes-italic-constructs t)
-;;   (modus-themes-bold-constructs t)
-;;   (modus-themes-mixed-fonts nil)
-;;   (modus-themes-prompts '(bold intense))
-;;   (modus-themes-common-palette-overrides
-;;    `((accent-0 "#89b4fa")
-;;      (accent-1 "#89dceb")
-;;      (bg-active bg-main)
-;;      (bg-added "#364144")
-;;      (bg-added-refine "#4A5457")
-;;      (bg-changed "#3e4b6c")
-;;      (bg-changed-refine "#515D7B")
-;;      (bg-completion "#45475a")
-;;      (bg-completion-match-0 "#1e1e2e")
-;;      (bg-completion-match-1 "#1e1e2e")
-;;      (bg-completion-match-2 "#1e1e2e")
-;;      (bg-completion-match-3 "#1e1e2e")
-;;      (bg-hl-line "#2a2b3d")
-;;      (bg-hover-secondary "#585b70")
-;;      (bg-line-number-active unspecified)
-;;      (bg-line-number-inactive "#1e1e2e")
-;;      (bg-main "#1e1e2e")
-;;      (bg-mark-delete "#443245")
-;;      (bg-mark-select "#3e4b6c")
-;;      (bg-mode-line-active "#181825")
-;;      (bg-mode-line-inactive "#181825")
-;;      (bg-prominent-err "#443245")
-;;      (bg-prompt unspecified)
-;;      (bg-prose-block-contents "#313244")
-;;      (bg-prose-block-delimiter bg-prose-block-contents)
-;;      (bg-region "#585b70")
-;;      (bg-removed "#443245")
-;;      (bg-removed-refine "#574658")
-;;      (bg-tab-bar      "#1e1e2e")
-;;      (bg-tab-current  bg-main)
-;;      (bg-tab-other    "#1e1e2e")
-;;      (border-mode-line-active nil)
-;;      (border-mode-line-inactive nil)
-;;      (builtin "#89b4fa")
-;;      (comment "#9399b2")
-;;      (constant  "#f38ba8")
-;;      (cursor  "#f5e0dc")
-;;      (date-weekday "#89b4fa")
-;;      (date-weekend "#fab387")
-;;      (docstring "#a6adc8")
-;;      (err     "#f38ba8")
-;;      (fg-active fg-main)
-;;      (fg-completion "#cdd6f4")
-;;      (fg-completion-match-0 "#89b4fa")
-;;      (fg-completion-match-1 "#f38ba8")
-;;      (fg-completion-match-2 "#a6e3a1")
-;;      (fg-completion-match-3 "#fab387")
-;;      (fg-heading-0 "#f38ba8")
-;;      (fg-heading-1 "#fab387")
-;;      (fg-heading-2 "#f9e2af")
-;;      (fg-heading-3 "#a6e3a1")
-;;      (fg-heading-4 "#74c7ec")
-;;      (fg-line-number-active "#b4befe")
-;;      (fg-line-number-inactive "#7f849c")
-;;      (fg-link  "#89b4fa")
-;;      (fg-main "#cdd6f4")
-;;      (fg-mark-delete "#f38ba8")
-;;      (fg-mark-select "#89b4fa")
-;;      (fg-mode-line-active "#bac2de")
-;;      (fg-mode-line-inactive "#585b70")
-;;      (fg-prominent-err "#f38ba8")
-;;      (fg-prompt "#cba6f7")
-;;      (fg-prose-block-delimiter "#9399b2")
-;;      (fg-prose-verbatim "#a6e3a1")
-;;      (fg-region "#cdd6f4")
-;;      (fnname    "#89b4fa")
-;;      (fringe "#1e1e2e")
-;;      (identifier "#cba6f7")
-;;      (info    "#94e2d5")
-;;      (keyword   "#cba6f7")
-;;      (keyword "#cba6f7")
-;;      (name "#89b4fa")
-;;      (number "#fab387")
-;;      (property "#89b4fa")
-;;      (string "#a6e3a1")
-;;      (type      "#f9e2af")
-;;      (variable  "#fab387")
-;;      (warning "#f9e2af")))
-;;   :config
-;;   (modus-themes-with-colors
-;;    (custom-set-faces
-;;     `(change-log-acknowledgment ((,c :foreground "#b4befe")))
-;;     `(change-log-date ((,c :foreground "#a6e3a1")))
-;;     `(change-log-name ((,c :foreground "#fab387")))
-;;     `(diff-context ((,c :foreground "#89b4fa")))
-;;     `(diff-file-header ((,c :foreground "#f5c2e7")))
-;;     `(diff-header ((,c :foreground "#89b4fa")))
-;;     `(diff-hunk-header ((,c :foreground "#fab387")))
-;;     `(gnus-button ((,c :foreground "#8aadf4")))
-;;     `(gnus-group-mail-3 ((,c :foreground "#8aadf4")))
-;;     `(gnus-group-mail-3-empty ((,c :foreground "#8aadf4")))
-;;     `(gnus-header-content ((,c :foreground "#7dc4e4")))
-;;     `(gnus-header-from ((,c :foreground "#cba6f7")))
-;;     `(gnus-header-name ((,c :foreground "#a6e3a1")))
-;;     `(gnus-header-subject ((,c :foreground "#8aadf4")))
-;;     `(log-view-message ((,c :foreground "#b4befe")))
-;;     `(match ((,c :background "#3e5768" :foreground "#cdd6f5")))
-;;     `(modus-themes-search-current ((,c :background "#f38ba8" :foreground "#11111b" ))) ;; :foreground "#cdd6f4" -- Catppuccin default, not that visible...
-;;     `(modus-themes-search-lazy ((,c :background "#3e5768" :foreground "#cdd6f5")))     ;; :foreground "#cdd6f4" :background "#94e2d5" -- Catppuccin default, not that visible...
-;;     `(newsticker-extra-face ((,c :foreground "#9399b2" :height 0.8 :slant italic)))
-;;     `(newsticker-feed-face ((,c :foreground "#f38ba8" :height 1.2 :weight bold)))
-;;     `(newsticker-treeview-face ((,c :foreground "#cdd6f4")))
-;;     `(newsticker-treeview-selection-face ((,c :background "#3e5768" :foreground "#cdd6f5")))
-;;     `(tab-bar ((,c :background "#1e1e2e" :foreground "#bac2de")))
-;;     `(tab-bar-tab ((,c :background "#1e1e2e")))
-;;     `(tab-bar-tab-group-current ((,c :background "#1e1e2e" :foreground "#bac2de")))
-;;     `(tab-bar-tab-group-inactive ((,c :background "#1e1e2e" :foreground "#9399b2"))))
-;;    `(tab-bar-tab-inactive ((,c :background "#1e1e2e" :foreground "#a6adc8")))
-;;    `(vc-dir-file ((,c :foreground "#89b4fa")))
-;;    `(vc-dir-header-value ((,c :foreground "#b4befe")))))
+  ;; Set the inactivity timeout (in seconds) after which buffers are considered
+  ;; inactive (default is 30 minutes):
+  (buffer-terminator-inactivity-timeout (* 30 60)) ; 30 minutes
+
+  ;; Define how frequently the cleanup process should run (default is every 10
+  ;; minutes):
+  (buffer-terminator-interval (* 10 60)) ; 10 minutes
+
+  :init
+  (buffer-terminator-mode 1))
+
+(use-package doom-modeline
+  :ensure t
+  :config (doom-modeline-mode 1)
+  :custom
+  (doom-modeline-icon nil))
+
+(use-package catppuccin-theme
+  :config (load-theme 'catppuccin :no-confirm))
 
 ;; put all minor modes on the mode line in one menu
 (use-package minions
-  :defer 0.25
   :commands (minions-mode glasses-mode)
   :custom
   (minions-mode-line-lighter "+")
@@ -421,7 +329,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
 (use-package ring-bell-pulse
   :ensure nil
-  :defer 1
   :hook (after-init-hook . ring-bell-pulse-mode))
 
 ;;; built-in packages
@@ -429,7 +336,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
 ;; to prevent fetching them from repositories
 (use-package auth-source
   :ensure nil
-  :defer 0.2
   :custom
   ;; add alternative port 23 for SSH
   ;; and add IMAP port 1143 and SMTP port 1025 for Proton Mail Bridge
@@ -441,18 +347,15 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
 (use-package auth-source-pass
   :ensure nil
-  :defer 0.75
   :config
   (auth-source-pass-enable))
 
 (use-package autorevert
   :ensure nil
-  :defer 1.5
   :hook (after-init-hook . global-auto-revert-mode))
 
 (use-package bookmark
   :ensure nil
-  :defer t
   :custom
   (bookmark-menu-confirm-deletion t)
   (bookmark-bmenu-file-column 40)
@@ -460,14 +363,12 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
 (use-package cc-mode
   :ensure nil
-  :defer 3
   :custom
   (c-basic-offset 4))
 
 (use-package completion-preview
   :disabled
   :ensure nil
-  :defer 0.5
   :config
   (global-completion-preview-mode)
   :bind (:map completion-preview-active-mode-map
@@ -478,7 +379,6 @@ URL `https://emacs.stackexchange.com/a/4191'"
 
 (use-package crm
   :ensure nil
-  :defer 2
   :commands (completing-read-multiple)
   :init
   (defun λαω-crm-prompt-indicator (args)
@@ -502,13 +402,11 @@ comma."
 ;; ignoring it
 (use-package delsel
   :ensure nil
-  :defer 1.25
   :config
   (delete-selection-mode))
 
 ;; (use-package desktop
 ;;   :ensure nil
-;;   :defer nil
 ;; (defun λαω-desktop-restore-display-line-numbers-mode ()
 ;;   "Activate `display-line-numbers-mode' for the correct buffers.
 
@@ -548,13 +446,12 @@ comma."
 
 (use-package dired
   :ensure nil
-  :defer 0.5
   :bind (:map dired-mode-map
          ("b" . dired-up-directory)
          ("+" . dired-create-empty-file)
          ("M-+" . dired-create-directory))
   :custom
-  (dired-listing-switches "-ahl")
+  (dired-listing-switches "-ahlS")
   (dired-auto-revert-buffer t)
   (dired-movement-style 'bounded))
 
@@ -585,6 +482,10 @@ comma."
   (elixir-ts-mode-hook . eglot-ensure)
   (heex-ts-mode-hook . eglot-ensure)
   (python-ts-mode-hook . eglot-ensure)
+  (c-mode-hook . eglot-ensure)
+  (c++-mode-hook . eglot-ensure)
+  (c-or-c++-mode-hook . eglot-ensure)
+  (js-ts-mode-hook . eglot-ensure)
   ;; :config
   ;; (setf (alist-get '(elixir-mode elixir-ts-mode heex-ts-mode)
   ;;                  eglot-server-programs
@@ -597,8 +498,7 @@ comma."
   )
 
 (use-package eldoc
-  :ensure nil
-  :defer 2)
+  :ensure nil)
 
 (use-package elec-pair
   :ensure nil
@@ -642,7 +542,6 @@ URL https://github.com/manateelazycat/aweshell"
 
 (use-package face-remap
   :ensure nil
-  :defer 2
   :config
   (when (equal (λαω-hostname) "macross")
     (setq text-scale-mode-step 1.05)
@@ -678,7 +577,6 @@ URL https://github.com/manateelazycat/aweshell"
 
 (use-package gnus
   :ensure nil
-  :defer t
   :custom
   (gnus-secondary-select-methods '((nntp "news.usenetserver.com")
                                    (nnimap "proton"
@@ -709,7 +607,6 @@ URL https://github.com/manateelazycat/aweshell"
 
 (use-package hl-line
   :ensure nil
-  :defer 0.5
   :init
   (defun λαω-disable-hl-line-mode-temporarily (func &rest args)
     "Temporarily disable `global-hl-line-mode' when calling FUNC.
@@ -782,7 +679,6 @@ URL https://sachachua.com/dotemacs/index.html#highlight-line-mode"
 
 (use-package css-mode
   :ensure nil
-  :defer t
   :custom
   (css-indent-offset 2))
 
@@ -862,7 +758,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
                         ;; condition is more debatable. It's so that I can have
                         ;; unquoted plists in macros. It assumes that you won't
                         ;; make a function whose name is a keyword.
-                        ;; (when-let (char-after (char-after (1+ containing-sexp)))
+                        ;; (when-let* (char-after (char-after (1+ containing-sexp)))
                         ;;   (char-equal char-after ?:))
 
                         ;; Check for quotes or backquotes around.
@@ -872,7 +768,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
                                (any-quoted-p nil)
                                (point nil))
                           (or
-                           (when-let (char (char-before last))
+                           (when-let* (char (char-before last))
                              (or (char-equal char ?')
                                  (char-equal char ?`)))
                            (progn
@@ -880,7 +776,7 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
                                (setq point (pop rest))
                                (setq any-quoted-p
                                      (or
-                                      (when-let (char (char-before point))
+                                      (when-let* (char (char-before point))
                                         (or (char-equal char ?')
                                             (char-equal char ?`)))
                                       (save-excursion
@@ -976,7 +872,6 @@ URL https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of
 
 (use-package mb-depth
   :ensure nil
-  :defer 2
   :config
   (minibuffer-depth-indicate-mode))
 
@@ -1025,7 +920,9 @@ if one already exists."
     (if (and vterm-buffer (not current-prefix-arg))
         (pop-to-buffer vterm-buffer (bound-and-true-p display-comint-buffer-action))
       (vterm t))))
-  :bind ("C-x p v" . λαω-project-vterm))
+  :bind ("C-x p v" . λαω-project-vterm)
+  :custom
+  (project-mode-line t))
 
 (use-package paren
   :ensure nil
@@ -1036,27 +933,23 @@ if one already exists."
 
 (use-package password-cache
   :ensure nil
-  :defer 1.5
   :custom
   (password-cache-expiry (* 60 15))) ; 15 minutes
 
 (use-package pixel-scroll
   :ensure nil
   :if (display-graphic-p)
-  :defer 2
   :config
   (pixel-scroll-precision-mode))
 
 (use-package re-builder
   :ensure nil
-  :defer t
   :custom
   (reb-re-syntax 'string)
   (reb-auto-match-limit 512))
 
 (use-package recentf
   :ensure nil
-  :defer 1
   :config
   (recentf-mode)
   :bind (("C-c f r" . recentf)
@@ -1078,24 +971,22 @@ if one already exists."
 
 (use-package savehist
   :ensure nil
-  :defer 0.75
   :config
   (savehist-mode)
   :custom
   (savehist-additional-variables '(kill-ring
                                    kmacro-ring
+                                   mark-ring
                                    regexp-search-ring
                                    search-ring)))
 
 (use-package saveplace
   :ensure nil
-  :defer 2
   :config
   (save-place-mode))
 
 (use-package sh-script
   :ensure nil
-  :defer 2
   :config
   ;; use tabs for shell scripts (for HEREDOC compatibility)
   (add-hook 'sh-mode-hook #'indent-tabs-mode)
@@ -1103,7 +994,6 @@ if one already exists."
 
 (use-package shr
   :ensure nil
-  :defer t
   :custom
   (shr-use-colors nil))
 
@@ -1126,7 +1016,6 @@ if one already exists."
 
 (use-package tramp
   :ensure nil
-  :defer 1
   :config
   (add-to-list 'tramp-remote-path "/run/current-system/profile/bin")
   (add-to-list 'tramp-remote-path "/run/current-system/profile/sbin")
@@ -1134,12 +1023,10 @@ if one already exists."
   (tramp-default-method "ssh")
   (tramp-backup-directory-alist backup-directory-alist))
 
-(use-package transient
-  :defer t)
+(use-package transient)
 
 (use-package treesit
   :ensure nil
-  :defer 2
   :init
   (defcustom λαω-treesit-language-grammars-directory
     "Directory for tree-sitter language grammars."
@@ -1230,8 +1117,7 @@ them in `λαω-treesit-language-grammars-directory'."
   (uniquify-after-kill-buffer-p t))
 
 (use-package webjump
-  :ensure nil
-  :defer t)
+  :ensure nil)
 
 (use-package window
   :ensure nil
@@ -1251,7 +1137,6 @@ them in `λαω-treesit-language-grammars-directory'."
 
 (use-package which-key
   :ensure nil
-  :defer 0.5
   :config
   (which-key-mode)
   :custom
@@ -1267,7 +1152,6 @@ them in `λαω-treesit-language-grammars-directory'."
 
 (use-package whitespace
   :ensure nil
-  :defer 1
   :config
   (global-whitespace-mode)
   :custom
@@ -1295,8 +1179,7 @@ them in `λαω-treesit-language-grammars-directory'."
          ("+" . enlarge-window)))
 
 ;;; third-party packages
-(use-package pass
-  :defer 1)
+(use-package pass)
 
 (use-package undo-fu-session
   :hook
@@ -1304,11 +1187,9 @@ them in `λαω-treesit-language-grammars-directory'."
   (prog-mode-hook . undo-fu-session-mode))
 
 (use-package whole-line-or-region
-  :defer 0.25
   :hook (after-init-hook . whole-line-or-region-global-mode))
 
 (use-package avy
-  :defer 0.5
   ;; default is `electric-newline-and-maybe-indent'
   :bind (("C-j" . avy-goto-char-timer))
   :custom
@@ -1339,7 +1220,6 @@ This function adds the `expreg--sentence' expansion function to
          ("t" . eat)))
 
 (use-package vterm
-  :defer t
   :commands (vterm vterm-other-window)
   :init
   (defun λαω-disable-truncate-lines-locally ()
@@ -1358,7 +1238,6 @@ This function adds the `expreg--sentence' expansion function to
   (vterm-always-compile-module t))
 
 (use-package orderless
-  :defer 0.5
   :init
   ;; efficient prefix filtering for inputs shorter than 4 characters
   (defun orderless-fast-dispatch (word index total)
@@ -1462,7 +1341,10 @@ This function adds the `expreg--sentence' expansion function to
          ("M-s" . consult-history)                 ; orig. next-matching-history-element
          ("M-r" . consult-history))                ; orig. previous-matching-history-element
   :custom
-  (consult-preview-key 'any))
+  (consult-preview-key 'any)
+  (consult-async-input-debounce 0.05)
+  (consult-async-input-throttle 0.1)
+  (consult-async-refresh-delay 0.05))
 
 (use-package consult-dir
   :after consult
@@ -1472,7 +1354,6 @@ This function adds the `expreg--sentence' expansion function to
          ("C-x C-j" . consult-dir-jump-file)))
 
 (use-package vertico
-  :defer 0.5
   :hook (after-init-hook . vertico-mode)
   :custom
   (vertico-cycle t) ; enable cycling for `vertico-next/previous'
@@ -1492,11 +1373,11 @@ This function adds the `expreg--sentence' expansion function to
   :hook
   (eshell-mode-hook . λαω-disable-corfu-auto-locally)
   (text-mode-hook . λαω-disable-corfu-auto-locally)
-  (after-ini-hook . global-corfu-mode)
+  (after-init-hook . global-corfu-mode)
   ;; corfu extensions
-  (after-ini-hook . corfu-echo-mode)
-  (after-ini-hook . corfu-history-mode)
-  (after-ini-hook . corfu-popupinfo-mode)
+  (after-init-hook . corfu-echo-mode)
+  (after-init-hook . corfu-history-mode)
+  (after-init-hook . corfu-popupinfo-mode)
   :bind (:map corfu-map
          ("M-n" . corfu-next)
          ("M-p" . corfu-previous)
@@ -1517,15 +1398,7 @@ This function adds the `expreg--sentence' expansion function to
   (corfu-quit-no-match t)
   (corfu-count 7))
 
-(use-package corfu-terminal
-  :if (display-graphic-p)
-  :defer 2
-  :after corfu
-  :config
-  (corfu-terminal-mode))
-
 (use-package cape
-  :defer 0.8
   :config
   ;; Add to the global default value of
   ;; `completion-at-point-functions' which is used by
@@ -1548,7 +1421,6 @@ This function adds the `expreg--sentence' expansion function to
   (keymap-set λαω-text-completion-map "c" (cons "cape" cape-prefix-map)))
 
 (use-package marginalia
-  :defer 1
   :config
   (marginalia-mode)
   :bind (("M-A" . marginalia-cycle))
@@ -1578,7 +1450,6 @@ This function adds the `expreg--sentence' expansion function to
   (embark-collect-mode-hook . consult-preview-at-point-mode))
 
 (use-package magit
-  :defer 1
   :config
   (add-to-list 'magit-no-confirm 'safe-with-wip)
   :hook (after-init-hook . magit-wip-mode)
@@ -1609,7 +1480,6 @@ This function adds the `expreg--sentence' expansion function to
   (add-hook 'ibuffer-mode-hook #'λαω-set-ibuffer-vc-set-filter-groups))
 
 (use-package diff-hl
-  :defer 1
   :hook
   (after-init-hook . global-diff-hl-mode)
   ;; (diff-hl-margin-mode)
@@ -1627,8 +1497,12 @@ This function adds the `expreg--sentence' expansion function to
   ;; (diff-hl-update-async t)
   (diff-hl-side 'right))
 
+;; (use-package eglot-booster
+;;   :after eglot
+;;   :config
+;;   (eglot-booster-mode))
+
 (use-package dape
-  :defer t
   ;; By default dape shares the same keybinding prefix as `gud'
   ;; If you do not want to use any prefix, set it to nil.
   ;; :bind-keymap (setq dape-key-prefix "\C-x\C-a")
@@ -1672,7 +1546,6 @@ This function adds the `expreg--sentence' expansion function to
   :after yasnippet)
 
 (use-package whitespace-cleanup-mode
-  :defer 2
   :hook
   (after-init-hook . global-whitespace-cleanup-mode)
   :custom
@@ -1721,16 +1594,12 @@ This function adds the `expreg--sentence' expansion function to
   (indent-bars-prefer-character t)
   (indent-bars-treesit-support t))
 
-(use-package ct
-  :defer t)
+(use-package ct)
 
 (use-package colorful-mode
   :hook
   (text-mode-hook . colorful-mode)
   (custom-mode-hook . colorful-mode))
-
-(use-package wgrep
-  :defer t)
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
@@ -1740,11 +1609,14 @@ This function adds the `expreg--sentence' expansion function to
 (use-package sly
   :mode ("\\.lisp\\'" . sly-mode))
 
+
+;; needed for pdf-tools
+(use-package tablist)
+
 (use-package pdf-tools
-  :disabled
   :if (display-graphic-p)
-  :defer 2
   :commands (pdf-view-mode)
+  :mode ("\\.pdf\\'" . pdf-view-mode)
   :config
   (pdf-loader-install)
   :custom
@@ -1753,9 +1625,22 @@ This function adds the `expreg--sentence' expansion function to
   (pdf-view-resize-factor 1.1)
   (pdf-view-max-image-width 1080))
 
-(use-package djvu
+(use-package pdf-annot
+  :ensure nil
+  :custom
+  (pdf-annot-default-annotation-properties
+   '((t (label . "Law"))
+     (text (icon . "Note") (color . "#ff0000"))
+     (highlight (color . "yellow")) (squiggly (color . "orange"))
+     (strike-out (color . "red")) (underline (color . "blue")))))
+
+(use-package saveplace-pdf-view
+  :demand t
   :if (display-graphic-p)
-  :defer t)
+  :after pdf-tools)
+
+(use-package djvu
+  :if (display-graphic-p))
 
 (use-package nov
   :if (display-graphic-p)
@@ -1765,11 +1650,6 @@ This function adds the `expreg--sentence' expansion function to
   (nov-text-width t))
 
 (require 'λαω-org)
-
-(use-package saveplace-pdf-view
-  :if (display-graphic-p)
-  :after pdf-tools
-  :defer t)
 
 (use-package spacious-padding
   :hook (after-init-hook . spacious-padding-mode)
@@ -1789,24 +1669,19 @@ This function adds the `expreg--sentence' expansion function to
   (gptel-model 'gpt-4o-mini))
 
 (use-package unfill
-  :defer t)
+  :bind (("M-q" . unfill-toggle)))
 
-(use-package xkcd
-  :defer t)
-
-(use-package literate-calc-mode
-  :defer t)
+(use-package literate-calc-mode)
 
 (use-package iedit
   :bind (:map λαω-text-map
-         ("i" . iedit-mode)))
+         ("i" . iedit-mode))
+  :custom (iedit-toggle-key-default nil))
 
 (use-package lorem-ipsum
-  :defer t)
-
-;; (use-package blimpy
-;;   :vc (:url "https://github.com/progfolio/blimpy")
-;;   :defer t)
+  :commands (lorem-ipsum-insert-list
+             lorem-ipsum-insert-sentences
+             lorem-ipsum-insert-paragraphs))
 
 (use-package visual-fill-column
   :hook ((Info-mode-hook . visual-fill-column-mode)
@@ -1821,12 +1696,10 @@ This function adds the `expreg--sentence' expansion function to
 ;;   :bind (("M-n" . move-text-down)
 ;;          ("M-p" . move-text-up)))
 
-(use-package sicp
-  :defer t)
+(use-package sicp)
 
 (use-package tex
   :ensure auctex
-  :defer t
   :config
   (setq-default TeX-master nil)
   :hook
@@ -1842,39 +1715,64 @@ This function adds the `expreg--sentence' expansion function to
                                (output-pdf "Okular")
                                (output-html "xdg-open"))))
 
-(use-package activities
+(use-package easysession
+  ;; ':demand t' ensures the package is loaded immediately upon startup
+  :demand t
   :init
-  ;; Prevent `edebug' default bindings from interfering.
-  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-
-  (defvar-keymap λαω-activities-map
-    :doc "Keymap for Activities."
-    :name "activities")
-  (keymap-global-set "C-c a" (cons "λαω-activities" λαω-activities-map))
-  (keymap-set λαω-map "a" (cons "activites" λαω-activities-map))
+  (defvar-keymap λαω-sessions-map
+    :doc "Keymap for Emacs sessions."
+    :name "sessions")
+  (keymap-global-set "C-c s" (cons "λαω-session" λαω-sessions-map))
+  (keymap-set λαω-map "s" (cons "session" λαω-sessions-map))
+  :bind (:map λαω-sessions-map
+              ("l" . easysession-switch-to) ; Load session
+              ("s" . easysession-save) ; Save session
+              ("L" . easysession-switch-to-and-restore-geometry)
+              ("r" . easysession-rename)
+              ("R" . easysession-reset)
+              ("u" . easysession-unload)
+              ("d" . easysession-delete))
   :config
-  (activities-mode)
-  (activities-tabs-mode)
-  :bind (:map λαω-activities-map
-         ("=" . activities-new)
-         ("d" . activities-define)
-         ("a" . activities-resume)
-         ("s" . activities-suspend)
-         ("k" . activities-kill)
-         ("f" . tab-next)
-         ("b" . tab-previous)
-         ("M-f" . tab-bar-move-tab)
-         ("M-b" . tab-bar-move-tab-backward)
-         ("RET" . activities-switch)
-         ;; ("b" . activities-switch-buffer)
-         ("g" . activities-revert)
-         ("l" . activities-list)))
+  (use-package easysession-scratch
+    :after easysession
+    :ensure nil
+    :config
+    (easysession-scratch-mode 1))
+
+  (use-package easysession-magit
+    :after easysession
+    :ensure nil
+    :config
+    (easysession-magit-mode 1))
+
+  ;; The `easysession-setup' function adds hooks:
+  ;; - To enable automatic session loading during `emacs-startup-hook', or
+  ;;   `server-after-make-frame-hook' when running in daemon mode.
+  ;; - To save the session at regular intervals, and when Emacs exits.
+  (easysession-setup)
+  :custom
+  ;; Save every 10 minutes
+  (easysession-save-interval (* 10 60))
+
+  ;e the current session when using `easysession-switch-to'
+  (easysession-switch-to-save-session t)
+
+  ;not exclude the current session when switching sessions
+  (easysession-switch-to-exclude-current nil)
+
+  ;; Display the active session name in the mode-line lighter.
+  ;; (setq easysession-save-mode-lighter-show-session-name t)
+
+  ;; Optionally, the session name can be shown in the modeline info area:
+  ;; (setq easysession-mode-line-misc-info t)
+  ;; non-nil: Make `easysession-setup' load the session automatically.
+  ;; (nil: session is not loaded automatically; the user can load it manually.)
+  (easysession-setup-load-session t))
 
 (use-package citar
-  :defer 1
   :hook
-  (LaTeX-mode . citar-capf-setup)
-  (org-mode . citar-capf-setup)
+  (LaTeX-mode-hook . citar-capf-setup)
+  (org-mode-hook . citar-capf-setup)
   :custom
   (citar-library-paths '("~/dump/library/"))
   (citar-bibliography "~/dump/library/bibliography.bib"))
@@ -1883,63 +1781,83 @@ This function adds the `expreg--sentence' expansion function to
   :after citar embark
   :config (citar-embark-mode))
 
-(use-package edraw
-  :vc (:url "https://github.com/misohena/el-easydraw")
-  :defer t)
-
-(use-package elfeed
-  :defer t)
+(use-package elfeed)
 
 (use-package elfeed-tube
   :after elfeed
-  :defer t
   :config
   (elfeed-tube-setup))
 
-(use-package htmlize
-  :defer t)
-
-(use-package citar
-  :defer 1
-  :hook
-  (LaTeX-mode . citar-capf-setup)
-  (org-mode . citar-capf-setup)
-  :custom
-  (citar-library-paths '("~/dump/library/"))
-  (citar-bibliography "~/dump/library/bibliography.bib"))
-
-(use-package citar-embark
-  :after citar embark
-  :hook (after-init-hook . citar-embark-mode))
-
-(use-package elfeed
-  :defer t)
-
-(use-package elfeed-tube
-  :after elfeed
-  :defer t
-  :config
-  (elfeed-tube-setup))
+(use-package htmlize)
 
 (use-package emmet-mode
-  :defer t
   :hook (elixir-mode . emmet-mode))
 
 (use-package calfw
-  :vc (:url "https://github.com/haji-ali/emacs-calfw.git")
-  :defer t)
+  :vc (:url "https://github.com/haji-ali/emacs-calfw.git"))
 
 (use-package maccalfw
   :vc (:url "https://github.com/haji-ali/maccalfw.git")
-  :commands maccalfw-open
-  :defer t)
+  :commands maccalfw-open)
 
 (use-package calfw-blocks
-  :vc (:url "https://github.com/haji-ali/calfw-blocks.git")
-  :defer t)
+  :vc (:url "https://github.com/haji-ali/calfw-blocks.git"))
 
-;; (use-package olivetti
-;;   :hook (org-mode-hook . olivetti-mode))
+(use-package olivetti
+  :hook (org-mode-hook . olivetti-mode))
+
+;; (use-package dired-preview
+;;   :config
+;;   (dired-preview-global-mode)
+;;   :custom
+;;   (dired-preview-delay 0.3))
+
+(use-package jinx
+  :hook
+  (text-mode-hook . jinx-mode)
+  :bind
+  (("M-$" . jinx-correct)
+   ("C-M-$" . jinx-languages)))
+
+(use-package kirigami
+  :config
+  (kirigami-global-mode 1)
+  :bind
+  ("C-c z o" . kirigami-open-fold)     ; Open fold at point
+  ("C-c z O" . kirigami-open-fold-rec) ; Open fold recursively
+  ("C-c z r" . kirigami-open-folds)    ; Open all folds
+  ("C-c z c" . kirigami-close-fold)    ; Close fold at point
+  ("C-c z m" . kirigami-close-folds)   ; Close all folds
+  ("C-c z a" . kirigami-toggle-fold)   ; Toggle fold at point
+  :custom
+  ;; Add Kirigami to the menu bar and context menu (`context-menu-mode').
+  (kirigami-show-menu-bar t)
+  (kirigami-show-context-menu t))
+
+(use-package macrursors
+  :vc (:url "https://github.com/karthink/macrursors")
+  :config
+  (dolist (mode '(corfu-mode goggles-mode beacon-mode))
+    (add-hook 'macrursors-pre-finish-hook mode)
+    (add-hook 'macrursors-post-finish-hook mode))
+  (define-prefix-command 'macrursors-mark-map)
+  (global-set-key (kbd "C-c SPC") #'macrursors-select)
+  (global-set-key (kbd "C->") #'macrursors-mark-next-instance-of)
+  (global-set-key (kbd "C-<") #'macrursors-mark-previous-instance-of)
+  (global-set-key (kbd "C-;") 'macrursors-mark-map)
+  (define-key macrursors-mark-map (kbd "C-;") #'macrursors-mark-all-lines-or-instances)
+  (define-key macrursors-mark-map (kbd ";") #'macrursors-mark-all-lines-or-instances)
+  (define-key macrursors-mark-map (kbd "l") #'macrursors-mark-all-lists)
+  (define-key macrursors-mark-map (kbd "s") #'macrursors-mark-all-symbols)
+  (define-key macrursors-mark-map (kbd "e") #'macrursors-mark-all-sexps)
+  (define-key macrursors-mark-map (kbd "f") #'macrursors-mark-all-defuns)
+  (define-key macrursors-mark-map (kbd "n") #'macrursors-mark-all-numbers)
+  (define-key macrursors-mark-map (kbd ".") #'macrursors-mark-all-sentences)
+  (define-key macrursors-mark-map (kbd "r") #'macrursors-mark-all-lines))
+
+;; (use-package dired-prev)
+
+;; (use-package agent-shell)
 
 ;;(load-file "/Users/law/devel/git/emacspeak/lisp/emacspeak-setup.el")
 

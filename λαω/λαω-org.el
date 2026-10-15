@@ -57,7 +57,11 @@
   (org-confirm-babel-evaluate nil)
   ;; todo
   (org-todo-keywords '((sequence "TODO(t)" "MAYBE(m)" "DOING(d)" "POSTPONED(p)"
-                        "|" "DONE(f)" "CANCELLED(x)"))))
+                        "|" "DONE(f)" "CANCELLED(x)")))
+  (org-blank-before-new-entry '((heading . t) (plain-list-item . nil)))
+  ;; ID
+  (org-id-method 'ts)
+  (org-id-ts-format "%Y-%m-%dT%H:%M:%S.%3N"))
 
 (use-package org-transclusion
   :defer t
@@ -138,7 +142,6 @@
 
 (use-package org-ql
   :defer t)
-
 
 (provide 'λαω-org)
 
